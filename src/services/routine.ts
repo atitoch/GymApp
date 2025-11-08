@@ -8,8 +8,8 @@ export const routineData: Record<string, DayRoutine[]> = {
       title: 'Dominante de Rodilla - Énfasis Cuádriceps',
       warmup: [
         'Movilidad de cadera en círculos x 10/dirección',
-        'Bicicleta estática 3-5 min',
-        'Activación de glúteo: caminar lateral con banda x 15 pasos/lado',
+        'Bicicleta estática 3-5 min (intensidad baja-media)',
+        'Activación de glúteo: caminar lateral con banda en rodillas x 15 pasos/lado',
         'Sentadillas sin peso x 15',
       ],
       sections: [
@@ -38,7 +38,7 @@ export const routineData: Record<string, DayRoutine[]> = {
               reps: '10/pierna',
               rpe: '8',
               rest: '2.5-3 min',
-              notes: 'Torso erguido, rodilla no sobrepasa el pie',
+              notes: 'Torso erguido, rodilla delantera no sobrepasa el pie',
             },
           ],
         },
@@ -80,9 +80,9 @@ export const routineData: Record<string, DayRoutine[]> = {
       dayName: 'TORSO',
       title: 'Empuje - Pecho/Hombro/Tríceps',
       warmup: [
-        'Remo en polea baja con cuerda x 15 reps',
-        'Estiramientos de hombro en polea x 10/lado',
-        'Press de pecho en máquina (peso ligero) x 12 reps',
+        'Remo en polea baja con cuerda x 15 reps (peso ligero, enfoque en retracción escapular)',
+        'Estiramientos de hombro en polea a altura de cadera: sujetar con una mano y rotar el torso x 10/lado',
+        'Press de pecho en máquina (peso muy ligero) x 12 reps',
       ],
       sections: [
         {
@@ -103,12 +103,12 @@ export const routineData: Record<string, DayRoutine[]> = {
               rest: '2.5-3 min',
             },
             {
-              name: 'Aperturas con Mancuernas o Peck Deck',
+              name: 'Aperturas con Mancuernas o en Máquina (Peck Deck)',
               sets: '3',
               reps: '12-15',
               rpe: '7-8',
               rest: '2 min',
-              notes: 'Estiramiento controlado',
+              notes: 'Estiramiento controlado, contracción en el centro',
             },
           ],
         },
@@ -135,14 +135,14 @@ export const routineData: Record<string, DayRoutine[]> = {
           title: 'Tríceps',
           exercises: [
             {
-              name: 'Extensiones de Tríceps en Polea',
+              name: 'Extensiones de Tríceps en Polea (agarre recto o cuerda)',
               sets: '3',
               reps: '12-15',
               rpe: '8',
               rest: '2-3 min',
             },
             {
-              name: 'Press Francés con Barra Z',
+              name: 'Press Francés con Barra Z o Mancuernas',
               sets: '3',
               reps: '10-12',
               rpe: '7-8',
@@ -165,8 +165,8 @@ export const routineData: Record<string, DayRoutine[]> = {
       title: 'Dominante de Cadera - Énfasis Glúteo/Femoral',
       warmup: [
         'Bicicleta o elíptica 3-5 min',
-        'Puente de glúteo x 20 reps',
-        'Bisagra de cadera con palo x 15 reps',
+        'Puente de glúteo (en suelo) x 20 reps',
+        'Bisagra de cadera con palo x 15 reps (aprender el patrón)',
         'Abducción de pierna acostado lateral x 15/lado',
       ],
       sections: [
@@ -174,12 +174,12 @@ export const routineData: Record<string, DayRoutine[]> = {
           title: 'Glúteo/Femoral',
           exercises: [
             {
-              name: 'Peso Muerto Rumano',
+              name: 'Peso Muerto Rumano (variación: con mancuernas, con barra, con trap bar)',
               sets: '4',
               reps: '6-8',
               rpe: '8-9',
               rest: '2.5-3 min',
-              notes: 'Bisagra perfecta, barra pegada al cuerpo',
+              notes: 'Bisagra de cadera perfecta, barra pegada al cuerpo',
             },
             {
               name: 'Hip Thrust con Barra',
@@ -187,7 +187,7 @@ export const routineData: Record<string, DayRoutine[]> = {
               reps: '8-10',
               rpe: '9',
               rest: '2.5-3 min',
-              notes: 'Contracción máxima arriba 1-2 seg',
+              notes: 'Contracción máxima arriba 1-2 seg, retroversión pélvica',
             },
             {
               name: 'Curl Femoral Acostado o Sentado',
@@ -195,7 +195,7 @@ export const routineData: Record<string, DayRoutine[]> = {
               reps: '10-12',
               rpe: '8',
               rest: '2.5-3 min',
-              notes: 'Cadera pegada al banco',
+              notes: 'Cadera pegada al banco, contracción controlada',
             },
           ],
         },
@@ -203,7 +203,7 @@ export const routineData: Record<string, DayRoutine[]> = {
           title: 'Complementarios',
           exercises: [
             {
-              name: 'Patada de Glúteo en Polea',
+              name: 'Patada de Glúteo en Polea o Máquina',
               sets: '3',
               reps: '12-15/pierna',
               rpe: '8',
@@ -211,7 +211,7 @@ export const routineData: Record<string, DayRoutine[]> = {
               notes: 'Extensión completa sin arquear lumbar',
             },
             {
-              name: 'Abducción de Cadera en Máquina',
+              name: 'Abducción de Cadera en Máquina (separar piernas hacia los lados)',
               sets: '3',
               reps: '15-20',
               rpe: '7-8',
@@ -276,9 +276,9 @@ export const routineData: Record<string, DayRoutine[]> = {
       dayName: 'TORSO',
       title: 'Tirón - Espalda/Bíceps',
       warmup: [
-        'Jalón en polea alta (peso ligero) x 15 reps',
+        'Jalón en polea alta con agarre ancho (peso ligero) x 15 reps',
         'Remo en máquina sentado (peso ligero) x 15 reps',
-        'Estirar brazos en polea alta x 10/lado',
+        'Estirar brazos en polea alta cruzándolos x 10/lado',
         'Colgarse de barra x 15-20 seg',
       ],
       sections: [
@@ -286,12 +286,13 @@ export const routineData: Record<string, DayRoutine[]> = {
           title: 'Espalda',
           exercises: [
             {
-              name: 'Peso Muerto Convencional o Remo en T',
+              name: 'Peso Muerto Convencional o Remo en T (variación: con barra, con mancuerna, en máquina)',
               sets: '4',
               reps: '5-6',
               rpe: '8-9',
               rest: '2.5-3 min',
-              notes: 'Refuerza cadena posterior',
+              notes:
+                'Si eliges peso muerto: refuerza toda la cadena posterior. Si eliges remo T: torso a 45°, jalar hacia abdomen bajo',
             },
             {
               name: 'Jalón al Pecho con Agarre Ancho',
@@ -299,22 +300,24 @@ export const routineData: Record<string, DayRoutine[]> = {
               reps: '8-10',
               rpe: '8',
               rest: '2.5-3 min',
-              notes: 'Sacar pecho, codos hacia atrás',
+              notes: 'Sacar pecho, llevar codos hacia atrás',
             },
             {
-              name: 'Remo con Barra o Barra en T',
+              name: 'Remo con Barra o Barra en T (agarre medio)',
               sets: '3',
               reps: '8-10',
               rpe: '8',
               rest: '2.5-3 min',
+              notes:
+                'Si usaste remo T arriba, aquí haz remo con barra y viceversa',
             },
             {
-              name: 'Remo en Polea Baja Agarre Cerrado',
+              name: 'Remo en Polea Baja con Agarre Cerrado (triángulo o agarre estrecho)',
               sets: '3',
               reps: '10-12',
               rpe: '7-8',
               rest: '2-2.5 min',
-              notes: 'Torso erguido, jalar hacia abdomen',
+              notes: 'Torso erguido, sacar pecho, jalar hacia abdomen',
             },
           ],
         },
@@ -322,7 +325,7 @@ export const routineData: Record<string, DayRoutine[]> = {
           title: 'Hombro Posterior',
           exercises: [
             {
-              name: 'Face Pulls',
+              name: 'Face Pulls (para deltoides posterior y manguito rotador)',
               sets: '3',
               reps: '15',
               rpe: '7',
@@ -335,7 +338,7 @@ export const routineData: Record<string, DayRoutine[]> = {
           title: 'Bíceps',
           exercises: [
             {
-              name: 'Curl de Bíceps con Barra Z',
+              name: 'Curl de Bíceps con Barra Z o Recta',
               sets: '3',
               reps: '10-12',
               rpe: '8',
@@ -386,15 +389,16 @@ export const routineData: Record<string, DayRoutine[]> = {
           title: 'Cuádriceps + Glúteo',
           exercises: [
             {
-              name: 'Sentadilla Hack o con Barra',
+              name: 'Sentadilla Hack o Sentadilla con Barra (variación diferente al Día 1)',
               sets: '3',
               reps: '10-12',
               rpe: '7-8',
               rest: '2.5-3 min',
-              notes: 'Variación diferente al Día 1',
+              notes:
+                'Si hiciste sentadilla trasera el lunes, haz frontal o hack hoy',
             },
             {
-              name: 'Peso Muerto con Piernas Rígidas',
+              name: 'Peso Muerto con Piernas Rígidas o Buenos Días con Barra',
               sets: '3',
               reps: '10-12',
               rpe: '7-8',
@@ -402,12 +406,12 @@ export const routineData: Record<string, DayRoutine[]> = {
               notes: 'Enfoque en estiramiento de femorales',
             },
             {
-              name: 'Sentadilla Búlgara',
+              name: 'Sentadilla Búlgara (énfasis en glúteo - torso inclinado)',
               sets: '3',
               reps: '12/pierna',
               rpe: '8',
               rest: '2.5-3 min',
-              notes: 'Torso inclinado para más glúteo',
+              notes: 'Torso más inclinado para mayor activación de glúteo',
             },
           ],
         },
@@ -415,34 +419,36 @@ export const routineData: Record<string, DayRoutine[]> = {
           title: 'Complementarios',
           exercises: [
             {
-              name: 'Step-Ups o Subidas al Banco',
+              name: 'Step-Ups o Subidas al Banco con Mancuernas',
               sets: '3',
               reps: '10-12/pierna',
               rpe: '7',
               rest: '2 min',
-              notes: 'Empujar con el talón',
+              notes: 'Banco a altura de rodilla, empujar con el talón',
             },
             {
-              name: 'Curl Femoral Nórdico o con Fitball',
+              name: 'Curl Femoral Nórdico o Curl con Fitball',
               sets: '3',
               reps: '8-10',
               rpe: '8',
               rest: '2 min',
+              notes: 'Alternativa más funcional al curl en máquina',
             },
             {
-              name: 'Abducción + Aducción (Superserie)',
+              name: 'Abducción + Aducción en Máquina (Superserie)',
               sets: '3',
               reps: '15 c/u',
               rpe: '7',
               rest: '2 min',
+              notes: 'Hacer abducción inmediatamente seguida de aducción',
             },
             {
-              name: 'Elevación de Gemelos en Prensa',
+              name: 'Elevación de Gemelos en Prensa de Pierna',
               sets: '3',
               reps: '20',
               rpe: '8',
               rest: '1.5-2 min',
-              notes: 'Rango completo',
+              notes: 'Rango completo de movimiento',
             },
           ],
         },
@@ -463,7 +469,7 @@ export const routineData: Record<string, DayRoutine[]> = {
               reps: '-',
               rpe: '-',
               rest: '-',
-              notes: '8-9 horas de sueño mínimo',
+              notes: '8-9 horas de sueño mínimo para recuperación óptima',
             },
           ],
         },

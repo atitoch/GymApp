@@ -271,7 +271,7 @@ const App = () => {
               </p>
               <p>
                 • <strong>Sueño crítico:</strong> 8-9 horas mínimo para
-                recuperación óptima
+                recuperación óptima (Entendido chamaca?)
               </p>
             </div>
           </div>
