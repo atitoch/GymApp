@@ -476,4 +476,457 @@ export const routineData: Record<string, DayRoutine[]> = {
       ],
     },
   ],
+  '2': [
+    {
+      day: 'Lunes',
+      dayName: 'UPPER 1',
+      title: 'Entrenamiento Superior - Día 1',
+      warmup: [
+        'Remo ligero en máquina x 15 reps',
+        'Movilidad de hombros x 10/dirección',
+        'Press de pecho con peso ligero x 12 reps',
+      ],
+      sections: [
+        {
+          title: 'Pecho y Tríceps',
+          exercises: [
+            {
+              name: 'Press Banca Plano con Barra',
+              sets: '4',
+              reps: '6-8',
+              rpe: '8-9',
+              rest: '2.5-3 min',
+            },
+            {
+              name: 'Cruces en Polea / Pec Deck',
+              sets: '3',
+              reps: '12-15',
+              rpe: '8',
+              rest: '2 min',
+            },
+          ],
+        },
+        {
+          title: 'Espalda',
+          exercises: [
+            {
+              name: 'Remo en Máquina con Respaldo (agarre amplio)',
+              sets: '3',
+              reps: '8-10',
+              rpe: '8',
+              rest: '2.5-3 min',
+            },
+            {
+              name: 'Pull-ups Lastradas/Supinas',
+              sets: '3',
+              reps: '8-10',
+              rpe: '8',
+              rest: '2.5-3 min',
+            },
+          ],
+        },
+        {
+          title: 'Hombros',
+          exercises: [
+            {
+              name: 'Press Militar con Barra',
+              sets: '3',
+              reps: '6-8',
+              rpe: '8',
+              rest: '2.5-3 min',
+            },
+            {
+              name: 'Face Pulls',
+              sets: '3',
+              reps: '15-20',
+              rpe: '7-8',
+              rest: '2 min',
+            },
+          ],
+        },
+        {
+          title: 'Bíceps y Tríceps',
+          exercises: [
+            {
+              name: 'Curl Bíceps Inclinado',
+              sets: '2',
+              reps: '10-12',
+              rpe: '8',
+              rest: '2 min',
+            },
+            {
+              name: 'Extensión Tríceps Cuerda',
+              sets: '2',
+              reps: '12-15',
+              rpe: '8',
+              rest: '2 min',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      day: 'Martes',
+      dayName: 'LOWER 1',
+      title: 'Entrenamiento Inferior - Día 1',
+      warmup: [
+        'Bicicleta estática 3-5 min',
+        'Movilidad de cadera x 10/dirección',
+        'Sentadillas sin peso x 15 reps',
+      ],
+      sections: [
+        {
+          title: 'Cuádriceps',
+          exercises: [
+            {
+              name: 'Sentadilla Hack',
+              sets: '4',
+              reps: '6-8',
+              rpe: '8-9',
+              rest: '2.5-3 min',
+            },
+            {
+              name: 'Extensiones de Cuádriceps',
+              sets: '3',
+              reps: '12-15',
+              rpe: '8',
+              rest: '2 min',
+            },
+          ],
+        },
+        {
+          title: 'Isquiosurales',
+          exercises: [
+            {
+              name: 'Curl Femoral Sentado',
+              sets: '3',
+              reps: '12-15',
+              rpe: '8',
+              rest: '2.5-3 min',
+            },
+          ],
+        },
+        {
+          title: 'Glúteos y Abductores',
+          exercises: [
+            {
+              name: 'Máquina de Abductor',
+              sets: '3',
+              reps: '15-20',
+              rpe: '7-8',
+              rest: '2 min',
+            },
+          ],
+        },
+        {
+          title: 'Gemelos y Core',
+          exercises: [
+            {
+              name: 'Elevación de Talones de Pie',
+              sets: '4',
+              reps: '15-20',
+              rpe: '8',
+              rest: '1.5-2 min',
+            },
+            {
+              name: 'Plancha Frontal y Lateral',
+              sets: '3',
+              reps: '30-45s',
+              rpe: '7',
+              rest: '1.5 min',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      day: 'Miércoles',
+      dayName: 'PUSH',
+      title: 'Entrenamiento Push - Pecho, Hombros y Tríceps',
+      warmup: [
+        'Remo ligero x 15 reps',
+        'Movilidad de hombros x 10/dirección',
+        'Press inclinado ligero x 12 reps',
+      ],
+      sections: [
+        {
+          title: 'Pecho',
+          exercises: [
+            {
+              name: 'Press Inclinado con Mancuernas',
+              sets: '3',
+              reps: '8-10',
+              rpe: '8',
+              rest: '2.5-3 min',
+            },
+            {
+              name: 'Press en Máquina/Smith Plano',
+              sets: '3',
+              reps: '10-12',
+              rpe: '8',
+              rest: '2.5-3 min',
+            },
+          ],
+        },
+        {
+          title: 'Hombros',
+          exercises: [
+            {
+              name: 'Press Militar Mancuernas Sentado',
+              sets: '3',
+              reps: '6-8',
+              rpe: '8',
+              rest: '2.5-3 min',
+            },
+            {
+              name: 'Elevaciones Laterales',
+              sets: '3',
+              reps: '15-20',
+              rpe: '7-8',
+              rest: '2 min',
+            },
+          ],
+        },
+        {
+          title: 'Tríceps',
+          exercises: [
+            {
+              name: 'Extensiones de Tríceps',
+              sets: '3',
+              reps: '8-10',
+              rpe: '8',
+              rest: '2 min',
+            },
+            {
+              name: 'Extensión Tríceps Overhead',
+              sets: '2',
+              reps: '12-15',
+              rpe: '8',
+              rest: '2 min',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      day: 'Jueves',
+      dayName: 'PULL',
+      title: 'Entrenamiento Pull - Espalda y Bíceps',
+      warmup: [
+        'Jalón al pecho ligero x 15 reps',
+        'Remo ligero x 15 reps',
+        'Movilidad de hombros x 10/dirección',
+      ],
+      sections: [
+        {
+          title: 'Espalda',
+          exercises: [
+            {
+              name: 'Remo Unilateral Mancuerna/Máquina',
+              sets: '3',
+              reps: '10-12',
+              rpe: '8',
+              rest: '2.5-3 min',
+            },
+            {
+              name: 'Jalón al Pecho',
+              sets: '3',
+              reps: '6-8',
+              rpe: '8',
+              rest: '2.5-3 min',
+            },
+            {
+              name: 'Reverse Fly / Pájaros',
+              sets: '3',
+              reps: '15-20',
+              rpe: '7-8',
+              rest: '2 min',
+            },
+          ],
+        },
+        {
+          title: 'Bíceps',
+          exercises: [
+            {
+              name: 'Predicador en Máquina',
+              sets: '3',
+              reps: '10-12',
+              rpe: '8',
+              rest: '2 min',
+            },
+            {
+              name: 'Spider Curl o Concentrada',
+              sets: '2',
+              reps: '12-15',
+              rpe: '8',
+              rest: '2 min',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      day: 'Viernes',
+      dayName: 'LOWER 2',
+      title: 'Entrenamiento Inferior - Día 2',
+      warmup: [
+        'Elíptica 3-5 min',
+        'Movilidad de cadera x 10/dirección',
+        'Puente de glúteo x 15 reps',
+      ],
+      sections: [
+        {
+          title: 'Cadena Posterior',
+          exercises: [
+            {
+              name: 'Peso Muerto Rumano',
+              sets: '3',
+              reps: '8-10',
+              rpe: '8',
+              rest: '2.5-3 min',
+            },
+            {
+              name: 'Curl Femoral de Pie',
+              sets: '3',
+              reps: '12-15',
+              rpe: '8',
+              rest: '2.5-3 min',
+            },
+          ],
+        },
+        {
+          title: 'Cuádriceps y Glúteos',
+          exercises: [
+            {
+              name: 'Sentadilla Hack',
+              sets: '3',
+              reps: '10-12',
+              rpe: '8',
+              rest: '2.5-3 min',
+            },
+            {
+              name: 'Sentadilla Búlgara',
+              sets: '3',
+              reps: '10',
+              rpe: '8',
+              rest: '2.5-3 min',
+            },
+          ],
+        },
+        {
+          title: 'Gemelos y Core',
+          exercises: [
+            {
+              name: 'Elevación de Talones Sentado',
+              sets: '4',
+              reps: '15-20',
+              rpe: '8',
+              rest: '1.5-2 min',
+            },
+            {
+              name: 'Hollow Hold + Piernas Colgado',
+              sets: '3',
+              reps: '30-45s',
+              rpe: '7',
+              rest: '1.5 min',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      day: 'Sábado',
+      dayName: 'UPPER 2',
+      title: 'Entrenamiento Superior - Día 2',
+      warmup: [
+        'Remo en máquina ligero x 15 reps',
+        'Movilidad de hombros x 10/dirección',
+        'Press inclinado ligero x 12 reps',
+      ],
+      sections: [
+        {
+          title: 'Pecho',
+          exercises: [
+            {
+              name: 'Press Inclinado en Máquina',
+              sets: '3',
+              reps: '10-12',
+              rpe: '8',
+              rest: '2.5-3 min',
+            },
+          ],
+        },
+        {
+          title: 'Espalda',
+          exercises: [
+            {
+              name: 'Remo en Máquina / Cable',
+              sets: '3',
+              reps: '12',
+              rpe: '8',
+              rest: '2.5-3 min',
+            },
+            {
+              name: 'Pull-over en Polea o Mancuerna',
+              sets: '2-3',
+              reps: '12-15',
+              rpe: '8',
+              rest: '2 min',
+            },
+          ],
+        },
+        {
+          title: 'Hombros',
+          exercises: [
+            {
+              name: 'Elevaciones Laterales con Pausa',
+              sets: '3',
+              reps: '15-20',
+              rpe: '7-8',
+              rest: '2 min',
+            },
+            {
+              name: 'Face Pull / Band Pull-aparts',
+              sets: '2',
+              reps: '20',
+              rpe: '7',
+              rest: '2 min',
+            },
+          ],
+        },
+        {
+          title: 'Bíceps y Tríceps',
+          exercises: [
+            {
+              name: 'Curl Martillo + Extensión Cuerda',
+              sets: '2',
+              reps: '12-15',
+              rpe: '8',
+              rest: '2 min',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      day: 'Domingo',
+      dayName: 'DESCANSO',
+      title: 'Descanso Completo - Recuperación',
+      sections: [
+        {
+          title: 'Recuperación Activa',
+          exercises: [
+            {
+              name: 'Descanso total o caminata ligera',
+              sets: '-',
+              reps: '-',
+              rpe: '-',
+              rest: '-',
+              notes: '8-9 horas de sueño mínimo para recuperación óptima',
+            },
+          ],
+        },
+      ],
+    },
+  ],
 };
