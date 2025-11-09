@@ -1,11 +1,14 @@
 import { UserCards } from '../components/userCards';
 import { Dumbbell, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-interface SelectUserProps {
-  handleUserSelect: (userId: string) => void;
-}
+export const SelectUser: React.FC = () => {
+  const navigate = useNavigate();
 
-export const SelectUser: React.FC<SelectUserProps> = ({ handleUserSelect }) => {
+  const handleUserSelect = (userId: string) => {
+    navigate(`/week/${userId}`);
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6">
       <div className="w-full max-w-4xl">

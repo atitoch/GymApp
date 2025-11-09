@@ -1,19 +1,29 @@
+import { useParams, useNavigate } from 'react-router-dom';
 import { Cooldown } from '../components/cooldown';
 import { DayHeader } from '../components/dayHeader';
 import { Exercises } from '../components/excersises';
 import { Tips } from '../components/tips';
 import { WarmUp } from '../components/warmUp';
-import type { DayRoutine as DayRoutineType } from '../types/routineType';
+import { routineData } from '../services/routine';
 
-interface DayRoutineProps {
-  currentRoutine: DayRoutineType;
-  handleBackToWeek: () => void;
-}
+export const DayRoutine: React.FC = () => {
+  const { userId, dayIndex } = useParams<{
+    userId: string;
+    dayIndex: string;
+  }>();
+  const navigate = useNavigate();
 
-export const DayRoutine: React.FC<DayRoutineProps> = ({
-  currentRoutine,
-  handleBackToWeek,
-}) => {
+  const currentRoutines = userId ? routineData[userId] : [];
+  const currentRoutine = currentRoutines[Number(dayIndex)];
+
+  const handleBackToWeek = () => {
+    navigate(`/week/${userId}`);
+  };
+
+  if (!currentRoutine) {
+    return <div>Rutina no encontrada</div>;
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 pb-12">
       <DayHeader
