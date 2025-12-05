@@ -34,7 +34,7 @@ export enum ErrorType {
 /**
  * Estructura de respuesta estándar del backend
  */
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
@@ -55,14 +55,14 @@ export class ApiError extends Error {
   public statusCode: number;
   public errorType?: ErrorType | string;
   public fieldErrors?: Record<string, string | string[]>;
-  public originalError?: any;
+  public originalError?: unknown;
 
   constructor(
     message: string,
     statusCode: number = HttpStatus.INTERNAL_SERVER_ERROR,
     errorType?: ErrorType | string,
     fieldErrors?: Record<string, string | string[]>,
-    originalError?: any
+    originalError?: unknown
   ) {
     super(message);
     this.name = "ApiError";
@@ -104,4 +104,3 @@ export class ApiError extends Error {
     );
   }
 }
-
