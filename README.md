@@ -1,4 +1,26 @@
-# React + TypeScript + Vite
+# GymApp - React + TypeScript + Vite
+
+Aplicación de seguimiento de rutinas de gimnasio construida con React, TypeScript y Vite.
+
+## Características
+
+- ✅ Sistema de diseño centralizado con paletas de colores
+- ✅ Soporte para múltiples usuarios
+- ✅ Rutinas personalizadas por día
+- ✅ Autenticación con múltiples proveedores
+- ✅ Preparado para paletas por coach (futuro)
+
+## Sistema de Diseño
+
+La aplicación incluye un sistema de diseño centralizado ubicado en `src/theme/` que permite:
+
+- **Cambios globales**: Modifica colores y estilos desde un solo archivo
+- **Paletas por coach**: Sistema preparado para paletas personalizadas por coach
+- **Integración con BD**: Estructura lista para conectar con base de datos
+
+Para más información, consulta [src/theme/README.md](src/theme/README.md)
+
+## Desarrollo
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

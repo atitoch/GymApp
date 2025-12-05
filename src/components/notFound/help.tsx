@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 export const Help: React.FC = () => {
   const navigate = useNavigate();
@@ -9,21 +9,21 @@ export const Help: React.FC = () => {
       </p>
       <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
         <button
-          onClick={() => navigate('/login')}
+          onClick={() => navigate("/login")}
           className="text-blue-400 hover:text-blue-300 transition-colors hover:underline"
         >
           Iniciar sesión
         </button>
         <span className="text-slate-700">•</span>
         <button
-          onClick={() => navigate('/select')}
+          onClick={() => navigate("/dashboard")}
           className="text-blue-400 hover:text-blue-300 transition-colors hover:underline"
         >
-          Seleccionar usuario
+          Ir al dashboard
         </button>
         <span className="text-slate-700">•</span>
         <button
-          onClick={() => navigate('/ayuda')}
+          onClick={() => navigate("/ayuda")}
           className="text-blue-400 hover:text-blue-300 transition-colors hover:underline"
         >
           Centro de ayuda

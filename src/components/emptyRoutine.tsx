@@ -1,4 +1,4 @@
-import { AlertCircle, Dumbbell } from 'lucide-react';
+import { AlertCircle, Dumbbell } from "lucide-react";
 
 export const EmptyRoutine: React.FC<{ handleBackToSelect: () => void }> = ({
   handleBackToSelect,
@@ -17,8 +17,8 @@ export const EmptyRoutine: React.FC<{ handleBackToSelect: () => void }> = ({
             </h1>
           </div>
           <p className="text-slate-400 mb-6">
-            Aún no se ha configurado una rutina de entrenamiento para este
-            usuario.
+            Aún no se ha configurado una rutina de entrenamiento para tu cuenta.
+            Contacta con tu coach para obtener un plan personalizado.
           </p>
         </div>
 
@@ -26,7 +26,7 @@ export const EmptyRoutine: React.FC<{ handleBackToSelect: () => void }> = ({
           onClick={handleBackToSelect}
           className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8 py-3 rounded-lg transition-colors shadow-lg shadow-blue-500/30"
         >
-          ← Volver a selección de usuario
+          ← Volver al dashboard
         </button>
       </div>
     </div>

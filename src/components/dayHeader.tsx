@@ -1,34 +1,72 @@
-import { Edit2, Trash2 } from 'lucide-react';
-import type { DayRoutine } from '../types/routineType';
+import { Edit2, Trash2, Calendar } from "lucide-react";
+import type { DayRoutine, CalculatedDayRoutine } from "../types/routineType";
 
 interface DayHeaderProps {
-  currentRoutine: DayRoutine;
-  handleBackToWeek: () => void;
+  currentRoutine: DayRoutine | CalculatedDayRoutine;
+  handleBackToRoutine: () => void;
 }
 
 export const DayHeader: React.FC<DayHeaderProps> = ({
   currentRoutine,
-  handleBackToWeek,
+  handleBackToRoutine,
 }) => {
+  // Determinar si es CalculatedDayRoutine
+  const isCalculatedRoutine = (
+    routine: DayRoutine | CalculatedDayRoutine
+  ): routine is CalculatedDayRoutine => {
+    return "dayNumber" in routine && typeof routine.dayNumber === "number";
+  };
+
+  // Formatear el día para mostrar
+  const formatDayLabel = (): string => {
+    if (isCalculatedRoutine(currentRoutine)) {
+      return `Día ${currentRoutine.dayNumber}`;
+    }
+    return typeof currentRoutine.day === "string"
+      ? currentRoutine.day
+      : `Día ${currentRoutine.day}`;
+  };
+
+  // Formatear la fecha para mostrar
+  const formatDate = (): string | null => {
+    if (isCalculatedRoutine(currentRoutine) && currentRoutine.date) {
+      const date = new Date(currentRoutine.date);
+      return date.toLocaleDateString("es-ES", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+    }
+    return null;
+  };
+
+  const dayLabel = formatDayLabel();
+  const dateLabel = formatDate();
+
   return (
     <div className="sticky top-0 z-10 bg-slate-900/95 backdrop-blur-sm border-b border-slate-800">
       <div className="max-w-4xl mx-auto px-6 py-4">
         <button
-          onClick={handleBackToWeek}
+          onClick={handleBackToRoutine}
           className="text-blue-500 hover:text-blue-400 mb-3 flex items-center gap-2 transition-colors"
         >
-          ← Volver a la semana
+          ← Volver al dashboard
         </button>
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <h1 className="text-2xl font-bold text-slate-50">
-                {currentRoutine.day}
-              </h1>
+              <h1 className="text-2xl font-bold text-slate-50">{dayLabel}</h1>
               <span className="px-3 py-1 bg-blue-500/20 text-blue-400 text-sm font-semibold rounded-full">
                 {currentRoutine.dayName}
               </span>
             </div>
+            {dateLabel && (
+              <div className="flex items-center gap-2 text-sm text-slate-400 mb-1">
+                <Calendar className="w-4 h-4" />
+                <span>{dateLabel}</span>
+              </div>
+            )}
             <p className="text-slate-400">{currentRoutine.title}</p>
           </div>
           <div className="flex gap-2">
