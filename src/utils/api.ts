@@ -18,14 +18,14 @@ const handleUnauthorized = () => {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
-  } catch (error) {
+  } catch {
     // Ignorar errores al limpiar localStorage
   }
-  
-  // Redirigir al login
+
+  // Redirigir a la página inicial
   // Usamos window.location.href para forzar una recarga completa
   // Esto asegura que React Router se reinicialice correctamente
-  window.location.href = "/login";
+  window.location.href = "/";
 };
 
 /**
@@ -35,7 +35,7 @@ const handleUnauthorized = () => {
 const getAuthToken = (): string | null => {
   try {
     return localStorage.getItem(TOKEN_KEY);
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -110,12 +110,12 @@ export const authenticatedGet = async <T>(endpoint: string): Promise<T> => {
     }
 
     const data: ApiResponse<T> = await response.json();
-    
+
     // El backend puede devolver los datos directamente o dentro de data
     if (data.data !== undefined) {
       return data.data;
     }
-    
+
     // Si no hay data, asumir que la respuesta completa es T
     return data as unknown as T;
   } catch (error) {
@@ -146,12 +146,12 @@ export const authenticatedPost = async <T>(
     }
 
     const responseData: ApiResponse<T> = await response.json();
-    
+
     // El backend puede devolver los datos directamente o dentro de data
     if (responseData.data !== undefined) {
       return responseData.data;
     }
-    
+
     // Si no hay data, asumir que la respuesta completa es T
     return responseData as unknown as T;
   } catch (error) {
@@ -182,12 +182,12 @@ export const authenticatedPut = async <T>(
     }
 
     const responseData: ApiResponse<T> = await response.json();
-    
+
     // El backend puede devolver los datos directamente o dentro de data
     if (responseData.data !== undefined) {
       return responseData.data;
     }
-    
+
     // Si no hay data, asumir que la respuesta completa es T
     return responseData as unknown as T;
   } catch (error) {
@@ -214,12 +214,12 @@ export const authenticatedDelete = async <T>(endpoint: string): Promise<T> => {
     }
 
     const responseData: ApiResponse<T> = await response.json();
-    
+
     // El backend puede devolver los datos directamente o dentro de data
     if (responseData.data !== undefined) {
       return responseData.data;
     }
-    
+
     // Si no hay data, asumir que la respuesta completa es T
     return responseData as unknown as T;
   } catch (error) {

@@ -126,7 +126,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       // Error silencioso al cerrar sesión
     } finally {
       clearSession();
-      navigate("/login");
+      navigate("/");
     }
   };
 
@@ -165,7 +165,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       saveSession(authData);
     } catch (error) {
       clearSession();
-      navigate("/login");
+      navigate("/");
       throw error;
     }
   };
