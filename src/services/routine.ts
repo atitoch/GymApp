@@ -1013,23 +1013,8 @@ export const fetchUserRoutines = async (
     return { routines, currentDayNumber };
   }
 
-  // DEBUG: Log para verificar qué valores estamos recibiendo
-  console.log("[fetchUserRoutines] routinePattern:", {
-    startDayOfWeek: routinePattern.startDayOfWeek,
-    startDate: routinePattern.startDate,
-    pattern: routinePattern.pattern,
-  });
-
   const routines = getRoutinesForDisplay(routinePattern, undefined, daysToShow);
   const currentDayNumber = getCurrentDayOfWeek(routinePattern);
-
-  // DEBUG: Log para verificar el día actual calculado
-  console.log("[fetchUserRoutines] currentDayNumber:", currentDayNumber);
-  console.log("[fetchUserRoutines] routines:", routines.map(r => ({
-    dayNumber: r.dayNumber,
-    date: r.date,
-    dayName: r.dayName,
-  })));
 
   return { routines, currentDayNumber };
 };
