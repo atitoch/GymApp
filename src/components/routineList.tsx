@@ -1,5 +1,7 @@
 import { ChevronRight, Dumbbell, Calendar } from "lucide-react";
 import type { CalculatedDayRoutine, DayRoutine } from "../types/routineType";
+import { themeClasses, cn } from "../theme/constants";
+import { useColors } from "../theme";
 
 interface RoutineListProps {
   routines: (DayRoutine | CalculatedDayRoutine)[];
@@ -12,6 +14,7 @@ export const RoutineList: React.FC<RoutineListProps> = ({
   handleDaySelect,
   currentDayNumber,
 }) => {
+  const colors = useColors();
   // Determinar si una rutina es CalculatedDayRoutine
   const isCalculatedRoutine = (
     routine: DayRoutine | CalculatedDayRoutine
@@ -73,43 +76,69 @@ export const RoutineList: React.FC<RoutineListProps> = ({
           <button
             key={index}
             onClick={() => handleDaySelect(dayNumber)}
-            className={`relative bg-slate-800 hover:bg-slate-700 rounded-xl p-6 text-left transition-all duration-300 hover:scale-105 ${
-              isToday ? "ring-2 ring-blue-500" : ""
-            }`}
+            className={cn(
+              themeClasses.cards.base,
+              themeClasses.cards.hover,
+              themeClasses.cards.withShadow,
+              "relative p-6 text-left transition-all duration-300 hover:scale-105",
+              isToday && "ring-2"
+            )}
+            style={{
+              borderColor: isToday ? colors.primary[500] : colors.border.default,
+            }}
           >
             {isToday && (
-              <div className="absolute top-3 right-3 w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <div
+                className="absolute top-3 right-3 w-2 h-2 rounded-full animate-pulse"
+                style={{ backgroundColor: colors.status.success }}
+              />
             )}
 
             <div className="flex items-center justify-between mb-3">
               <div className="flex flex-col">
-                <h3 className="text-sm font-semibold text-slate-400 uppercase">
+                <h3
+                  className="text-sm font-semibold uppercase"
+                  style={{ color: colors.text.tertiary }}
+                >
                   {dayLabel}
                 </h3>
                 {dateLabel && (
-                  <div className="flex items-center gap-1 text-xs text-slate-500 mt-1">
+                  <div
+                    className="flex items-center gap-1 text-xs mt-1"
+                    style={{ color: colors.text.placeholder }}
+                  >
                     <Calendar className="w-3 h-3" />
                     <span>{dateLabel}</span>
                   </div>
                 )}
               </div>
-              <ChevronRight className="w-5 h-5 text-slate-600 group-hover:text-blue-500 transition-colors" />
+              <ChevronRight
+                className="w-5 h-5 transition-colors"
+                style={{ color: colors.text.placeholder }}
+              />
             </div>
 
             <div
-              className={`text-xl font-bold mb-2 ${
-                isRest ? "text-green-400" : "text-slate-50"
-              }`}
+              className="text-xl font-bold mb-2"
+              style={{
+                color: isRest ? colors.status.success : colors.text.primary,
+              }}
             >
               {routine.dayName}
             </div>
 
-            <p className="text-sm text-slate-400 line-clamp-2">
+            <p
+              className="text-sm line-clamp-2"
+              style={{ color: colors.text.tertiary }}
+            >
               {routine.title}
             </p>
 
             {!isRest && (
-              <div className="mt-4 flex items-center gap-2 text-xs text-slate-500">
+              <div
+                className="mt-4 flex items-center gap-2 text-xs"
+                style={{ color: colors.text.placeholder }}
+              >
                 <Dumbbell className="w-4 h-4" />
                 <span>
                   {routine.sections.reduce(

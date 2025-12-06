@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "../components/header";
 import { RoutineList } from "../components/routineList";
@@ -7,49 +7,53 @@ import { EmptyRoutine } from "../components/emptyRoutine";
 import { useAuth } from "../contexts/useAuth";
 import type { CalculatedDayRoutine } from "../types/routineType";
 import { themeClasses, cn } from "../theme/constants";
+import { useColors } from "../theme";
 import { Dumbbell, Calendar, TrendingUp, Sparkles } from "lucide-react";
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const colors = useColors();
   const [routines, setRoutines] = useState<CalculatedDayRoutine[]>([]);
   const [currentDayNumber, setCurrentDayNumber] = useState<number | undefined>(
     undefined
   );
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadRoutines = async () => {
-      if (!user?.id) return;
+  const loadRoutines = useCallback(async () => {
+    if (!user?.id) return;
 
-      setLoading(true);
-      try {
-        // Obtener rutinas del backend para los próximos 7 días
-        const fetchedRoutines = await fetchUserRoutines(user.id, 7);
+    setLoading(true);
+    try {
+      // Obtener rutinas del backend para los próximos 7 días
+      const fetchedRoutines = await fetchUserRoutines(user.id, 7);
 
-        if (fetchedRoutines && fetchedRoutines.length > 0) {
-          setRoutines(fetchedRoutines);
-          // El primer día es el día actual
-          setCurrentDayNumber(fetchedRoutines[0]?.dayNumber);
-        }
-      } catch (error) {
-        console.error("Error al cargar rutinas:", error);
-      } finally {
-        setLoading(false);
+      if (fetchedRoutines && fetchedRoutines.length > 0) {
+        setRoutines(fetchedRoutines);
+        // El primer día es el día actual
+        setCurrentDayNumber(fetchedRoutines[0]?.dayNumber);
+      } else {
+        setRoutines([]);
+        setCurrentDayNumber(undefined);
       }
-    };
-
-    loadRoutines();
+    } catch (error) {
+      console.error("Error al cargar rutinas:", error);
+    } finally {
+      setLoading(false);
+    }
   }, [user?.id]);
+
+  useEffect(() => {
+    loadRoutines();
+  }, [loadRoutines]);
 
   const handleDaySelect = (dayNumber: number) => {
     navigate(`/routine/${dayNumber}`);
   };
 
   const handleBackToDashboard = () => {
-    // No hacer nada, ya estamos en el dashboard
-    // O podríamos recargar las rutinas
-    window.location.reload();
+    // Recargar las rutinas sin recargar toda la página
+    loadRoutines();
   };
 
   if (loading) {
@@ -57,11 +61,15 @@ export const Dashboard: React.FC = () => {
       <div
         className={cn(
           themeClasses.layout.screen,
+          themeClasses.backgrounds.primary,
           themeClasses.layout.flexCenter
         )}
       >
         <div className="flex flex-col items-center gap-4">
-          <Dumbbell className="w-8 h-8 text-blue-500 animate-pulse" />
+          <Dumbbell
+            className="w-8 h-8 animate-pulse"
+            style={{ color: colors.primary[500] }}
+          />
           <div className={themeClasses.text.tertiary}>
             Cargando tu rutina...
           </div>
@@ -73,13 +81,15 @@ export const Dashboard: React.FC = () => {
   // Si no hay rutinas para este usuario
   if (!routines || routines.length === 0) {
     return (
-      <div className={cn(themeClasses.layout.screen, "p-6")}>
-        <div className="max-w-6xl mx-auto">
+      <div className={cn(themeClasses.layout.screen, themeClasses.backgrounds.primary, "p-6 flex flex-col")}>
+        <div className="max-w-6xl mx-auto w-full flex-1 flex flex-col">
           <Header
             handleBackToSelect={handleBackToDashboard}
             showBackButton={false}
           />
-          <EmptyRoutine handleBackToSelect={handleBackToDashboard} />
+          <div className="flex-1 flex items-center justify-center">
+            <EmptyRoutine handleBackToSelect={handleBackToDashboard} />
+          </div>
         </div>
       </div>
     );
@@ -101,7 +111,7 @@ export const Dashboard: React.FC = () => {
   const restDays = routines.length - workoutDays;
 
   return (
-    <div className={cn(themeClasses.layout.screen, "p-6")}>
+    <div className={cn(themeClasses.layout.screen, themeClasses.backgrounds.primary, "p-6")}>
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <Header
@@ -119,8 +129,14 @@ export const Dashboard: React.FC = () => {
             )}
           >
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 rounded-lg bg-blue-500/20">
-                <Dumbbell className="w-5 h-5 text-blue-400" />
+              <div
+                className="p-2 rounded-lg"
+                style={{ backgroundColor: colors.primary[500] + "20" }}
+              >
+                <Dumbbell
+                  className="w-5 h-5"
+                  style={{ color: colors.primary[400] }}
+                />
               </div>
               <h3
                 className={cn(
@@ -144,8 +160,14 @@ export const Dashboard: React.FC = () => {
             )}
           >
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 rounded-lg bg-green-500/20">
-                <Calendar className="w-5 h-5 text-green-400" />
+              <div
+                className="p-2 rounded-lg"
+                style={{ backgroundColor: colors.status.success + "20" }}
+              >
+                <Calendar
+                  className="w-5 h-5"
+                  style={{ color: colors.status.success }}
+                />
               </div>
               <h3
                 className={cn(
@@ -169,8 +191,14 @@ export const Dashboard: React.FC = () => {
             )}
           >
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 rounded-lg bg-purple-500/20">
-                <TrendingUp className="w-5 h-5 text-purple-400" />
+              <div
+                className="p-2 rounded-lg"
+                style={{ backgroundColor: colors.secondary[500] + "20" }}
+              >
+                <TrendingUp
+                  className="w-5 h-5"
+                  style={{ color: colors.secondary[400] }}
+                />
               </div>
               <h3
                 className={cn(
@@ -208,10 +236,21 @@ export const Dashboard: React.FC = () => {
 
         {/* Sección de Entrenamientos Personalizados - Próximamente */}
         <div className="mt-12 mb-8">
-          <div className="relative rounded-2xl bg-gradient-to-br from-blue-600/20 via-purple-600/20 to-pink-600/20 border border-blue-500/30 p-8 backdrop-blur-sm">
+          <div
+            className="relative rounded-2xl border p-8 backdrop-blur-sm"
+            style={{
+              background: `linear-gradient(to bottom right, ${colors.primary[600]}20, ${colors.secondary[600]}20, ${colors.primary[500]}20)`,
+              borderColor: colors.primary[500] + "30",
+            }}
+          >
             <div className="flex items-start gap-4">
               <div className="flex-shrink-0">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                <div
+                  className="w-16 h-16 rounded-full flex items-center justify-center"
+                  style={{
+                    background: `linear-gradient(to bottom right, ${colors.primary[500]}, ${colors.secondary[600]})`,
+                  }}
+                >
                   <Sparkles className="w-8 h-8 text-white" />
                 </div>
               </div>
@@ -225,7 +264,14 @@ export const Dashboard: React.FC = () => {
                   >
                     Entrenamientos Personalizados
                   </h3>
-                  <span className="px-3 py-1 bg-blue-500/30 text-blue-300 text-xs font-semibold rounded-full border border-blue-400/30">
+                  <span
+                    className="px-3 py-1 text-xs font-semibold rounded-full border"
+                    style={{
+                      backgroundColor: colors.primary[500] + "30",
+                      color: colors.primary[300],
+                      borderColor: colors.primary[400] + "30",
+                    }}
+                  >
                     Próximamente
                   </span>
                 </div>
@@ -240,7 +286,10 @@ export const Dashboard: React.FC = () => {
                   certificados para obtener un plan de entrenamiento adaptado a
                   tus objetivos y necesidades.
                 </p>
-                <div className="flex items-center gap-2 text-blue-400">
+                <div
+                  className="flex items-center gap-2"
+                  style={{ color: colors.primary[400] }}
+                >
                   <Sparkles className="w-5 h-5" />
                   <span className="text-sm font-medium">
                     Contacta con un coach para más información

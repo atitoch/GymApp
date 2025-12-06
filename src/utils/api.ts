@@ -6,13 +6,20 @@ import { parseApiError, handleFetchError } from "./errorHandler";
 
 /**
  * Obtiene el token de autenticación del localStorage
+ * Asegura que siempre se lea el valor más reciente
  */
 const getAuthToken = (): string | null => {
-  return localStorage.getItem("auth_token");
+  try {
+    return localStorage.getItem("auth_token");
+  } catch (error) {
+    console.error("Error al leer token de localStorage:", error);
+    return null;
+  }
 };
 
 /**
  * Crea headers con autenticación
+ * Siempre incluye el token si está disponible
  */
 export const createAuthHeaders = (): HeadersInit => {
   const token = getAuthToken();
@@ -20,6 +27,7 @@ export const createAuthHeaders = (): HeadersInit => {
     "Content-Type": "application/json",
   };
 
+  // Siempre incluir el token si está disponible
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
@@ -29,6 +37,7 @@ export const createAuthHeaders = (): HeadersInit => {
 
 /**
  * Realiza una petición autenticada al backend
+ * Incluye automáticamente el token en el header Authorization
  */
 export const authenticatedFetch = async (
   endpoint: string,
@@ -38,11 +47,13 @@ export const authenticatedFetch = async (
     ? endpoint
     : `${API_BASE_URL}${endpoint}`;
 
-  const headers = createAuthHeaders();
+  // Obtener headers con autenticación
+  const authHeaders = createAuthHeaders();
 
   // Merge headers personalizados con los de autenticación
+  // Los headers personalizados tienen prioridad para permitir sobrescribir si es necesario
   const mergedHeaders = {
-    ...headers,
+    ...authHeaders,
     ...(options.headers || {}),
   };
 
@@ -51,12 +62,9 @@ export const authenticatedFetch = async (
     headers: mergedHeaders,
   });
 
-  // Si el token expiró (401), podrías intentar refrescarlo aquí
-  if (response.status === 401) {
-    // El contexto de autenticación manejará el refresh
-    throw new Error("Token expirado o inválido");
-  }
-
+  // Si el token expiró (401), no lanzar error aquí
+  // Dejamos que el código que llama maneje el 401
+  // para que pueda intentar refrescar el token si es necesario
   return response;
 };
 
