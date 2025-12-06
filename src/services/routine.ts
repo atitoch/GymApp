@@ -944,6 +944,336 @@ export const routineData: Record<string, DayRoutine[]> = {
       ],
     },
   ],
+  "3": [
+    {
+      day: "Día 1",
+      dayName: "PIERNA - GLÚTEO",
+      title: "Dominante de Cadera - Fuerza y Hipertrofia de Glúteo",
+      warmup: [
+        "Bicicleta estática 5 min (intensidad moderada)",
+        "Movilidad de cadera: círculos x 10/dirección",
+        "Puente de glúteo con peso corporal x 20 reps",
+        "Abducción de pierna acostada lateral x 15/lado",
+        "Bisagra de cadera sin peso x 15 reps (aprender el patrón)",
+      ],
+      sections: [
+        {
+          title: "Ejercicios Principales - Glúteo",
+          exercises: [
+            {
+              name: "Hip Thrust con Barra",
+              sets: "4",
+              reps: "8-10",
+              rpe: "8-9",
+              rest: "2.5-3 min",
+              notes:
+                "Ejercicio ESTRELLA para glúteos. Contracción máxima arriba 2 seg, retroversión pélvica",
+            },
+            {
+              name: "Peso Muerto Rumano con Barra",
+              sets: "4",
+              reps: "8-10",
+              rpe: "8",
+              rest: "2.5-3 min",
+              notes:
+                "Bisagra de cadera perfecta, sentir estiramiento en glúteos e isquios. Barra pegada al cuerpo",
+            },
+            {
+              name: "Sentadilla Búlgara con Mancuernas",
+              sets: "3",
+              reps: "10-12/pierna",
+              rpe: "8",
+              rest: "2 min",
+              notes:
+                "Torso ligeramente inclinado hacia adelante para mayor activación de glúteo",
+            },
+          ],
+        },
+        {
+          title: "Ejercicios Complementarios",
+          exercises: [
+            {
+              name: "Abducción de Cadera en Máquina",
+              sets: "3",
+              reps: "15-20",
+              rpe: "7-8",
+              rest: "1.5-2 min",
+              notes: "Activa glúteo medio. Pausa 1 seg en la posición abierta",
+            },
+            {
+              name: "Patada de Glúteo en Polea Baja",
+              sets: "3",
+              reps: "12-15/pierna",
+              rpe: "7-8",
+              rest: "1.5 min",
+              notes: "Extensión completa sin arquear la zona lumbar",
+            },
+            {
+              name: "Curl Femoral Acostado",
+              sets: "3",
+              reps: "12-15",
+              rpe: "7",
+              rest: "1.5 min",
+              notes: "Cadera pegada al banco durante todo el movimiento",
+            },
+          ],
+        },
+      ],
+      cooldown: [
+        "Estiramiento de glúteos (rodilla al pecho) x 30 seg/lado",
+        "Estiramiento de isquiotibiales x 30 seg/pierna",
+        "Estiramiento de flexores de cadera x 30 seg/lado",
+      ],
+    },
+    {
+      day: "Día 2",
+      dayName: "PIERNA - CUÁDRICEPS",
+      title: "Dominante de Rodilla - Cuádriceps y Glúteo Medio",
+      warmup: [
+        "Elíptica 5 min (intensidad moderada)",
+        "Movilidad de tobillo: flexiones x 15/pie",
+        "Sentadillas sin peso x 20 reps",
+        "Caminar lateral con banda elástica en rodillas x 15 pasos/lado",
+        "Activación de glúteo medio: elevación de pierna lateral x 15/lado",
+      ],
+      sections: [
+        {
+          title: "Ejercicios Principales",
+          exercises: [
+            {
+              name: "Sentadilla con Barra (Trasera o Frontal)",
+              sets: "4",
+              reps: "8-10",
+              rpe: "8-9",
+              rest: "2.5-3 min",
+              notes:
+                "Profundidad completa (al menos paralelo). Trabaja cuádriceps y glúteos",
+            },
+            {
+              name: "Prensa de Pierna",
+              sets: "4",
+              reps: "10-12",
+              rpe: "8",
+              rest: "2-2.5 min",
+              notes:
+                "Pies al ancho de hombros o ligeramente más anchos. Bajar controlado hasta 90°",
+            },
+            {
+              name: "Zancadas Caminando con Mancuernas",
+              sets: "3",
+              reps: "10-12/pierna",
+              rpe: "7-8",
+              rest: "2 min",
+              notes:
+                "Paso largo, rodilla delantera no sobrepasa el pie. Torso erguido",
+            },
+          ],
+        },
+        {
+          title: "Ejercicios Complementarios",
+          exercises: [
+            {
+              name: "Extensión de Cuádriceps en Máquina",
+              sets: "3",
+              reps: "12-15",
+              rpe: "7-8",
+              rest: "1.5 min",
+              notes: "Contracción pico en extensión completa, bajar controlado",
+            },
+            {
+              name: "Peso Muerto a Una Pierna con Mancuerna",
+              sets: "3",
+              reps: "10/pierna",
+              rpe: "7",
+              rest: "1.5-2 min",
+              notes:
+                "Mejora equilibrio y activa glúteos e isquios. Peso moderado",
+            },
+            {
+              name: "Elevación de Gemelos de Pie",
+              sets: "3",
+              reps: "15-20",
+              rpe: "7-8",
+              rest: "1.5 min",
+              notes: "Pausa 1 seg arriba, bajar hasta sentir estiramiento",
+            },
+          ],
+        },
+      ],
+      cooldown: [
+        "Estiramiento de cuádriceps x 30 seg/pierna",
+        "Estiramiento de gemelos x 30 seg/pierna",
+        "Estiramiento de glúteos x 30 seg/lado",
+      ],
+    },
+    {
+      day: "Día 3",
+      dayName: "TREN SUPERIOR",
+      title: "Tren Superior Completo + Core",
+      warmup: [
+        "Remo en polea baja con peso ligero x 15 reps",
+        "Movilidad de hombros: círculos x 10/dirección",
+        "Press de pecho en máquina (peso ligero) x 12 reps",
+        "Estiramientos dinámicos de brazos x 10 reps",
+      ],
+      sections: [
+        {
+          title: "Pecho",
+          exercises: [
+            {
+              name: "Press de Banca con Mancuernas",
+              sets: "3",
+              reps: "10-12",
+              rpe: "7-8",
+              rest: "2-2.5 min",
+              notes: "Control en la bajada, explosión en la subida",
+            },
+            {
+              name: "Aperturas con Mancuernas o Peck Deck",
+              sets: "3",
+              reps: "12-15",
+              rpe: "7",
+              rest: "2 min",
+              notes: "Estiramiento controlado, contracción en el centro",
+            },
+          ],
+        },
+        {
+          title: "Espalda",
+          exercises: [
+            {
+              name: "Jalón al Pecho con Agarre Medio",
+              sets: "3",
+              reps: "10-12",
+              rpe: "7-8",
+              rest: "2-2.5 min",
+              notes: "Sacar pecho, llevar codos hacia atrás y abajo",
+            },
+            {
+              name: "Remo en Polea Baja con Agarre Cerrado",
+              sets: "3",
+              reps: "10-12",
+              rpe: "7-8",
+              rest: "2 min",
+              notes: "Torso erguido, jalar hacia abdomen bajo",
+            },
+          ],
+        },
+        {
+          title: "Hombros",
+          exercises: [
+            {
+              name: "Press Militar con Mancuernas",
+              sets: "3",
+              reps: "10-12",
+              rpe: "7",
+              rest: "2 min",
+              notes: "Movimiento controlado, no arquear la espalda",
+            },
+            {
+              name: "Elevaciones Laterales con Mancuernas",
+              sets: "3",
+              reps: "12-15",
+              rpe: "7",
+              rest: "1.5 min",
+              notes:
+                "Codos ligeramente flexionados, subir hasta altura de hombros",
+            },
+          ],
+        },
+        {
+          title: "Core y Bíceps/Tríceps",
+          exercises: [
+            {
+              name: "Curl de Bíceps con Mancuernas",
+              sets: "2",
+              reps: "12-15",
+              rpe: "7",
+              rest: "1.5 min",
+              notes: "Codos fijos, contracción controlada",
+            },
+            {
+              name: "Extensión de Tríceps en Polea Alta",
+              sets: "2",
+              reps: "12-15",
+              rpe: "7",
+              rest: "1.5 min",
+              notes: "Codos pegados al cuerpo, extensión completa",
+            },
+            {
+              name: "Plancha Abdominal",
+              sets: "3",
+              reps: "30-45 seg",
+              rpe: "7",
+              rest: "1.5 min",
+              notes: "Cuerpo en línea recta, glúteos contraídos",
+            },
+            {
+              name: "Crunch con Peso o en Polea",
+              sets: "3",
+              reps: "15-20",
+              rpe: "7",
+              rest: "1.5 min",
+              notes: "Contracción abdominal, no jalar del cuello",
+            },
+          ],
+        },
+      ],
+      cooldown: [
+        "Estiramiento de pecho x 30 seg",
+        "Estiramiento de espalda (colgarse de barra) x 20 seg",
+        "Estiramiento de hombros x 30 seg",
+      ],
+    },
+    {
+      day: "Día 4",
+      dayName: "DESCANSO",
+      title: "Descanso Activo",
+      warmup: [],
+      sections: [
+        {
+          title: "Opciones de Recuperación Activa",
+          exercises: [
+            {
+              name: "Descanso completo",
+              sets: "-",
+              reps: "-",
+              rpe: "-",
+              rest: "-",
+              notes:
+                "Priorizar 8-9 horas de sueño para máxima recuperación muscular",
+            },
+            {
+              name: "Caminata ligera 20-30 minutos",
+              sets: "-",
+              reps: "-",
+              rpe: "-",
+              rest: "-",
+              notes:
+                "Ayuda a la recuperación activa sin generar fatiga adicional",
+            },
+            {
+              name: "Yoga o estiramientos suaves",
+              sets: "-",
+              reps: "-",
+              rpe: "-",
+              rest: "-",
+              notes: "Mejora la flexibilidad y reduce el estrés muscular",
+            },
+            {
+              name: "Trabajo de movilidad articular",
+              sets: "-",
+              reps: "-",
+              rpe: "-",
+              rest: "-",
+              notes: "Especialmente cadera, tobillo y hombros",
+            },
+          ],
+        },
+      ],
+      cooldown: [],
+    },
+  ],
 };
 
 // ============================================
