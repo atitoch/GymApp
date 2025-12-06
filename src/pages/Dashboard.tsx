@@ -232,35 +232,35 @@ export const Dashboard: React.FC = () => {
         {/* Sección de Entrenamientos Personalizados - Próximamente */}
         <div className="mt-12 mb-8">
           <div
-            className="relative rounded-2xl border p-8 backdrop-blur-sm"
+            className="relative rounded-2xl border p-4 sm:p-6 md:p-8 backdrop-blur-sm"
             style={{
               background: `linear-gradient(to bottom right, ${colors.primary[600]}20, ${colors.secondary[600]}20, ${colors.primary[500]}20)`,
               borderColor: colors.primary[500] + "30",
             }}
           >
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0">
+            <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
+              <div className="flex-shrink-0 mx-auto sm:mx-0">
                 <div
-                  className="w-16 h-16 rounded-full flex items-center justify-center"
+                  className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center"
                   style={{
                     background: `linear-gradient(to bottom right, ${colors.primary[500]}, ${colors.secondary[600]})`,
                   }}
                 >
-                  <Sparkles className="w-8 h-8 text-white" />
+                  <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white" />
                 </div>
               </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
+              <div className="flex-1 w-full">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
                   <h3
                     className={cn(
-                      "text-2xl font-bold",
+                      "text-xl sm:text-2xl font-bold",
                       themeClasses.text.primary
                     )}
                   >
                     Entrenamientos Personalizados
                   </h3>
                   <span
-                    className="px-3 py-1 text-xs font-semibold rounded-full border"
+                    className="px-3 py-1 text-xs font-semibold rounded-full border w-fit"
                     style={{
                       backgroundColor: colors.primary[500] + "30",
                       color: colors.primary[300],
@@ -272,7 +272,7 @@ export const Dashboard: React.FC = () => {
                 </div>
                 <p
                   className={cn(
-                    "mb-4 leading-relaxed",
+                    "mb-4 leading-relaxed text-sm sm:text-base",
                     themeClasses.text.secondary
                   )}
                 >
@@ -282,11 +282,11 @@ export const Dashboard: React.FC = () => {
                   tus objetivos y necesidades.
                 </p>
                 <div
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 flex-wrap"
                   style={{ color: colors.primary[400] }}
                 >
-                  <Sparkles className="w-5 h-5" />
-                  <span className="text-sm font-medium">
+                  <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                  <span className="text-xs sm:text-sm font-medium">
                     Contacta con un coach para más información
                   </span>
                 </div>
