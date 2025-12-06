@@ -23,27 +23,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   // Cargar datos de sesión al iniciar
   useEffect(() => {
-    // Listener para detectar si localStorage se está limpiando
-    const storageListener = (e: StorageEvent) => {
-      // Detectar cambios externos en localStorage
-    };
-    window.addEventListener('storage', storageListener);
-
     const loadSession = async () => {
       try {
         // Verificar si localStorage está disponible
         try {
-          const testKey = '__localStorage_test__';
-          localStorage.setItem(testKey, 'test');
+          const testKey = "__localStorage_test__";
+          localStorage.setItem(testKey, "test");
           localStorage.removeItem(testKey);
-        } catch (e) {
+        } catch {
           setIsLoading(false);
           return;
         }
 
         const storedToken = localStorage.getItem(TOKEN_KEY);
         const storedUser = localStorage.getItem(USER_KEY);
-        const storedRefreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
 
         if (storedToken && storedUser) {
           // Establecer el token y usuario primero (optimistic) para evitar redirección inmediata
@@ -53,13 +46,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
             // NO intentar refrescar el token automáticamente al cargar
             // El token se refrescará automáticamente cuando sea necesario (cuando una petición falle con 401)
             // Esto evita limpiar la sesión si el refresh token está expirado pero el token actual sigue siendo válido
-          } catch (parseError) {
+          } catch {
             clearSession();
             setIsLoading(false);
             return;
           }
         }
-      } catch (error) {
+      } catch {
         // Solo limpiar si es un error crítico (parseo, etc.)
         // No limpiar la sesión aquí, podría ser un error temporal
       } finally {
@@ -68,11 +61,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     };
 
     loadSession();
-
-    // Cleanup: remover el listener cuando el componente se desmonte
-    return () => {
-      window.removeEventListener('storage', storageListener);
-    };
   }, []);
 
   const saveSession = (authData: AuthResponse) => {
@@ -134,7 +122,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         const refreshTokenValue = localStorage.getItem(REFRESH_TOKEN_KEY);
         await authService.logout(token, refreshTokenValue || undefined);
       }
-    } catch (error) {
+    } catch {
       // Error silencioso al cerrar sesión
     } finally {
       clearSession();
