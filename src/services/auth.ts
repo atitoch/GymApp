@@ -184,7 +184,6 @@ export const logout = async (
     });
   } catch (error) {
     // Incluso si falla, limpiamos el token localmente
-    console.error("Error al cerrar sesión en el servidor:", error);
   }
 };
 

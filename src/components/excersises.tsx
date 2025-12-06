@@ -1,13 +1,12 @@
 import type { Section } from '../types/routineType';
 
 interface ExerciseProps {
-  key: number;
   section: Section;
 }
 
-export const Exercises: React.FC<ExerciseProps> = ({ key, section }) => {
+export const Exercises: React.FC<ExerciseProps> = ({ section }) => {
   return (
-    <div key={key} className="mb-8">
+    <div className="mb-8">
       <h2 className="text-lg font-semibold text-blue-400 mb-4 flex items-center gap-2">
         <span className="w-2 h-2 bg-blue-400 rounded-full" />
         {section.title}

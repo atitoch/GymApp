@@ -26,18 +26,18 @@ export const Dashboard: React.FC = () => {
     setLoading(true);
     try {
       // Obtener rutinas del backend para los próximos 7 días
-      const fetchedRoutines = await fetchUserRoutines(user.id, 7);
+      const result = await fetchUserRoutines(user.id, 7);
 
-      if (fetchedRoutines && fetchedRoutines.length > 0) {
-        setRoutines(fetchedRoutines);
-        // El primer día es el día actual
-        setCurrentDayNumber(fetchedRoutines[0]?.dayNumber);
+      if (result && result.routines && result.routines.length > 0) {
+        setRoutines(result.routines);
+        // Usar el currentDayNumber que viene del resultado
+        setCurrentDayNumber(result.currentDayNumber);
       } else {
         setRoutines([]);
         setCurrentDayNumber(undefined);
       }
-    } catch (error) {
-      console.error("Error al cargar rutinas:", error);
+    } catch {
+      // Error silencioso, se muestra estado vacío
     } finally {
       setLoading(false);
     }
@@ -81,7 +81,13 @@ export const Dashboard: React.FC = () => {
   // Si no hay rutinas para este usuario
   if (!routines || routines.length === 0) {
     return (
-      <div className={cn(themeClasses.layout.screen, themeClasses.backgrounds.primary, "p-6 flex flex-col")}>
+      <div
+        className={cn(
+          themeClasses.layout.screen,
+          themeClasses.backgrounds.primary,
+          "p-6 flex flex-col"
+        )}
+      >
         <div className="max-w-6xl mx-auto w-full flex-1 flex flex-col">
           <Header
             handleBackToSelect={handleBackToDashboard}
@@ -111,7 +117,13 @@ export const Dashboard: React.FC = () => {
   const restDays = routines.length - workoutDays;
 
   return (
-    <div className={cn(themeClasses.layout.screen, themeClasses.backgrounds.primary, "p-6")}>
+    <div
+      className={cn(
+        themeClasses.layout.screen,
+        themeClasses.backgrounds.primary,
+        "p-6"
+      )}
+    >
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <Header

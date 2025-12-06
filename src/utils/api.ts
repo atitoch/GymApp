@@ -4,15 +4,38 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 import type { ApiResponse } from "../types/api";
 import { parseApiError, handleFetchError } from "./errorHandler";
 
+const TOKEN_KEY = "auth_token";
+const REFRESH_TOKEN_KEY = "auth_refresh_token";
+const USER_KEY = "auth_user";
+
+/**
+ * Limpia la sesión y redirige al login
+ * Se llama cuando el token expira (401)
+ */
+const handleUnauthorized = () => {
+  // Limpiar localStorage
+  try {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+  } catch (error) {
+    // Ignorar errores al limpiar localStorage
+  }
+  
+  // Redirigir al login
+  // Usamos window.location.href para forzar una recarga completa
+  // Esto asegura que React Router se reinicialice correctamente
+  window.location.href = "/login";
+};
+
 /**
  * Obtiene el token de autenticación del localStorage
  * Asegura que siempre se lea el valor más reciente
  */
 const getAuthToken = (): string | null => {
   try {
-    return localStorage.getItem("auth_token");
+    return localStorage.getItem(TOKEN_KEY);
   } catch (error) {
-    console.error("Error al leer token de localStorage:", error);
     return null;
   }
 };
@@ -78,6 +101,11 @@ export const authenticatedGet = async <T>(endpoint: string): Promise<T> => {
     });
 
     if (!response.ok) {
+      // Si es un 401, limpiar sesión y redirigir al login
+      if (response.status === 401) {
+        handleUnauthorized();
+        throw new Error("Sesión expirada. Redirigiendo al login...");
+      }
       throw await parseApiError(response);
     }
 
@@ -109,6 +137,11 @@ export const authenticatedPost = async <T>(
     });
 
     if (!response.ok) {
+      // Si es un 401, limpiar sesión y redirigir al login
+      if (response.status === 401) {
+        handleUnauthorized();
+        throw new Error("Sesión expirada. Redirigiendo al login...");
+      }
       throw await parseApiError(response);
     }
 
@@ -140,6 +173,11 @@ export const authenticatedPut = async <T>(
     });
 
     if (!response.ok) {
+      // Si es un 401, limpiar sesión y redirigir al login
+      if (response.status === 401) {
+        handleUnauthorized();
+        throw new Error("Sesión expirada. Redirigiendo al login...");
+      }
       throw await parseApiError(response);
     }
 
@@ -167,6 +205,11 @@ export const authenticatedDelete = async <T>(endpoint: string): Promise<T> => {
     });
 
     if (!response.ok) {
+      // Si es un 401, limpiar sesión y redirigir al login
+      if (response.status === 401) {
+        handleUnauthorized();
+        throw new Error("Sesión expirada. Redirigiendo al login...");
+      }
       throw await parseApiError(response);
     }
 

@@ -38,7 +38,10 @@ export const RoutineList: React.FC<RoutineListProps> = ({
     routine: DayRoutine | CalculatedDayRoutine
   ): string | null => {
     if (isCalculatedRoutine(routine) && routine.date) {
-      const date = new Date(routine.date);
+      // Parsear la fecha manualmente para evitar problemas de zona horaria
+      // El formato es YYYY-MM-DD
+      const [year, month, day] = routine.date.split("-").map(Number);
+      const date = new Date(year, month - 1, day); // month es 0-indexed
       return date.toLocaleDateString("es-ES", {
         weekday: "short",
         day: "numeric",
@@ -53,8 +56,24 @@ export const RoutineList: React.FC<RoutineListProps> = ({
     routine: DayRoutine | CalculatedDayRoutine,
     index: number
   ): boolean => {
-    if (isCalculatedRoutine(routine) && currentDayNumber) {
-      return routine.dayNumber === currentDayNumber;
+    if (isCalculatedRoutine(routine)) {
+      // Primero intentar comparar por fecha (más preciso)
+      if (routine.date) {
+        const today = new Date();
+        // Usar hora local para evitar problemas de zona horaria
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, "0");
+        const day = String(today.getDate()).padStart(2, "0");
+        const todayString = `${year}-${month}-${day}`;
+        
+        if (routine.date === todayString) {
+          return true;
+        }
+      }
+      // Fallback: comparar por dayNumber si está disponible
+      if (currentDayNumber) {
+        return routine.dayNumber === currentDayNumber;
+      }
     }
     // Fallback: si no hay dayNumber, usar el primer día como "hoy"
     return index === 0;

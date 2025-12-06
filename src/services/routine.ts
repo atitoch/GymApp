@@ -6,6 +6,7 @@ import type {
 import {
   getRoutinesForDisplay,
   getRoutineForDay,
+  getCurrentDayOfWeek,
 } from "../utils/routineCalculations";
 import {
   authenticatedGet,
@@ -969,12 +970,7 @@ export const fetchUserRoutinePattern = async (
     ) {
       return null;
     }
-    // Solo loguear errores que no sean 404
-    if (
-      !(error instanceof ApiError && error.statusCode === HttpStatus.NOT_FOUND)
-    ) {
-      console.error("Error al obtener patrón de rutina:", error);
-    }
+    // Solo loguear errores que no sean 404 (no hacer nada, solo retornar null)
     // En caso de error, retornar null para que la app use datos locales como fallback
     return null;
   }
@@ -986,18 +982,56 @@ export const fetchUserRoutinePattern = async (
  * @param daysToShow Número de días a mostrar (default: 7)
  * @returns Array de rutinas calculadas
  */
+/**
+ * Resultado de fetchUserRoutines con el día actual incluido
+ */
+export interface UserRoutinesResult {
+  routines: CalculatedDayRoutine[];
+  currentDayNumber: number; // Día actual de la semana (1-7)
+}
+
+/**
+ * Obtiene las rutinas de la semana completa para un usuario
+ * Siempre devuelve los días 1-7 (lunes a domingo)
+ * @param userId ID del usuario
+ * @param daysToShow Número de días a mostrar (default: 7)
+ * @returns Objeto con las rutinas y el día actual
+ */
 export const fetchUserRoutines = async (
   userId: string,
   daysToShow: number = 7
-): Promise<CalculatedDayRoutine[]> => {
+): Promise<UserRoutinesResult> => {
   const routinePattern = await fetchUserRoutinePattern(userId);
 
   if (!routinePattern) {
     // Fallback: usar datos locales si no hay patrón en el backend
-    return getLocalRoutinesAsCalculated(userId, daysToShow);
+    const routines = getLocalRoutinesAsCalculated(userId, daysToShow);
+    // Calcular día actual basado en el día de la semana (Lunes=1, ..., Domingo=7)
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const currentDayNumber = dayOfWeek === 0 ? 7 : dayOfWeek;
+    return { routines, currentDayNumber };
   }
 
-  return getRoutinesForDisplay(routinePattern, undefined, daysToShow);
+  // DEBUG: Log para verificar qué valores estamos recibiendo
+  console.log("[fetchUserRoutines] routinePattern:", {
+    startDayOfWeek: routinePattern.startDayOfWeek,
+    startDate: routinePattern.startDate,
+    pattern: routinePattern.pattern,
+  });
+
+  const routines = getRoutinesForDisplay(routinePattern, undefined, daysToShow);
+  const currentDayNumber = getCurrentDayOfWeek(routinePattern);
+
+  // DEBUG: Log para verificar el día actual calculado
+  console.log("[fetchUserRoutines] currentDayNumber:", currentDayNumber);
+  console.log("[fetchUserRoutines] routines:", routines.map(r => ({
+    dayNumber: r.dayNumber,
+    date: r.date,
+    dayName: r.dayName,
+  })));
+
+  return { routines, currentDayNumber };
 };
 
 /**
@@ -1030,15 +1064,10 @@ export const saveUserRoutinePattern = async (
   userId: string,
   pattern: Omit<RoutinePattern, "id" | "userId">
 ): Promise<RoutinePattern> => {
-  try {
-    return await authenticatedPost<RoutinePattern>(
-      `/users/${userId}/routine-pattern`,
-      pattern
-    );
-  } catch (error) {
-    console.error("Error al guardar patrón de rutina:", error);
-    throw error;
-  }
+  return await authenticatedPost<RoutinePattern>(
+    `/users/${userId}/routine-pattern`,
+    pattern
+  );
 };
 
 /**
@@ -1053,15 +1082,10 @@ export const updateUserRoutinePattern = async (
   patternId: string,
   pattern: Partial<RoutinePattern>
 ): Promise<RoutinePattern> => {
-  try {
-    return await authenticatedPut<RoutinePattern>(
-      `/users/${userId}/routine-pattern/${patternId}`,
-      pattern
-    );
-  } catch (error) {
-    console.error("Error al actualizar patrón de rutina:", error);
-    throw error;
-  }
+  return await authenticatedPut<RoutinePattern>(
+    `/users/${userId}/routine-pattern/${patternId}`,
+    pattern
+  );
 };
 
 // ============================================
@@ -1087,15 +1111,21 @@ const getLocalRoutinesAsCalculated = (
     const dayNumber = dayOfWeek === 0 ? 7 : dayOfWeek; // Ajustar para que Lunes sea día 1
     const calculatedDay = ((dayNumber - 1 + index) % 7) + 1;
 
+    // Calcular la fecha usando hora local
+    const targetDate = new Date(today);
+    targetDate.setDate(today.getDate() + index);
+    const year = targetDate.getFullYear();
+    const month = String(targetDate.getMonth() + 1).padStart(2, "0");
+    const day = String(targetDate.getDate()).padStart(2, "0");
+    const dateString = `${year}-${month}-${day}`;
+
     return {
       ...routine,
       day: calculatedDay,
       dayNumber: calculatedDay,
       cycleDay: index % localRoutines.length,
       patternType: routine.dayName,
-      date: new Date(today.getTime() + index * 24 * 60 * 60 * 1000)
-        .toISOString()
-        .split("T")[0],
+      date: dateString,
     };
   });
 };
@@ -1119,9 +1149,14 @@ const getLocalDayRoutineAsCalculated = (
   }
 
   const today = new Date();
-  const date = new Date(
-    today.getTime() + (dayNumber - 1) * 24 * 60 * 60 * 1000
-  );
+  const targetDate = new Date(today);
+  targetDate.setDate(today.getDate() + (dayNumber - 1));
+
+  // Usar hora local para evitar problemas de zona horaria
+  const year = targetDate.getFullYear();
+  const month = String(targetDate.getMonth() + 1).padStart(2, "0");
+  const day = String(targetDate.getDate()).padStart(2, "0");
+  const dateString = `${year}-${month}-${day}`;
 
   return {
     ...routine,
@@ -1129,6 +1164,6 @@ const getLocalDayRoutineAsCalculated = (
     dayNumber,
     cycleDay: index,
     patternType: routine.dayName,
-    date: date.toISOString().split("T")[0],
+    date: dateString,
   };
 };

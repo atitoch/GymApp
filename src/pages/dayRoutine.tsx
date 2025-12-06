@@ -40,36 +40,51 @@ export const DayRoutine: React.FC = () => {
           const localRoutine = localRoutines[index];
 
           if (localRoutine) {
+            const today = new Date();
+            const targetDate = new Date(today);
+            targetDate.setDate(today.getDate() + (dayNumber - 1));
+            
+            // Usar hora local para evitar problemas de zona horaria
+            const year = targetDate.getFullYear();
+            const month = String(targetDate.getMonth() + 1).padStart(2, "0");
+            const day = String(targetDate.getDate()).padStart(2, "0");
+            const dateString = `${year}-${month}-${day}`;
+            
             const convertedRoutine: CalculatedDayRoutine = {
               ...localRoutine,
               day: dayNumber,
               dayNumber,
               cycleDay: index,
               patternType: localRoutine.dayName,
-              date: new Date(Date.now() + (dayNumber - 1) * 24 * 60 * 60 * 1000)
-                .toISOString()
-                .split("T")[0],
+              date: dateString,
             };
             setCurrentRoutine(convertedRoutine);
           }
         }
       } catch (error) {
-        console.error("Error al cargar rutina:", error);
         // Fallback a datos locales en caso de error
         const localRoutines = routineData[user.id] || [];
         const index = (dayNumber - 1) % localRoutines.length;
         const localRoutine = localRoutines[index];
 
         if (localRoutine) {
+          const today = new Date();
+          const targetDate = new Date(today);
+          targetDate.setDate(today.getDate() + (dayNumber - 1));
+          
+          // Usar hora local para evitar problemas de zona horaria
+          const year = targetDate.getFullYear();
+          const month = String(targetDate.getMonth() + 1).padStart(2, "0");
+          const day = String(targetDate.getDate()).padStart(2, "0");
+          const dateString = `${year}-${month}-${day}`;
+          
           const convertedRoutine: CalculatedDayRoutine = {
             ...localRoutine,
             day: dayNumber,
             dayNumber,
             cycleDay: index,
             patternType: localRoutine.dayName,
-            date: new Date(Date.now() + (dayNumber - 1) * 24 * 60 * 60 * 1000)
-              .toISOString()
-              .split("T")[0],
+            date: dateString,
           };
           setCurrentRoutine(convertedRoutine);
         }

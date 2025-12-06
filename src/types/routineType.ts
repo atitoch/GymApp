@@ -28,6 +28,7 @@ export interface RoutinePattern {
   userId: string;
   pattern: string[]; // Ej: ['PUSH', 'PULL', 'LEG', 'DESCANSO']
   startDate: string; // ISO date string - fecha de inicio del ciclo
+  startDayOfWeek?: number; // Día de la semana preferido (0=Domingo, 1=Lunes, ..., 6=Sábado). Si se especifica, ajusta startDate
   routines: DayRoutine[]; // Rutinas definidas para cada tipo en el patrón
 }
 
