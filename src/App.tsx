@@ -11,13 +11,16 @@ import { AuthCallback } from "./pages/auth/callback";
 import { AuthError } from "./pages/auth/error";
 import { VerifyEmail } from "./pages/auth/verify-email";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { ScrollToTop } from "./components/ScrollToTop";
 import { useAuth } from "./contexts/useAuth";
 
 const App = () => {
   const { isAuthenticated } = useAuth();
 
   return (
-    <Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
       <Route
         path="/"
         element={
@@ -56,7 +59,8 @@ const App = () => {
       <Route path="/auth/error" element={<AuthError />} />
       <Route path="/auth/verify-email" element={<VerifyEmail />} />
       <Route path="*" element={<NotFound />} />
-    </Routes>
+      </Routes>
+    </>
   );
 };
 
