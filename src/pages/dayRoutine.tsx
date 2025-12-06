@@ -9,6 +9,7 @@ import { routineData, fetchDayRoutine } from "../services/routine";
 import type { CalculatedDayRoutine } from "../types/routineType";
 import { themeClasses, cn } from "../theme/constants";
 import { useAuth } from "../contexts/useAuth";
+import { DayRoutineSkeleton } from "../components/DayRoutineSkeleton";
 
 export const DayRoutine: React.FC = () => {
   const { dayIndex } = useParams<{
@@ -43,13 +44,13 @@ export const DayRoutine: React.FC = () => {
             const today = new Date();
             const targetDate = new Date(today);
             targetDate.setDate(today.getDate() + (dayNumber - 1));
-            
+
             // Usar hora local para evitar problemas de zona horaria
             const year = targetDate.getFullYear();
             const month = String(targetDate.getMonth() + 1).padStart(2, "0");
             const day = String(targetDate.getDate()).padStart(2, "0");
             const dateString = `${year}-${month}-${day}`;
-            
+
             const convertedRoutine: CalculatedDayRoutine = {
               ...localRoutine,
               day: dayNumber,
@@ -61,7 +62,7 @@ export const DayRoutine: React.FC = () => {
             setCurrentRoutine(convertedRoutine);
           }
         }
-      } catch (error) {
+      } catch {
         // Fallback a datos locales en caso de error
         const localRoutines = routineData[user.id] || [];
         const index = (dayNumber - 1) % localRoutines.length;
@@ -71,13 +72,13 @@ export const DayRoutine: React.FC = () => {
           const today = new Date();
           const targetDate = new Date(today);
           targetDate.setDate(today.getDate() + (dayNumber - 1));
-          
+
           // Usar hora local para evitar problemas de zona horaria
           const year = targetDate.getFullYear();
           const month = String(targetDate.getMonth() + 1).padStart(2, "0");
           const day = String(targetDate.getDate()).padStart(2, "0");
           const dateString = `${year}-${month}-${day}`;
-          
+
           const convertedRoutine: CalculatedDayRoutine = {
             ...localRoutine,
             day: dayNumber,
@@ -101,16 +102,7 @@ export const DayRoutine: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div
-        className={cn(
-          themeClasses.layout.screen,
-          themeClasses.layout.flexCenter
-        )}
-      >
-        <div className={themeClasses.text.tertiary}>Cargando rutina...</div>
-      </div>
-    );
+    return <DayRoutineSkeleton />;
   }
 
   if (!currentRoutine) {

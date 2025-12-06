@@ -9,6 +9,7 @@ import type { CalculatedDayRoutine } from "../types/routineType";
 import { themeClasses, cn } from "../theme/constants";
 import { useColors } from "../theme";
 import { Dumbbell, Calendar, TrendingUp, Sparkles } from "lucide-react";
+import { DashboardSkeleton } from "../components/DashboardSkeleton";
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -57,25 +58,7 @@ export const Dashboard: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div
-        className={cn(
-          themeClasses.layout.screen,
-          themeClasses.backgrounds.primary,
-          themeClasses.layout.flexCenter
-        )}
-      >
-        <div className="flex flex-col items-center gap-4">
-          <Dumbbell
-            className="w-8 h-8 animate-pulse"
-            style={{ color: colors.primary[500] }}
-          />
-          <div className={themeClasses.text.tertiary}>
-            Cargando tu rutina...
-          </div>
-        </div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   // Si no hay rutinas para este usuario

@@ -18,7 +18,7 @@ export const Tips = () => {
         </p>
         <p>
           • <strong>Sueño crítico:</strong> 8-9 horas mínimo para recuperación
-          óptima (Entendido chamaca?)
+          óptima
         </p>
       </div>
     </div>
