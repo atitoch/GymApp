@@ -22,14 +22,49 @@ export interface DayRoutine {
   cooldown?: string[];
 }
 
-// Estructura para datos del backend
+// ============================================
+// Tipos de respuesta del API (contrato con el backend)
+// ============================================
+
+/**
+ * Estructura exacta de DayRoutine que devuelve el backend
+ * Incluye campos adicionales de metadatos que no son parte del dominio interno
+ */
+export interface DayRoutineResponse extends DayRoutine {
+  id: string; // UUID del día de rutina
+  orderIndex: number; // Índice de orden dentro del patrón
+  createdAt: string; // ISO date string - fecha de creación
+  updatedAt: string; // ISO date string - fecha de actualización
+}
+
+/**
+ * Estructura exacta de RoutinePattern que devuelve el backend
+ * Representa el contrato completo con el API
+ */
+export interface RoutinePatternResponse {
+  id: string;
+  userId: string;
+  pattern: string[]; // Ej: ['PUSH', 'PULL', 'LEG', 'DESCANSO']
+  startDate: string; // ISO date string - fecha de inicio del ciclo
+  isCyclic: boolean; // Indica si el patrón es cíclico
+  routines: DayRoutineResponse[]; // Rutinas definidas para cada tipo en el patrón
+}
+
+// ============================================
+// Tipos internos de dominio (para uso en la aplicación)
+// ============================================
+
+/**
+ * Estructura para datos del backend transformados al dominio interno
+ * Este tipo se usa después de transformar RoutinePatternResponse
+ */
 export interface RoutinePattern {
   id: string;
   userId: string;
   pattern: string[]; // Ej: ['PUSH', 'PULL', 'LEG', 'DESCANSO']
   startDate: string; // ISO date string - fecha de inicio del ciclo
   startDayOfWeek?: number; // Día de la semana preferido (0=Domingo, 1=Lunes, ..., 6=Sábado). Si se especifica, ajusta startDate
-  routines: DayRoutine[]; // Rutinas definidas para cada tipo en el patrón
+  routines: DayRoutine[]; // Rutinas definidas para cada tipo en el patrón (sin metadatos del API)
 }
 
 // Estructura para la rutina del día actual calculada

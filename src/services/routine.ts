@@ -2,6 +2,8 @@ import type {
   DayRoutine,
   RoutinePattern,
   CalculatedDayRoutine,
+  RoutinePatternResponse,
+  DayRoutineResponse,
 } from "../types/routineType";
 import {
   getRoutinesForDisplay,
@@ -1281,17 +1283,56 @@ export const routineData: Record<string, DayRoutine[]> = {
 // ============================================
 
 /**
+ * Transforma una respuesta del API (RoutinePatternResponse) al dominio interno (RoutinePattern)
+ * Elimina los metadatos del API que no son necesarios para la lógica de negocio
+ * @param response Respuesta del backend
+ * @returns Patrón de rutina en formato de dominio interno
+ */
+const transformRoutinePatternResponse = (
+  response: RoutinePatternResponse
+): RoutinePattern => {
+  return {
+    id: response.id,
+    userId: response.userId,
+    pattern: response.pattern,
+    startDate: response.startDate,
+    // startDayOfWeek no viene del backend, se calcula si es necesario
+    routines: response.routines.map((routine) => transformDayRoutineResponse(routine)),
+  };
+};
+
+/**
+ * Transforma una respuesta de DayRoutine del API al dominio interno
+ * Elimina los metadatos del API (id, orderIndex, createdAt, updatedAt)
+ * @param response Respuesta del backend
+ * @returns Rutina del día en formato de dominio interno
+ */
+const transformDayRoutineResponse = (
+  response: DayRoutineResponse
+): DayRoutine => {
+  return {
+    day: response.day,
+    dayName: response.dayName,
+    title: response.title,
+    warmup: response.warmup,
+    sections: response.sections,
+    cooldown: response.cooldown,
+  };
+};
+
+/**
  * Obtiene el patrón de rutina de un usuario desde el backend
  * @param userId ID del usuario
- * @returns Patrón de rutina del usuario
+ * @returns Patrón de rutina del usuario transformado al dominio interno
  */
 export const fetchUserRoutinePattern = async (
   userId: string
 ): Promise<RoutinePattern | null> => {
   try {
-    return await authenticatedGet<RoutinePattern>(
+    const response = await authenticatedGet<RoutinePatternResponse>(
       `/users/${userId}/routine-pattern`
     );
+    return transformRoutinePatternResponse(response);
   } catch (error) {
     // Si es 404, el usuario no tiene rutina configurada (comportamiento esperado)
     if (
@@ -1370,37 +1411,86 @@ export const fetchDayRoutine = async (
 };
 
 /**
+ * Transforma un patrón de dominio interno al formato que espera el backend
+ * @param pattern Patrón en formato de dominio interno
+ * @param userId ID del usuario
+ * @returns Patrón en formato de respuesta del API (sin id para creación)
+ */
+const transformRoutinePatternToRequest = (
+  pattern: Omit<RoutinePattern, "id" | "userId">,
+  userId: string
+): Omit<RoutinePatternResponse, "id"> => {
+  return {
+    userId,
+    pattern: pattern.pattern,
+    startDate: pattern.startDate,
+    isCyclic: false, // Por defecto, se puede hacer configurable si es necesario
+    routines: pattern.routines.map((routine, index) => ({
+      ...routine,
+      id: `temp-${index}`, // Temporal, el backend asignará el ID real
+      orderIndex: index,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    })),
+  };
+};
+
+/**
  * Crea o actualiza el patrón de rutina de un usuario
  * @param userId ID del usuario
- * @param pattern Patrón de rutina a guardar
- * @returns Patrón de rutina guardado
+ * @param pattern Patrón de rutina a guardar (formato de dominio interno)
+ * @returns Patrón de rutina guardado (transformado al dominio interno)
  */
 export const saveUserRoutinePattern = async (
   userId: string,
   pattern: Omit<RoutinePattern, "id" | "userId">
 ): Promise<RoutinePattern> => {
-  return await authenticatedPost<RoutinePattern>(
+  const requestData = transformRoutinePatternToRequest(pattern, userId);
+  const response = await authenticatedPost<RoutinePatternResponse>(
     `/users/${userId}/routine-pattern`,
-    pattern
+    requestData
   );
+  return transformRoutinePatternResponse(response);
 };
 
 /**
  * Actualiza el patrón de rutina de un usuario
  * @param userId ID del usuario
  * @param patternId ID del patrón
- * @param pattern Datos del patrón a actualizar
- * @returns Patrón de rutina actualizado
+ * @param pattern Datos del patrón a actualizar (formato de dominio interno)
+ * @returns Patrón de rutina actualizado (transformado al dominio interno)
  */
 export const updateUserRoutinePattern = async (
   userId: string,
   patternId: string,
-  pattern: Partial<RoutinePattern>
+  pattern: Partial<Omit<RoutinePattern, "id" | "userId">>
 ): Promise<RoutinePattern> => {
-  return await authenticatedPut<RoutinePattern>(
+  // Para actualización, solo enviamos los campos que se pueden actualizar
+  const updateData: Partial<Omit<RoutinePatternResponse, "id" | "userId">> = {};
+  
+  if (pattern.pattern !== undefined) {
+    updateData.pattern = pattern.pattern;
+  }
+  if (pattern.startDate !== undefined) {
+    updateData.startDate = pattern.startDate;
+  }
+  if (pattern.routines !== undefined) {
+    updateData.routines = pattern.routines.map((routine, index) => ({
+      ...routine,
+      id: `temp-${index}`, // Temporal, el backend mantendrá los IDs existentes
+      orderIndex: index,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }));
+  }
+  // isCyclic puede ser actualizado si es necesario
+  // updateData.isCyclic = pattern.isCyclic ?? false;
+
+  const response = await authenticatedPut<RoutinePatternResponse>(
     `/users/${userId}/routine-pattern/${patternId}`,
-    pattern
+    updateData
   );
+  return transformRoutinePatternResponse(response);
 };
 
 // ============================================
