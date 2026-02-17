@@ -1,160 +1,141 @@
+// src/services/workoutLog.ts  — versión corregida
 import {
   authenticatedGet,
   authenticatedPost,
   authenticatedPut,
-} from "../utils/api";
+} from '../utils/api';
 import type {
   WorkoutLog,
-  WorkoutLogWithExercises,
   ExerciseLog,
-  CreateWorkoutLogRequest,
   UpdateWorkoutLogRequest,
   CreateExerciseSetRequest,
-} from "../types/workoutLog";
+} from '../types/workoutLog';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// WORKOUT LOG ACTIVO
+// ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Crea o obtiene el workout log activo para el día actual
- * Métodos HTTP: GET (para obtener) y POST (para crear)
+ * Obtiene o crea el workout log activo del día actual.
+ * El backend maneja la lógica de crear si no existe.
  */
 export const getOrCreateWorkoutLog = async (
-  userId: string,
   dayRoutineId?: string,
-  routineId?: string
+  routineId?: string,
 ): Promise<WorkoutLog> => {
-  const today = new Date().toISOString().split("T")[0];
-
-  try {
-    // Intentar obtener el workout log existente para hoy
-    // GET /api/workout-logs/today
-    const existingLog = await authenticatedPost<WorkoutLog>(
-      `/api/workout-logs/today`,
-      {
-        user_id: userId,
-        date: today,
-      }
-    );
-
-    if (existingLog) {
-      return existingLog;
-    }
-  } catch {
-    // Si no existe, crear uno nuevo
-    console.log("No existing workout log found, creating new one");
-  }
-
-  // Crear nuevo workout log
-  // POST /api/workout-logs
-  const request: CreateWorkoutLogRequest = {
-    day_routine_id: dayRoutineId,
-    routine_id: routineId,
-    workout_date: today,
-    started_at: new Date().toISOString(),
-  };
-
-  return authenticatedPost<WorkoutLog>("/api/workout-logs", request);
+  return authenticatedPost<WorkoutLog>('/workout-logs/current', {
+    day_routine_id: dayRoutineId ?? null,
+    routine_id: routineId ?? null,
+  });
 };
 
 /**
- * Obtiene un workout log por ID con sus exercise logs
- * Método HTTP: GET /api/workout-logs/:id
- */
-export const getWorkoutLog = async (
-  logId: string
-): Promise<WorkoutLogWithExercises> => {
-  return authenticatedGet<WorkoutLogWithExercises>(
-    `/api/workout-logs/${logId}`
-  );
-};
-
-/**
- * Obtiene los exercise logs de un workout específico
- * Método HTTP: GET /api/workout-logs/:id/exercise-logs
- */
-export const getWorkoutExerciseLogs = async (
-  workoutLogId: string
-): Promise<ExerciseLog[]> => {
-  return authenticatedGet<ExerciseLog[]>(
-    `/api/workout-logs/${workoutLogId}/exercise-logs`
-  );
-};
-
-/**
- * Actualiza un workout log
- * Método HTTP: PUT /api/workout-logs/:id
+ * Actualiza el workout log (completar, rating, notas)
  */
 export const updateWorkoutLog = async (
   logId: string,
-  data: UpdateWorkoutLogRequest
+  data: UpdateWorkoutLogRequest,
 ): Promise<WorkoutLog> => {
-  return authenticatedPut<WorkoutLog>(`/api/workout-logs/${logId}`, data);
+  return authenticatedPut<WorkoutLog>(`/workout-logs/${logId}`, data);
 };
 
 /**
- * Completa un workout log
- * Método HTTP: PUT /api/workout-logs/:id
+ * Marca el workout como completado y opcionalmente agrega rating y notas
  */
 export const completeWorkoutLog = async (
   logId: string,
   rating?: number,
-  notes?: string
+  notes?: string,
+  energyLevel?: number,
 ): Promise<WorkoutLog> => {
-  const completedAt = new Date().toISOString();
-  const request: UpdateWorkoutLogRequest = {
-    completed_at: completedAt,
+  return authenticatedPut<WorkoutLog>(`/workout-logs/${logId}`, {
+    completed_at: new Date().toISOString(),
     rating,
     notes,
-  };
-
-  return authenticatedPut<WorkoutLog>(`/api/workout-logs/${logId}`, request);
+    energy_level: energyLevel,
+  });
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// EXERCISE LOGS (SETS)
+// ─────────────────────────────────────────────────────────────────────────────
+
 /**
- * Registra una serie de un ejercicio
- * Método HTTP: POST /api/workout-logs/:id/exercise-logs
+ * Registra un set de un ejercicio en el workout activo
  */
 export const logExerciseSet = async (
   workoutLogId: string,
-  data: CreateExerciseSetRequest
+  data: CreateExerciseSetRequest,
 ): Promise<ExerciseLog> => {
   return authenticatedPost<ExerciseLog>(
-    `/api/workout-logs/${workoutLogId}/exercise-logs`,
-    data
+    `/workout-logs/${workoutLogId}/exercise-logs`,
+    data,
   );
 };
 
 /**
- * Obtiene el historial de ejercicios para ver el progreso
- * Método HTTP: GET /api/exercise-logs/history
+ * Obtiene todos los sets registrados de un workout
  */
-export const getExerciseHistory = async (
-  userId: string,
-  exerciseName: string,
-  limit: number = 10
+export const getWorkoutExerciseLogs = async (
+  workoutLogId: string,
 ): Promise<ExerciseLog[]> => {
   return authenticatedGet<ExerciseLog[]>(
-    `/api/exercise-logs/history?user_id=${userId}&exercise_name=${encodeURIComponent(
-      exerciseName
-    )}&limit=${limit}`
+    `/workout-logs/${workoutLogId}/exercise-logs`,
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HISTORIAL
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Historial paginado del usuario
+ */
+export const getWorkoutHistory = async (
+  options: {
+    limit?: number;
+    offset?: number;
+    dayName?: string;
+    from?: string;
+    to?: string;
+  } = {},
+): Promise<{ sessions: WorkoutLog[]; total: number }> => {
+  const params = new URLSearchParams();
+  if (options.limit != null) params.set('limit', String(options.limit));
+  if (options.offset != null) params.set('offset', String(options.offset));
+  if (options.dayName) params.set('day_name', options.dayName);
+  if (options.from) params.set('from', options.from);
+  if (options.to) params.set('to', options.to);
+
+  const qs = params.toString();
+  return authenticatedGet<{ sessions: WorkoutLog[]; total: number }>(
+    `/workout-logs${qs ? `?${qs}` : ''}`,
   );
 };
 
 /**
- * Obtiene todos los workout logs del usuario
- * Método HTTP: GET /api/workout-logs
+ * Stats de la semana actual (para el Dashboard)
  */
-export const getUserWorkoutLogs = async (
-  userId: string,
-  limit?: number,
-  offset?: number
-): Promise<WorkoutLog[]> => {
-  const params = new URLSearchParams({
-    user_id: userId,
-  });
+export const getWeeklyStats = async (): Promise<{
+  total_sessions: number;
+  completed_sessions: number;
+  days_trained: number;
+  total_duration_min: number;
+  total_volume: number;
+  avg_rating: number | null;
+}> => {
+  return authenticatedGet('/workout-logs/weekly-stats');
+};
 
-  if (limit) params.append("limit", limit.toString());
-  if (offset) params.append("offset", offset.toString());
-
-  return authenticatedGet<WorkoutLog[]>(
-    `/api/workout-logs?${params.toString()}`
+/**
+ * Historial de un ejercicio específico — últimas N sesiones
+ * Usado por ExerciseTracker para mostrar "última vez: 80kg × 10"
+ */
+export const getExerciseHistory = async (
+  exerciseName: string,
+  limit: number = 5,
+): Promise<{ date: string; sets: ExerciseLog[] }[]> => {
+  return authenticatedGet<{ date: string; sets: ExerciseLog[] }[]>(
+    `/workout-logs/exercise-history/${encodeURIComponent(exerciseName)}?limit=${limit}`,
   );
 };
