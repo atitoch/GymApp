@@ -1,12 +1,12 @@
 // URL base del backend (debe configurarse según el entorno)
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-import type { ApiResponse } from "../types/api";
-import { parseApiError, handleFetchError } from "./errorHandler";
+import type { ApiResponse } from '../types/api';
+import { parseApiError, handleFetchError } from './errorHandler';
 
-const TOKEN_KEY = "auth_token";
-const REFRESH_TOKEN_KEY = "auth_refresh_token";
-const USER_KEY = "auth_user";
+const TOKEN_KEY = 'auth_token';
+const REFRESH_TOKEN_KEY = 'auth_refresh_token';
+const USER_KEY = 'auth_user';
 
 /**
  * Limpia la sesión y redirige al login
@@ -25,7 +25,7 @@ const handleUnauthorized = () => {
   // Redirigir a la página inicial
   // Usamos window.location.href para forzar una recarga completa
   // Esto asegura que React Router se reinicialice correctamente
-  window.location.href = "/";
+  window.location.href = '/';
 };
 
 /**
@@ -47,12 +47,12 @@ const getAuthToken = (): string | null => {
 export const createAuthHeaders = (): HeadersInit => {
   const token = getAuthToken();
   const headers: HeadersInit = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   };
 
   // Siempre incluir el token si está disponible
   if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
+    headers['Authorization'] = `Bearer ${token}`;
   }
 
   return headers;
@@ -64,11 +64,16 @@ export const createAuthHeaders = (): HeadersInit => {
  */
 export const authenticatedFetch = async (
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<Response> => {
-  const url = endpoint.startsWith("http")
+  // Normalizar el endpoint (quitar barra inicial si existe)
+  const normalizedEndpoint = endpoint.startsWith('/')
+    ? endpoint.slice(1)
+    : endpoint;
+
+  const url = endpoint.startsWith('http')
     ? endpoint
-    : `${API_BASE_URL}${endpoint}`;
+    : `${API_BASE_URL}/${normalizedEndpoint}`;
 
   // Obtener headers con autenticación
   const authHeaders = createAuthHeaders();
@@ -97,14 +102,14 @@ export const authenticatedFetch = async (
 export const authenticatedGet = async <T>(endpoint: string): Promise<T> => {
   try {
     const response = await authenticatedFetch(endpoint, {
-      method: "GET",
+      method: 'GET',
     });
 
     if (!response.ok) {
       // Si es un 401, limpiar sesión y redirigir al login
       if (response.status === 401) {
         handleUnauthorized();
-        throw new Error("Sesión expirada. Redirigiendo al login...");
+        throw new Error('Sesión expirada. Redirigiendo al login...');
       }
       throw await parseApiError(response);
     }
@@ -128,11 +133,11 @@ export const authenticatedGet = async <T>(endpoint: string): Promise<T> => {
  */
 export const authenticatedPost = async <T>(
   endpoint: string,
-  data?: unknown
+  data?: unknown,
 ): Promise<T> => {
   try {
     const response = await authenticatedFetch(endpoint, {
-      method: "POST",
+      method: 'POST',
       body: data ? JSON.stringify(data) : undefined,
     });
 
@@ -140,7 +145,7 @@ export const authenticatedPost = async <T>(
       // Si es un 401, limpiar sesión y redirigir al login
       if (response.status === 401) {
         handleUnauthorized();
-        throw new Error("Sesión expirada. Redirigiendo al login...");
+        throw new Error('Sesión expirada. Redirigiendo al login...');
       }
       throw await parseApiError(response);
     }
@@ -164,11 +169,11 @@ export const authenticatedPost = async <T>(
  */
 export const authenticatedPut = async <T>(
   endpoint: string,
-  data?: unknown
+  data?: unknown,
 ): Promise<T> => {
   try {
     const response = await authenticatedFetch(endpoint, {
-      method: "PUT",
+      method: 'PUT',
       body: data ? JSON.stringify(data) : undefined,
     });
 
@@ -176,7 +181,43 @@ export const authenticatedPut = async <T>(
       // Si es un 401, limpiar sesión y redirigir al login
       if (response.status === 401) {
         handleUnauthorized();
-        throw new Error("Sesión expirada. Redirigiendo al login...");
+        throw new Error('Sesión expirada. Redirigiendo al login...');
+      }
+      throw await parseApiError(response);
+    }
+
+    const responseData: ApiResponse<T> = await response.json();
+
+    // El backend puede devolver los datos directamente o dentro de data
+    if (responseData.data !== undefined) {
+      return responseData.data;
+    }
+
+    // Si no hay data, asumir que la respuesta completa es T
+    return responseData as unknown as T;
+  } catch (error) {
+    throw handleFetchError(error);
+  }
+};
+
+/**
+ * Realiza una petición PATCH autenticada
+ */
+export const authenticatedPatch = async <T>(
+  endpoint: string,
+  data?: unknown,
+): Promise<T> => {
+  try {
+    const response = await authenticatedFetch(endpoint, {
+      method: 'PUT',
+      body: data ? JSON.stringify(data) : undefined,
+    });
+
+    if (!response.ok) {
+      // Si es un 401, limpiar sesión y redirigir al login
+      if (response.status === 401) {
+        handleUnauthorized();
+        throw new Error('Sesión expirada. Redirigiendo al login...');
       }
       throw await parseApiError(response);
     }
@@ -201,14 +242,14 @@ export const authenticatedPut = async <T>(
 export const authenticatedDelete = async <T>(endpoint: string): Promise<T> => {
   try {
     const response = await authenticatedFetch(endpoint, {
-      method: "DELETE",
+      method: 'DELETE',
     });
 
     if (!response.ok) {
       // Si es un 401, limpiar sesión y redirigir al login
       if (response.status === 401) {
         handleUnauthorized();
-        throw new Error("Sesión expirada. Redirigiendo al login...");
+        throw new Error('Sesión expirada. Redirigiendo al login...');
       }
       throw await parseApiError(response);
     }

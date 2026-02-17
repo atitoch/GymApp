@@ -1,10 +1,19 @@
 import type { Section } from '../types/routineType';
+import ExerciseNotes from './ExerciseNotes';
+import { useAuth } from '../contexts/useAuth';
+import { Timer } from 'lucide-react';
 
 interface ExerciseProps {
   section: Section;
+  onStartRest?: (exerciseName: string) => void;
 }
 
-export const Exercises: React.FC<ExerciseProps> = ({ section }) => {
+export const Exercises: React.FC<ExerciseProps> = ({
+  section,
+  onStartRest,
+}) => {
+  const { user } = useAuth();
+
   return (
     <div className="mb-8">
       <h2 className="text-lg font-semibold text-blue-400 mb-4 flex items-center gap-2">
@@ -31,7 +40,7 @@ export const Exercises: React.FC<ExerciseProps> = ({ section }) => {
               </div>
             </div>
 
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-4 gap-4 mb-4">
               <div>
                 <div className="text-xs text-slate-500 mb-1">Series</div>
                 <div className="text-slate-50 font-semibold">
@@ -51,14 +60,28 @@ export const Exercises: React.FC<ExerciseProps> = ({ section }) => {
                 </div>
               </div>
               <div>
-                <div className="text-xs text-slate-500 mb-1">
-                  Descanso
-                </div>
+                <div className="text-xs text-slate-500 mb-1">Descanso</div>
                 <div className="text-slate-50 font-semibold text-sm">
                   {exercise.rest}
                 </div>
               </div>
             </div>
+
+            {/* Botón de descanso */}
+            {onStartRest && (
+              <button
+                onClick={() => onStartRest(exercise.name)}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 mb-4"
+              >
+                <Timer size={18} />
+                Iniciar descanso
+              </button>
+            )}
+
+            {/* Notas del ejercicio */}
+            {user && (
+              <ExerciseNotes exerciseName={exercise.name} userId={user.id} />
+            )}
           </div>
         ))}
       </div>

@@ -1,7 +1,7 @@
-import { useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useAuth } from "../../contexts/useAuth";
-import { Loader2 } from "lucide-react";
+import { useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../../contexts/useAuth';
+import { Loader2 } from 'lucide-react';
 
 export const AuthCallback = () => {
   const navigate = useNavigate();
@@ -9,12 +9,12 @@ export const AuthCallback = () => {
   const { setAuthData } = useAuth();
 
   useEffect(() => {
-    const token = searchParams.get("token");
-    const refreshToken = searchParams.get("refreshToken");
+    const token = searchParams.get('token');
+    const refreshToken = searchParams.get('refreshToken');
 
     if (token && refreshToken) {
       // Obtener info del usuario usando el endpoint verify
-      fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/verify`, {
+      fetch(`${import.meta.env.VITE_API_URL}/auth/verify`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -32,16 +32,16 @@ export const AuthCallback = () => {
               token: token,
               refreshToken: refreshToken,
             });
-            navigate("/dashboard");
+            navigate('/dashboard');
           } else {
-            navigate("/login?error=authentication_failed");
+            navigate('/login?error=authentication_failed');
           }
         })
         .catch(() => {
-          navigate("/login?error=authentication_failed");
+          navigate('/login?error=authentication_failed');
         });
     } else {
-      navigate("/login?error=missing_tokens");
+      navigate('/login?error=missing_tokens');
     }
   }, [searchParams, navigate, setAuthData]);
 

@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { Calendar, LogOut, Home, Dumbbell } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/useAuth";
-import { themeClasses, cn } from "../theme/constants";
-import { useColors } from "../theme";
-import { ConfirmDialog } from "./ConfirmDialog";
+import React, { useState } from 'react';
+import { Calendar, LogOut, Home, Dumbbell, History, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/useAuth';
+import { themeClasses, cn } from '../theme/constants';
+import { useColors } from '../theme';
+import { ConfirmDialog } from './ConfirmDialog';
 
 interface HeaderProps {
   handleBackToSelect?: () => void;
@@ -32,23 +32,23 @@ export const Header: React.FC<HeaderProps> = ({
     if (handleBackToSelect) {
       handleBackToSelect();
     } else {
-      navigate("/dashboard");
+      navigate('/dashboard');
     }
   };
 
   // Usar el usuario autenticado
-  const displayName = authUser?.name || authUser?.email || "Usuario";
-  const displayInitial = displayName[0]?.toUpperCase() || "U";
+  const displayName = authUser?.name || authUser?.email || 'Usuario';
+  const displayInitial = displayName[0]?.toUpperCase() || 'U';
 
   // Generar color basado en el nombre del usuario para consistencia
   const getUserColor = (name: string): string => {
     const colors = [
-      "#3b82f6", // blue
-      "#8b5cf6", // purple
-      "#ec4899", // pink
-      "#10b981", // green
-      "#f59e0b", // amber
-      "#ef4444", // red
+      '#3b82f6', // blue
+      '#8b5cf6', // purple
+      '#ec4899', // pink
+      '#10b981', // green
+      '#f59e0b', // amber
+      '#ef4444', // red
     ];
     const index = name.charCodeAt(0) % colors.length;
     return colors[index];
@@ -58,8 +58,8 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <>
-      <div className={cn(themeClasses.layout.flexBetween, "mb-8")}>
-        <div className={themeClasses.layout.flexCenter + " gap-4"}>
+      <div className={cn(themeClasses.layout.flexBetween, 'mb-8')}>
+        <div className={themeClasses.layout.flexCenter + ' gap-4'}>
           {showBackButton && (
             <button
               onClick={handleBack}
@@ -85,31 +85,45 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           )}
           <div>
-            <h1 className={cn("text-3xl font-bold", themeClasses.text.primary)}>
+            <h1 className={cn('text-3xl font-bold', themeClasses.text.primary)}>
               {displayName}
             </h1>
             <p className={themeClasses.text.tertiary}>
-              {showBackButton ? "Rutina" : "Mi Panel"}
+              {showBackButton ? 'Rutina' : 'Mi Panel'}
             </p>
           </div>
         </div>
-        <div className={cn(themeClasses.layout.flexCenter, "gap-4")}>
+        <div className={cn(themeClasses.layout.flexCenter, 'gap-4')}>
           {showBackButton && (
             <button
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate('/dashboard')}
               className={themeClasses.buttons.icon}
               title="Ir al dashboard"
             >
-              <Home className={cn("w-5 h-5", themeClasses.text.tertiary)} />
+              <Home className={cn('w-5 h-5', themeClasses.text.tertiary)} />
             </button>
           )}
-          <Calendar className={cn("w-8 h-8", themeClasses.text.primary)} />
+          <button
+            onClick={() => navigate('/history')}
+            className={themeClasses.buttons.icon}
+            title="Historial de entrenamientos"
+          >
+            <History className={cn('w-5 h-5', themeClasses.text.tertiary)} />
+          </button>
+          <button
+            onClick={() => navigate('/profile')}
+            className={themeClasses.buttons.icon}
+            title="Configuración de perfil"
+          >
+            <User className={cn('w-5 h-5', themeClasses.text.tertiary)} />
+          </button>
+          <Calendar className={cn('w-8 h-8', themeClasses.text.primary)} />
           <button
             onClick={handleLogout}
             className={themeClasses.buttons.icon}
             title="Cerrar sesión"
           >
-            <LogOut className={cn("w-5 h-5", themeClasses.text.tertiary)} />
+            <LogOut className={cn('w-5 h-5', themeClasses.text.tertiary)} />
           </button>
         </div>
       </div>

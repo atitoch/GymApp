@@ -1,15 +1,27 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { Cooldown } from "../components/cooldown";
-import { DayHeader } from "../components/dayHeader";
-import { Exercises } from "../components/excersises";
-import { Tips } from "../components/tips";
-import { WarmUp } from "../components/warmUp";
-import { routineData, fetchDayRoutine } from "../services/routine";
-import type { CalculatedDayRoutine } from "../types/routineType";
-import { themeClasses, cn } from "../theme/constants";
-import { useAuth } from "../contexts/useAuth";
-import { DayRoutineSkeleton } from "../components/DayRoutineSkeleton";
+import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Cooldown } from '../components/cooldown';
+import { DayHeader } from '../components/dayHeader';
+import { Tips } from '../components/tips';
+import { WarmUp } from '../components/warmUp';
+import { routineData, fetchDayRoutine } from '../services/routine';
+import type { CalculatedDayRoutine } from '../types/routineType';
+import { themeClasses, cn } from '../theme/constants';
+import { useAuth } from '../contexts/useAuth';
+import { DayRoutineSkeleton } from '../components/DayRoutineSkeleton';
+import RestTimer from '../components/RestTimer';
+import WorkoutProgress, {
+  type ExerciseStatus,
+} from '../components/WorkoutProgress';
+import ExerciseTracker from '../components/ExerciseTracker';
+import {
+  getOrCreateWorkoutLog,
+  logExerciseSet,
+  getWorkoutExerciseLogs,
+} from '../services/workoutLog';
+import type { ExerciseLog } from '../types/workoutLog';
+import { ConfirmDialog } from '../components/ConfirmDialog';
+import { Flag } from 'lucide-react';
 
 export const DayRoutine: React.FC = () => {
   const { dayIndex } = useParams<{
@@ -20,6 +32,19 @@ export const DayRoutine: React.FC = () => {
   const [currentRoutine, setCurrentRoutine] =
     useState<CalculatedDayRoutine | null>(null);
   const [loading, setLoading] = useState(true);
+  const [timerOpen, setTimerOpen] = useState(false);
+  const [exerciseStatuses, setExerciseStatuses] = useState<ExerciseStatus[]>(
+    [],
+  );
+  const [workoutLogId, setWorkoutLogId] = useState<string | null>(null);
+  const [exerciseLogs, setExerciseLogs] = useState<Map<string, ExerciseLog[]>>(
+    new Map(),
+  );
+  const [isCurrentDay, setIsCurrentDay] = useState(false);
+  const [showFinishDialog, setShowFinishDialog] = useState(false);
+  const [exerciseTargetSets, setExerciseTargetSets] = useState<
+    Map<string, number>
+  >(new Map());
 
   useEffect(() => {
     const loadRoutine = async () => {
@@ -47,8 +72,8 @@ export const DayRoutine: React.FC = () => {
 
             // Usar hora local para evitar problemas de zona horaria
             const year = targetDate.getFullYear();
-            const month = String(targetDate.getMonth() + 1).padStart(2, "0");
-            const day = String(targetDate.getDate()).padStart(2, "0");
+            const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+            const day = String(targetDate.getDate()).padStart(2, '0');
             const dateString = `${year}-${month}-${day}`;
 
             const convertedRoutine: CalculatedDayRoutine = {
@@ -75,8 +100,8 @@ export const DayRoutine: React.FC = () => {
 
           // Usar hora local para evitar problemas de zona horaria
           const year = targetDate.getFullYear();
-          const month = String(targetDate.getMonth() + 1).padStart(2, "0");
-          const day = String(targetDate.getDate()).padStart(2, "0");
+          const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+          const day = String(targetDate.getDate()).padStart(2, '0');
           const dateString = `${year}-${month}-${day}`;
 
           const convertedRoutine: CalculatedDayRoutine = {
@@ -97,8 +122,133 @@ export const DayRoutine: React.FC = () => {
     loadRoutine();
   }, [dayIndex, user?.id]);
 
+  // Función helper para parsear el número de sets objetivo
+  const parseTargetSets = (sets: string): number => {
+    const n = parseInt(sets.split('-')[0]);
+    return isNaN(n) ? 3 : n;
+  };
+
+  // Inicializa los statuses cuando cargas la rutina del día
+  useEffect(() => {
+    if (currentRoutine) {
+      const allExercises = currentRoutine.sections.flatMap((s) =>
+        s.exercises.map((ex) => ({ name: ex.name, completed: false })),
+      );
+      setExerciseStatuses(allExercises);
+
+      // Crear mapa de sets objetivo por ejercicio
+      const setsMap = new Map<string, number>();
+      currentRoutine.sections.forEach((section) => {
+        section.exercises.forEach((ex) => {
+          setsMap.set(ex.name, parseTargetSets(ex.sets));
+        });
+      });
+      setExerciseTargetSets(setsMap);
+
+      // Verificar si es el día actual
+      const today = new Date().toISOString().split('T')[0];
+      setIsCurrentDay(currentRoutine.date === today);
+    }
+  }, [currentRoutine]);
+
+  // Inicializar workout log cuando la rutina está lista
+  useEffect(() => {
+    const initWorkoutLog = async () => {
+      if (!currentRoutine || !isCurrentDay) return;
+
+      try {
+        const workoutLog = await getOrCreateWorkoutLog(
+          undefined, // dayRoutineId
+          undefined, // routineId
+        );
+        setWorkoutLogId(workoutLog.id);
+
+        // Cargar logs existentes
+        const logs = await getWorkoutExerciseLogs(workoutLog.id);
+        const logsMap = new Map<string, ExerciseLog[]>();
+
+        logs.forEach((log: ExerciseLog) => {
+          const existing = logsMap.get(log.exercise_name) || [];
+          logsMap.set(log.exercise_name, [...existing, log]);
+        });
+
+        setExerciseLogs(logsMap);
+
+        // Actualizar statuses basados en logs existentes
+        // Solo marcar como completado si tiene todas las series
+        setExerciseStatuses((prev) =>
+          prev.map((ex) => {
+            const targetSets = exerciseTargetSets.get(ex.name) || 0;
+            const completedSetsCount = logsMap.get(ex.name)?.length || 0;
+            return {
+              ...ex,
+              completed: completedSetsCount >= targetSets,
+            };
+          }),
+        );
+      } catch (error) {
+        console.error('Error al inicializar workout log:', error);
+      }
+    };
+
+    initWorkoutLog();
+  }, [currentRoutine, isCurrentDay, exerciseTargetSets]);
+
+  // Función para registrar un set
+  const handleLogSet = async (
+    exerciseName: string,
+    setData: {
+      reps_completed?: number;
+      weight_kg?: number;
+      weight_lbs?: number;
+      rpe?: number;
+      notes?: string;
+    },
+  ) => {
+    if (!workoutLogId) {
+      throw new Error('No hay workout log activo');
+    }
+
+    // Calcular el número de set
+    const existingSets = exerciseLogs.get(exerciseName) || [];
+    const setNumber = existingSets.length + 1;
+
+    // Guardar en backend
+    const newLog = await logExerciseSet(workoutLogId, {
+      exercise_name: exerciseName,
+      set_number: setNumber,
+      ...setData,
+    });
+
+    // Actualizar estado local
+    setExerciseLogs((prev) => {
+      const updated = new Map(prev);
+      const current = updated.get(exerciseName) || [];
+      const newSets = [...current, newLog];
+      updated.set(exerciseName, newSets);
+
+      // Verificar si se completaron todas las series del ejercicio
+      const targetSets = exerciseTargetSets.get(exerciseName) || 0;
+      if (newSets.length >= targetSets) {
+        // Marcar ejercicio como completado solo si tiene todas las series
+        setExerciseStatuses((prevStatuses) =>
+          prevStatuses.map((ex) =>
+            ex.name === exerciseName ? { ...ex, completed: true } : ex,
+          ),
+        );
+      }
+
+      return updated;
+    });
+  };
+
+  // Función para terminar el entrenamiento
+  const handleFinishWorkout = () => {
+    navigate('/dashboard');
+  };
+
   const handleBackToRoutine = () => {
-    navigate("/dashboard");
+    navigate('/dashboard');
   };
 
   if (loading) {
@@ -110,7 +260,7 @@ export const DayRoutine: React.FC = () => {
       <div
         className={cn(
           themeClasses.layout.screen,
-          themeClasses.layout.flexCenter
+          themeClasses.layout.flexCenter,
         )}
       >
         <div className={themeClasses.text.tertiary}>Rutina no encontrada</div>
@@ -127,19 +277,45 @@ export const DayRoutine: React.FC = () => {
       className={cn(
         themeClasses.layout.screen,
         themeClasses.backgrounds.primary,
-        "pb-12"
+        'pb-12',
       )}
     >
+      {/* Barra de progreso sticky */}
+      <WorkoutProgress
+        exercises={exerciseStatuses}
+        dayName={currentRoutine.dayName}
+        sessionStarted={exerciseStatuses.some((e) => e.completed)}
+        estimatedMinutes={60}
+      />
+
       <DayHeader
         currentRoutine={currentRoutine}
         handleBackToRoutine={handleBackToRoutine}
       />
 
-      <div className={cn(themeClasses.layout.container, "py-8")}>
+      <div className={cn(themeClasses.layout.container, 'py-8')}>
         {currentRoutine.warmup && <WarmUp currentRoutine={currentRoutine} />}
 
         {currentRoutine.sections.map((section, sIdx) => (
-          <Exercises key={sIdx} section={section} />
+          <div key={sIdx} className="mb-8">
+            <h2 className="text-lg font-semibold text-blue-400 mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 bg-blue-400 rounded-full" />
+              {section.title}
+            </h2>
+            <div className="space-y-4">
+              {section.exercises.map((exercise, eIdx) => (
+                <ExerciseTracker
+                  key={eIdx}
+                  exercise={exercise}
+                  workoutLogId={workoutLogId}
+                  completedSets={exerciseLogs.get(exercise.name) || []}
+                  onLogSet={handleLogSet}
+                  isCurrentDay={isCurrentDay}
+                  weightUnit="kg"
+                />
+              ))}
+            </div>
+          </div>
         ))}
 
         {currentRoutine.cooldown && (
@@ -147,7 +323,49 @@ export const DayRoutine: React.FC = () => {
         )}
 
         {showTips && <Tips />}
+
+        {/* Botón de terminar entrenamiento */}
+        {isCurrentDay && (
+          <div className="mt-8 flex justify-center">
+            <button
+              onClick={() => setShowFinishDialog(true)}
+              className="px-6 py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 flex items-center gap-2"
+              style={{
+                background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                color: 'white',
+                boxShadow: '0 4px 16px rgba(239, 68, 68, 0.3)',
+              }}
+            >
+              <Flag size={18} />
+              Terminar entrenamiento
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Timer flotante */}
+      <RestTimer
+        isOpen={timerOpen}
+        onClose={() => setTimerOpen(false)}
+        defaultSeconds={90}
+        exerciseName=""
+        onComplete={() => {
+          // opcional: callback cuando termina el timer
+        }}
+      />
+
+      {/* Diálogo de confirmación para terminar */}
+      <ConfirmDialog
+        isOpen={showFinishDialog}
+        onClose={() => setShowFinishDialog(false)}
+        onConfirm={handleFinishWorkout}
+        title="Terminar entrenamiento"
+        message="¿Estás seguro de que quieres finalizar el entrenamiento? Tu progreso actual se guardará."
+        confirmText="Terminar"
+        cancelText="Continuar entrenando"
+        variant="warning"
+        icon={<Flag size={24} />}
+      />
     </div>
   );
 };

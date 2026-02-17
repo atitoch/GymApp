@@ -1,9 +1,9 @@
 // URL base del backend (debe configurarse según el entorno)
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-import type { ApiResponse } from "../types/api";
-import { ApiError } from "../types/api";
-import { parseApiError, handleFetchError } from "../utils/errorHandler";
+import type { ApiResponse } from '../types/api';
+import { ApiError } from '../types/api';
+import { parseApiError, handleFetchError } from '../utils/errorHandler';
 
 export interface LoginCredentials {
   email: string;
@@ -35,13 +35,13 @@ export type AuthError = ApiError;
  * Inicia sesión con email y contraseña
  */
 export const login = async (
-  credentials: LoginCredentials
+  credentials: LoginCredentials,
 ): Promise<AuthResponse> => {
   try {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         email: credentials.email,
@@ -74,18 +74,18 @@ export const register = async (data: RegisterData): Promise<AuthResponse> => {
   try {
     // Validar que las contraseñas coincidan
     if (data.password !== data.confirmPassword) {
-      throw new ApiError("Las contraseñas no coinciden", 400);
+      throw new ApiError('Las contraseñas no coinciden', 400);
     }
 
     // Dividir fullName en firstName y lastName
     const nameParts = data.fullName.trim().split(/\s+/);
-    const firstName = nameParts[0] || "";
-    const lastName = nameParts.slice(1).join(" ") || "";
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
 
     const response = await fetch(`${API_BASE_URL}/auth/register`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         email: data.email,
@@ -121,11 +121,11 @@ export const loginWithGoogle = async (): Promise<void> => {
     // El backend debe manejar la redirección a Google
     // Esto puede variar según cómo implementes OAuth en el backend
     const response = await fetch(`${API_BASE_URL}/auth/google`, {
-      method: "GET",
+      method: 'GET',
     });
 
     if (!response.ok) {
-      throw new Error("Error al iniciar sesión con Google");
+      throw new Error('Error al iniciar sesión con Google');
     }
 
     // Si el backend devuelve una URL de redirección
@@ -137,7 +137,7 @@ export const loginWithGoogle = async (): Promise<void> => {
     if (error instanceof Error) {
       throw error;
     }
-    throw new Error("Error desconocido al iniciar sesión con Google");
+    throw new Error('Error desconocido al iniciar sesión con Google');
   }
 };
 
@@ -147,11 +147,11 @@ export const loginWithGoogle = async (): Promise<void> => {
 export const loginWithGitHub = async (): Promise<void> => {
   try {
     const response = await fetch(`${API_BASE_URL}/auth/github`, {
-      method: "GET",
+      method: 'GET',
     });
 
     if (!response.ok) {
-      throw new Error("Error al iniciar sesión con GitHub");
+      throw new Error('Error al iniciar sesión con GitHub');
     }
 
     const data = await response.json();
@@ -162,7 +162,7 @@ export const loginWithGitHub = async (): Promise<void> => {
     if (error instanceof Error) {
       throw error;
     }
-    throw new Error("Error desconocido al iniciar sesión con GitHub");
+    throw new Error('Error desconocido al iniciar sesión con GitHub');
   }
 };
 
@@ -171,18 +171,18 @@ export const loginWithGitHub = async (): Promise<void> => {
  */
 export const logout = async (
   token: string,
-  refreshToken?: string
+  refreshToken?: string,
 ): Promise<void> => {
   try {
     await fetch(`${API_BASE_URL}/auth/logout`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
       body: refreshToken ? JSON.stringify({ refreshToken }) : undefined,
     });
-  } catch (error) {
+  } catch {
     // Incluso si falla, limpiamos el token localmente
   }
 };
@@ -191,13 +191,13 @@ export const logout = async (
  * Refresca el token de acceso
  */
 export const refreshToken = async (
-  refreshToken: string
+  refreshToken: string,
 ): Promise<AuthResponse> => {
   try {
     const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ refreshToken }),
     });
@@ -227,13 +227,13 @@ export const refreshToken = async (
  * Verifica si un token es válido y obtiene información del usuario
  */
 export const verifyToken = async (
-  token: string
+  token: string,
 ): Promise<{ valid: boolean; user?: { id: string; email: string } }> => {
   try {
     const response = await fetch(`${API_BASE_URL}/auth/verify`, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
@@ -255,9 +255,9 @@ export const verifyToken = async (
 export const requestPasswordReset = async (email: string): Promise<void> => {
   try {
     const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ email }),
     });
@@ -276,9 +276,9 @@ export const requestPasswordReset = async (email: string): Promise<void> => {
 export const resendVerificationEmail = async (email: string): Promise<void> => {
   try {
     const response = await fetch(`${API_BASE_URL}/auth/resend-verification`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ email }),
     });
