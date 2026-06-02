@@ -10,22 +10,60 @@ const USER_KEY = 'auth_user';
 
 /**
  * Limpia la sesión y redirige al login
- * Se llama cuando el token expira (401)
  */
 const handleUnauthorized = () => {
-  // Limpiar localStorage
   try {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
   } catch {
-    // Ignorar errores al limpiar localStorage
+    // ignore
   }
-
-  // Redirigir a la página inicial
-  // Usamos window.location.href para forzar una recarga completa
-  // Esto asegura que React Router se reinicialice correctamente
   window.location.href = '/';
+};
+
+let _isRefreshing = false;
+let _refreshPromise: Promise<string | null> | null = null;
+
+/**
+ * Intenta renovar el token con el refresh token.
+ * Si ya hay un refresh en curso, espera el mismo para evitar llamadas duplicadas.
+ */
+const tryRefreshToken = (): Promise<string | null> => {
+  if (_isRefreshing && _refreshPromise) return _refreshPromise;
+
+  _isRefreshing = true;
+  _refreshPromise = (async () => {
+    try {
+      const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+      if (!refreshToken) return null;
+
+      const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken }),
+      });
+
+      if (!response.ok) return null;
+
+      const data = await response.json();
+      const newToken: string = data?.data?.token ?? data?.token;
+      if (!newToken) return null;
+
+      localStorage.setItem(TOKEN_KEY, newToken);
+      if (data?.data?.refreshToken ?? data?.refreshToken) {
+        localStorage.setItem(REFRESH_TOKEN_KEY, data?.data?.refreshToken ?? data?.refreshToken);
+      }
+      return newToken;
+    } catch {
+      return null;
+    } finally {
+      _isRefreshing = false;
+      _refreshPromise = null;
+    }
+  })();
+
+  return _refreshPromise;
 };
 
 /**
@@ -85,14 +123,20 @@ export const authenticatedFetch = async (
     ...(options.headers || {}),
   };
 
-  const response = await fetch(url, {
-    ...options,
-    headers: mergedHeaders,
-  });
+  let response = await fetch(url, { ...options, headers: mergedHeaders });
 
-  // Si el token expiró (401), no lanzar error aquí
-  // Dejamos que el código que llama maneje el 401
-  // para que pueda intentar refrescar el token si es necesario
+  // En 401 intentar renovar el token una sola vez y reintentar
+  if (response.status === 401) {
+    const newToken = await tryRefreshToken();
+    if (newToken) {
+      const retryHeaders = {
+        ...mergedHeaders,
+        Authorization: `Bearer ${newToken}`,
+      };
+      response = await fetch(url, { ...options, headers: retryHeaders });
+    }
+  }
+
   return response;
 };
 
