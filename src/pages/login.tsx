@@ -195,9 +195,10 @@ export const Login: React.FC = () => {
       validateField(name, value);
     }
 
-    // Si es confirmPassword, también validar cuando cambia password
+    // Revalidar confirmPassword con el nuevo valor de password (no el del estado anterior)
     if (name === "password" && touchedFields.has("confirmPassword")) {
-      validateField("confirmPassword", formData.confirmPassword);
+      const confirmError = validateConfirmPassword(formData.confirmPassword, value);
+      setFieldErrors((prev) => ({ ...prev, confirmPassword: confirmError }));
     }
   };
 
@@ -205,6 +206,10 @@ export const Login: React.FC = () => {
     const { name, value } = e.target;
     setTouchedFields((prev) => new Set(prev).add(name));
     validateField(name, value);
+    if (name === "password" && touchedFields.has("confirmPassword")) {
+      const confirmError = validateConfirmPassword(formData.confirmPassword, value);
+      setFieldErrors((prev) => ({ ...prev, confirmPassword: confirmError }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -771,6 +776,7 @@ export const Login: React.FC = () => {
                   setError(null);
                   setFieldErrors({});
                   setTouchedFields(new Set());
+                  setFormData({ email: "", password: "", confirmPassword: "", fullName: "", rememberMe: false });
                 }}
                 disabled={isLoading}
                 className="text-lime-400 hover:text-lime-300 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
