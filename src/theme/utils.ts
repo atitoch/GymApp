@@ -23,27 +23,27 @@ export const themeToTailwind = {
   textInverse: "text-slate-900",
 
   // Primary colors
-  primary50: "text-blue-50",
-  primary100: "text-blue-100",
-  primary200: "text-blue-200",
-  primary300: "text-blue-300",
-  primary400: "text-blue-400",
-  primary500: "text-blue-500",
-  primary600: "text-blue-600",
-  primary700: "text-blue-700",
-  primary800: "text-blue-800",
-  primary900: "text-blue-900",
+  primary50: "text-amber-50",
+  primary100: "text-amber-100",
+  primary200: "text-amber-200",
+  primary300: "text-amber-300",
+  primary400: "text-amber-400",
+  primary500: "text-amber-500",
+  primary600: "text-amber-600",
+  primary700: "text-amber-700",
+  primary800: "text-amber-800",
+  primary900: "text-amber-900",
 
-  bgPrimary50: "bg-blue-50",
-  bgPrimary100: "bg-blue-100",
-  bgPrimary200: "bg-blue-200",
-  bgPrimary300: "bg-blue-300",
-  bgPrimary400: "bg-blue-400",
-  bgPrimary500: "bg-blue-500",
-  bgPrimary600: "bg-blue-600",
-  bgPrimary700: "bg-blue-700",
-  bgPrimary800: "bg-blue-800",
-  bgPrimary900: "bg-blue-900",
+  bgPrimary50: "bg-amber-50",
+  bgPrimary100: "bg-amber-100",
+  bgPrimary200: "bg-amber-200",
+  bgPrimary300: "bg-amber-300",
+  bgPrimary400: "bg-amber-400",
+  bgPrimary500: "bg-amber-500",
+  bgPrimary600: "bg-amber-600",
+  bgPrimary700: "bg-amber-700",
+  bgPrimary800: "bg-amber-800",
+  bgPrimary900: "bg-amber-900",
 
   // Secondary colors
   secondary500: "text-green-500",
@@ -52,24 +52,24 @@ export const themeToTailwind = {
   // Borders
   borderDefault: "border-slate-700",
   borderHover: "border-slate-600",
-  borderFocus: "border-blue-500",
+  borderFocus: "border-amber-500",
   borderError: "border-red-500",
 
   // Status
   success: "text-green-500",
   warning: "text-amber-500",
   error: "text-red-500",
-  info: "text-blue-500",
+  info: "text-amber-500",
 
   bgSuccess: "bg-green-500/10",
   bgWarning: "bg-amber-500/10",
   bgError: "bg-red-500/10",
-  bgInfo: "bg-blue-500/10",
+  bgInfo: "bg-amber-500/10",
 
   borderSuccess: "border-green-500/50",
   borderWarning: "border-amber-500/50",
   borderErrorOpacity: "border-red-500/50",
-  borderInfo: "border-blue-500/50",
+  borderInfo: "border-amber-500/50",
 };
 
 /**

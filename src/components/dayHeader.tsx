@@ -49,7 +49,7 @@ export const DayHeader: React.FC<DayHeaderProps> = ({
       <div className="max-w-4xl mx-auto px-6 py-4">
         <button
           onClick={handleBackToRoutine}
-          className="text-blue-500 hover:text-blue-400 mb-3 flex items-center gap-2 transition-colors"
+          className="text-amber-500 hover:text-amber-400 mb-3 flex items-center gap-2 transition-colors"
         >
           ← Volver al dashboard
         </button>
@@ -57,7 +57,7 @@ export const DayHeader: React.FC<DayHeaderProps> = ({
           <div>
             <div className="flex items-center gap-3 mb-1">
               <h1 className="text-2xl font-bold text-slate-50">{dayLabel}</h1>
-              <span className="px-3 py-1 bg-blue-500/20 text-blue-400 text-sm font-semibold rounded-full">
+              <span className="px-3 py-1 bg-amber-500/20 text-amber-400 text-sm font-semibold rounded-full">
                 {currentRoutine.dayName}
               </span>
             </div>

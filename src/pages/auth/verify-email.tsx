@@ -66,7 +66,7 @@ export const VerifyEmail = () => {
           </p>
           <button
             onClick={() => navigate("/login")}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition-colors"
+            className="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 rounded-lg transition-colors"
           >
             Ir al inicio de sesión
           </button>
@@ -121,7 +121,7 @@ export const VerifyEmail = () => {
                     setResendSuccess(false);
                   }}
                   placeholder="tu@email.com"
-                  className="w-full pl-10 pr-4 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -142,7 +142,7 @@ export const VerifyEmail = () => {
             <button
               onClick={handleResendEmail}
               disabled={isResending || !email}
-              className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-amber-500 hover:bg-amber-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
             >
               {isResending ? (
                 <>
@@ -173,8 +173,8 @@ export const VerifyEmail = () => {
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6">
       <div className="max-w-md w-full bg-slate-800/60 border border-slate-700/50 rounded-lg p-8 text-center">
-        <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Mail className="w-8 h-8 text-blue-500" />
+        <div className="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Mail className="w-8 h-8 text-amber-500" />
         </div>
         <h1 className="text-2xl font-bold text-slate-50 mb-2">
           Verifica tu Correo Electrónico
@@ -183,7 +183,7 @@ export const VerifyEmail = () => {
           Hemos enviado un correo de verificación a:
         </p>
         {email && (
-          <p className="text-lg font-semibold text-blue-400 mb-4">{email}</p>
+          <p className="text-lg font-semibold text-amber-400 mb-4">{email}</p>
         )}
         <p className="text-slate-400 text-sm mb-6">
           Por favor revisa tu bandeja de entrada y haz clic en el link de
@@ -207,7 +207,7 @@ export const VerifyEmail = () => {
             <button
               onClick={handleResendEmail}
               disabled={isResending}
-              className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-amber-500 hover:bg-amber-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
             >
               {isResending ? (
                 <>

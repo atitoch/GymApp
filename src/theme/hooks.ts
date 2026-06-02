@@ -46,26 +46,26 @@ export const useThemeClasses = () => {
     // Borders
     borderDefault: "border-slate-700",
     borderHover: "border-slate-600",
-    borderFocus: "border-blue-500",
+    borderFocus: "border-amber-500",
 
     // Buttons
     btnPrimary:
-      "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white",
+      "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white",
     btnSecondary: "bg-slate-800 hover:bg-slate-700 text-slate-300",
-    btnGhost: "bg-transparent hover:bg-slate-800 text-blue-400",
+    btnGhost: "bg-transparent hover:bg-slate-800 text-amber-400",
 
     // Cards
     card: "bg-slate-800 hover:bg-slate-700 border border-slate-700",
 
     // Inputs
     input:
-      "bg-slate-900/50 border border-slate-700 focus:border-blue-500 text-slate-50 placeholder-slate-500",
+      "bg-slate-900/50 border border-slate-700 focus:border-amber-500 text-slate-50 placeholder-slate-500",
 
     // Status colors
     success: "text-green-500 bg-green-500/10 border-green-500/50",
     warning: "text-amber-500 bg-amber-500/10 border-amber-500/50",
     error: "text-red-500 bg-red-500/10 border-red-500/50",
-    info: "text-blue-500 bg-blue-500/10 border-blue-500/50",
+    info: "text-amber-500 bg-amber-500/10 border-amber-500/50",
   };
 };
 

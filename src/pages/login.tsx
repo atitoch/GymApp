@@ -336,7 +336,7 @@ export const Login: React.FC = () => {
       >
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center">
               <Dumbbell className="w-5 h-5 text-white" />
             </div>
             <span className="text-white font-semibold text-lg">GymTrack</span>
@@ -391,7 +391,7 @@ export const Login: React.FC = () => {
       </header>
 
       {/* Panel izquierdo - Información de la app */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 p-12 flex-col justify-between relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-amber-600 via-amber-700 to-indigo-800 p-12 flex-col justify-between relative overflow-hidden">
         {/* Efectos de fondo */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
@@ -409,10 +409,10 @@ export const Login: React.FC = () => {
           <h1 className="text-5xl font-bold text-white mb-6 leading-tight">
             Organiza tu entrenamiento
             <br />
-            <span className="text-blue-200">de forma inteligente</span>
+            <span className="text-amber-200">de forma inteligente</span>
           </h1>
 
-          <p className="text-blue-100 text-lg mb-12 max-w-md">
+          <p className="text-amber-100 text-lg mb-12 max-w-md">
             Planifica tus rutinas, sigue tu progreso y alcanza tus objetivos de
             fitness con nuestra plataforma.
           </p>
@@ -427,7 +427,7 @@ export const Login: React.FC = () => {
                 <h3 className="text-white font-semibold mb-1">
                   Rutinas Personalizadas
                 </h3>
-                <p className="text-blue-100 text-sm">
+                <p className="text-amber-100 text-sm">
                   Crea y gestiona rutinas adaptadas a tus objetivos y
                   disponibilidad.
                 </p>
@@ -442,7 +442,7 @@ export const Login: React.FC = () => {
                 <h3 className="text-white font-semibold mb-1">
                   Seguimiento de Progreso
                 </h3>
-                <p className="text-blue-100 text-sm">
+                <p className="text-amber-100 text-sm">
                   Monitorea tu evolución y mantén la motivación día a día.
                 </p>
               </div>
@@ -456,7 +456,7 @@ export const Login: React.FC = () => {
                 <h3 className="text-white font-semibold mb-1">
                   Patrones Inteligentes
                 </h3>
-                <p className="text-blue-100 text-sm">
+                <p className="text-amber-100 text-sm">
                   Sistema de días consecutivos que se adapta a tu ritmo de
                   entrenamiento.
                 </p>
@@ -467,7 +467,7 @@ export const Login: React.FC = () => {
 
         {/* Footer del panel izquierdo */}
         <div className="relative z-10">
-          <div className="flex items-center gap-2 text-blue-200 text-sm">
+          <div className="flex items-center gap-2 text-amber-200 text-sm">
             <CheckCircle2 className="w-4 h-4" />
             <span>100% Gratis</span>
             <span className="mx-2">•</span>
@@ -481,7 +481,7 @@ export const Login: React.FC = () => {
         <div className="w-full max-w-md">
           {/* Logo móvil */}
           <div className="lg:hidden text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl mb-4 shadow-lg shadow-blue-500/30">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl mb-4 shadow-lg shadow-amber-500/30">
               <Dumbbell className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold text-slate-50 mb-2">GymTrack</h1>
@@ -529,7 +529,7 @@ export const Login: React.FC = () => {
                     className={`w-full bg-slate-800/60 border border-slate-700/50 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:bg-slate-800/80 focus:border-slate-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                       fieldErrors.fullName && touchedFields.has("fullName")
                         ? "focus:ring-red-500/50 ring-2 ring-red-500/50 border-red-500/50"
-                        : "focus:ring-blue-500/50"
+                        : "focus:ring-amber-500/50"
                     }`}
                   />
                   {fieldErrors.fullName && touchedFields.has("fullName") && (
@@ -557,7 +557,7 @@ export const Login: React.FC = () => {
                   className={`w-full bg-slate-800/60 border border-slate-700/50 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:bg-slate-800/80 focus:border-slate-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                     fieldErrors.email && touchedFields.has("email")
                       ? "focus:ring-red-500/50 ring-2 ring-red-500/50 border-red-500/50"
-                      : "focus:ring-blue-500/50"
+                      : "focus:ring-amber-500/50"
                   }`}
                 />
                 {fieldErrors.email && touchedFields.has("email") && (
@@ -587,7 +587,7 @@ export const Login: React.FC = () => {
                     className={`w-full bg-slate-800/60 border border-slate-700/50 rounded-lg px-4 py-3 pr-11 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:bg-slate-800/80 focus:border-slate-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                       fieldErrors.password && touchedFields.has("password")
                         ? "focus:ring-red-500/50 ring-2 ring-red-500/50 border-red-500/50"
-                        : "focus:ring-blue-500/50"
+                        : "focus:ring-amber-500/50"
                     }`}
                   />
                   <button
@@ -633,7 +633,7 @@ export const Login: React.FC = () => {
                         fieldErrors.confirmPassword &&
                         touchedFields.has("confirmPassword")
                           ? "focus:ring-red-500/50 ring-2 ring-red-500/50 border-red-500/50"
-                          : "focus:ring-blue-500/50"
+                          : "focus:ring-amber-500/50"
                       }`}
                     />
                     <button
@@ -675,7 +675,7 @@ export const Login: React.FC = () => {
                       checked={formData.rememberMe}
                       onChange={handleInputChange}
                       disabled={isLoading}
-                      className="w-4 h-4 rounded border-slate-600 bg-slate-900/30 text-blue-500 focus:ring-2 focus:ring-blue-500/30 focus:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-4 h-4 rounded border-slate-600 bg-slate-900/30 text-amber-500 focus:ring-2 focus:ring-amber-500/30 focus:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                     <span className="group-hover:text-slate-300 transition-colors">
                       Recordarme
@@ -684,7 +684,7 @@ export const Login: React.FC = () => {
                   <button
                     type="button"
                     disabled={isLoading}
-                    className="text-blue-400 hover:text-blue-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                    className="text-amber-400 hover:text-amber-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                   >
                     ¿Olvidaste tu contraseña?
                   </button>
@@ -694,7 +694,7 @@ export const Login: React.FC = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
               >
                 {isLoading && <Loader2 className="w-5 h-5 animate-spin" />}
                 {isRegistering ? "Crear cuenta" : "Iniciar sesión"}
@@ -773,7 +773,7 @@ export const Login: React.FC = () => {
                   setTouchedFields(new Set());
                 }}
                 disabled={isLoading}
-                className="text-blue-400 hover:text-blue-300 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="text-amber-400 hover:text-amber-300 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isRegistering ? "Inicia sesión" : "Regístrate"}
               </button>

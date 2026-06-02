@@ -15,7 +15,7 @@ export const TermsOfService: React.FC = () => {
       <div className="max-w-4xl mx-auto px-6 py-12">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-blue-400 hover:text-blue-300 mb-8 transition-colors"
+          className="flex items-center gap-2 text-amber-400 hover:text-amber-300 mb-8 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
           Volver
@@ -23,7 +23,7 @@ export const TermsOfService: React.FC = () => {
 
         <div className="bg-slate-800/50 rounded-2xl p-8 md:p-12">
           <div className="flex items-center gap-3 mb-6">
-            <Scale className="w-8 h-8 text-blue-500" />
+            <Scale className="w-8 h-8 text-amber-500" />
             <h1 className="text-4xl font-bold">
               Términos y Condiciones de Uso
             </h1>
@@ -41,7 +41,7 @@ export const TermsOfService: React.FC = () => {
           <div className="prose prose-invert max-w-none space-y-8">
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-blue-500" />
+                <FileText className="w-6 h-6 text-amber-500" />
                 1. Aceptación de los Términos
               </h2>
               <p className="text-slate-300 leading-relaxed">
@@ -61,7 +61,7 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-blue-500" />
+                <FileText className="w-6 h-6 text-amber-500" />
                 2. Descripción del Servicio
               </h2>
               <p className="text-slate-300 leading-relaxed mb-4">
@@ -86,7 +86,7 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <Shield className="w-6 h-6 text-blue-500" />
+                <Shield className="w-6 h-6 text-amber-500" />
                 3. Cuenta de Usuario
               </h2>
               <div className="space-y-4">
@@ -129,7 +129,7 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <AlertTriangle className="w-6 h-6 text-blue-500" />
+                <AlertTriangle className="w-6 h-6 text-amber-500" />
                 4. Uso Aceptable
               </h2>
               <p className="text-slate-300 leading-relaxed mb-4">
@@ -170,7 +170,7 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-blue-500" />
+                <FileText className="w-6 h-6 text-amber-500" />
                 5. Propiedad Intelectual
               </h2>
               <p className="text-slate-300 leading-relaxed mb-4">
@@ -198,7 +198,7 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-blue-500" />
+                <FileText className="w-6 h-6 text-amber-500" />
                 6. Limitación de Responsabilidad
               </h2>
               <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-6 space-y-4">
@@ -246,7 +246,7 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-blue-500" />
+                <FileText className="w-6 h-6 text-amber-500" />
                 7. Disponibilidad del Servicio
               </h2>
               <p className="text-slate-300 leading-relaxed">
@@ -261,7 +261,7 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-blue-500" />
+                <FileText className="w-6 h-6 text-amber-500" />
                 8. Cancelación y Terminación
               </h2>
               <div className="space-y-4">
@@ -299,7 +299,7 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-blue-500" />
+                <FileText className="w-6 h-6 text-amber-500" />
                 9. Modificaciones a los Términos
               </h2>
               <p className="text-slate-300 leading-relaxed">
@@ -324,7 +324,7 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-blue-500" />
+                <FileText className="w-6 h-6 text-amber-500" />
                 10. Enlaces a Terceros
               </h2>
               <p className="text-slate-300 leading-relaxed">
@@ -338,7 +338,7 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-blue-500" />
+                <FileText className="w-6 h-6 text-amber-500" />
                 11. Indemnización
               </h2>
               <p className="text-slate-300 leading-relaxed">
@@ -361,7 +361,7 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-blue-500" />
+                <FileText className="w-6 h-6 text-amber-500" />
                 12. Legislación Aplicable y Jurisdicción
               </h2>
               <p className="text-slate-300 leading-relaxed">
@@ -375,7 +375,7 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-blue-500" />
+                <FileText className="w-6 h-6 text-amber-500" />
                 13. Disposiciones Generales
               </h2>
               <div className="space-y-3">
@@ -397,15 +397,15 @@ export const TermsOfService: React.FC = () => {
               </div>
             </section>
 
-            <section className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4 text-blue-400">
+            <section className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-6">
+              <h2 className="text-xl font-semibold mb-4 text-amber-400">
                 Contacto
               </h2>
               <p className="text-slate-300 leading-relaxed">
                 Si tiene preguntas sobre estos Términos y Condiciones, puede
                 contactarnos en:
               </p>
-              <p className="text-blue-400 mt-2">
+              <p className="text-amber-400 mt-2">
                 <strong>Email:</strong> support@gymtrack.com
               </p>
             </section>

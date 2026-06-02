@@ -8,17 +8,17 @@ import type { ColorPalette, ThemeConfig } from './types';
 // Paleta base (por defecto)
 const basePalette: ColorPalette = {
   primary: {
-    50: '#eff6ff',
-    100: '#dbeafe',
-    200: '#bfdbfe',
-    300: '#93c5fd',
-    400: '#60a5fa',
-    500: '#3b82f6', // Blue principal
-    600: '#2563eb',
-    700: '#1d4ed8',
-    800: '#1e40af',
-    900: '#1e3a8a',
-    950: '#172554',
+    50: '#fffbeb',
+    100: '#fef3c7',
+    200: '#fde68a',
+    300: '#fcd34d',
+    400: '#fbbf24',
+    500: '#f59e0b', // Amber principal
+    600: '#d97706',
+    700: '#b45309',
+    800: '#92400e',
+    900: '#78350f',
+    950: '#451a03',
   },
   
   secondary: {
@@ -54,22 +54,22 @@ const basePalette: ColorPalette = {
     success: '#22c55e', // green-500
     warning: '#f59e0b', // amber-500
     error: '#ef4444', // red-500
-    info: '#3b82f6', // blue-500
+    info: '#f59e0b', // amber-500
   },
   
   border: {
     default: '#334155', // slate-700
     hover: '#475569', // slate-600
-    focus: '#3b82f6', // blue-500
+    focus: '#f59e0b', // amber-500
     error: '#ef4444', // red-500
   },
   
   button: {
     primary: {
-      bg: 'linear-gradient(to right, #3b82f6, #2563eb)', // from-blue-500 to-blue-600
-      hover: 'linear-gradient(to right, #2563eb, #1d4ed8)', // from-blue-600 to-blue-700
+      bg: 'linear-gradient(to right, #f59e0b, #d97706)', // from-amber-500 to-amber-600
+      hover: 'linear-gradient(to right, #d97706, #b45309)', // from-amber-600 to-amber-700
       text: '#ffffff',
-      shadow: 'rgba(59, 130, 246, 0.3)', // blue-500/30
+      shadow: 'rgba(245, 158, 11, 0.3)', // amber-500/30
     },
     secondary: {
       bg: '#1e293b', // slate-800
@@ -80,14 +80,14 @@ const basePalette: ColorPalette = {
     ghost: {
       bg: 'transparent',
       hover: '#1e293b', // slate-800
-      text: '#3b82f6', // blue-400
+      text: '#f59e0b', // amber-400
     },
   },
   
   input: {
     bg: 'rgba(15, 23, 42, 0.5)', // slate-900/50
     border: '#334155', // slate-700
-    focus: '#3b82f6', // blue-500
+    focus: '#f59e0b', // amber-500
     placeholder: '#64748b', // slate-500
     text: '#f8fafc', // slate-50
   },
@@ -96,7 +96,7 @@ const basePalette: ColorPalette = {
     bg: '#1e293b', // slate-800
     hover: '#334155', // slate-700
     border: '#334155', // slate-700
-    shadow: 'rgba(59, 130, 246, 0.2)', // blue-500/20
+    shadow: 'rgba(245, 158, 11, 0.15)', // amber-500/20
   },
 };
 

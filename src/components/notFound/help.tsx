@@ -10,21 +10,21 @@ export const Help: React.FC = () => {
       <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
         <button
           onClick={() => navigate("/login")}
-          className="text-blue-400 hover:text-blue-300 transition-colors hover:underline"
+          className="text-amber-400 hover:text-amber-300 transition-colors hover:underline"
         >
           Iniciar sesión
         </button>
         <span className="text-slate-700">•</span>
         <button
           onClick={() => navigate("/dashboard")}
-          className="text-blue-400 hover:text-blue-300 transition-colors hover:underline"
+          className="text-amber-400 hover:text-amber-300 transition-colors hover:underline"
         >
           Ir al dashboard
         </button>
         <span className="text-slate-700">•</span>
         <button
           onClick={() => navigate("/ayuda")}
-          className="text-blue-400 hover:text-blue-300 transition-colors hover:underline"
+          className="text-amber-400 hover:text-amber-300 transition-colors hover:underline"
         >
           Centro de ayuda
         </button>

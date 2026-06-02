@@ -9,7 +9,7 @@ export const PrivacyPolicy: React.FC = () => {
       <div className="max-w-4xl mx-auto px-6 py-12">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-blue-400 hover:text-blue-300 mb-8 transition-colors"
+          className="flex items-center gap-2 text-amber-400 hover:text-amber-300 mb-8 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
           Volver
@@ -17,7 +17,7 @@ export const PrivacyPolicy: React.FC = () => {
 
         <div className="bg-slate-800/50 rounded-2xl p-8 md:p-12">
           <div className="flex items-center gap-3 mb-6">
-            <Shield className="w-8 h-8 text-blue-500" />
+            <Shield className="w-8 h-8 text-amber-500" />
             <h1 className="text-4xl font-bold">Política de Privacidad</h1>
           </div>
 
@@ -33,7 +33,7 @@ export const PrivacyPolicy: React.FC = () => {
           <div className="prose prose-invert max-w-none space-y-8">
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-blue-500" />
+                <FileText className="w-6 h-6 text-amber-500" />
                 1. Identificación del Responsable
               </h2>
               <p className="text-slate-300 leading-relaxed">
@@ -54,7 +54,7 @@ export const PrivacyPolicy: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <Eye className="w-6 h-6 text-blue-500" />
+                <Eye className="w-6 h-6 text-amber-500" />
                 2. Datos Personales que Recopilamos
               </h2>
               <p className="text-slate-300 leading-relaxed mb-4">
@@ -104,7 +104,7 @@ export const PrivacyPolicy: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-blue-500" />
+                <FileText className="w-6 h-6 text-amber-500" />
                 3. Finalidades del Tratamiento
               </h2>
               <p className="text-slate-300 leading-relaxed mb-4">
@@ -146,7 +146,7 @@ export const PrivacyPolicy: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-blue-500" />
+                <FileText className="w-6 h-6 text-amber-500" />
                 4. Transferencias de Datos
               </h2>
               <p className="text-slate-300 leading-relaxed mb-4">
@@ -172,7 +172,7 @@ export const PrivacyPolicy: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <Eye className="w-6 h-6 text-blue-500" />
+                <Eye className="w-6 h-6 text-amber-500" />
                 5. Derechos ARCO
               </h2>
               <p className="text-slate-300 leading-relaxed mb-4">
@@ -219,7 +219,7 @@ export const PrivacyPolicy: React.FC = () => {
               <p className="text-slate-300 leading-relaxed mt-4">
                 Para ejercer cualquiera de estos derechos, puede enviar una
                 solicitud a
-                <strong className="text-blue-400">
+                <strong className="text-amber-400">
                   {" "}
                   privacidad@gymroutine.com
                 </strong>{" "}
@@ -230,7 +230,7 @@ export const PrivacyPolicy: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <Lock className="w-6 h-6 text-blue-500" />
+                <Lock className="w-6 h-6 text-amber-500" />
                 6. Medidas de Seguridad
               </h2>
               <p className="text-slate-300 leading-relaxed mb-4">
@@ -249,7 +249,7 @@ export const PrivacyPolicy: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-blue-500" />
+                <FileText className="w-6 h-6 text-amber-500" />
                 7. Cookies y Tecnologías Similares
               </h2>
               <p className="text-slate-300 leading-relaxed mb-4">
@@ -269,7 +269,7 @@ export const PrivacyPolicy: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-blue-500" />
+                <FileText className="w-6 h-6 text-amber-500" />
                 8. Retención de Datos
               </h2>
               <p className="text-slate-300 leading-relaxed">
@@ -284,7 +284,7 @@ export const PrivacyPolicy: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-blue-500" />
+                <FileText className="w-6 h-6 text-amber-500" />
                 9. Menores de Edad
               </h2>
               <p className="text-slate-300 leading-relaxed">
@@ -299,7 +299,7 @@ export const PrivacyPolicy: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-blue-500" />
+                <FileText className="w-6 h-6 text-amber-500" />
                 10. Modificaciones a esta Política
               </h2>
               <p className="text-slate-300 leading-relaxed">
@@ -313,7 +313,7 @@ export const PrivacyPolicy: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-blue-500" />
+                <FileText className="w-6 h-6 text-amber-500" />
                 11. Legislación Aplicable
               </h2>
               <p className="text-slate-300 leading-relaxed">
@@ -326,15 +326,15 @@ export const PrivacyPolicy: React.FC = () => {
               </p>
             </section>
 
-            <section className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4 text-blue-400">
+            <section className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-6">
+              <h2 className="text-xl font-semibold mb-4 text-amber-400">
                 Contacto
               </h2>
               <p className="text-slate-300 leading-relaxed">
                 Si tiene preguntas sobre esta Política de Privacidad o sobre el
                 tratamiento de sus datos personales, puede contactarnos en:
               </p>
-              <p className="text-blue-400 mt-2">
+              <p className="text-amber-400 mt-2">
                 <strong>Email:</strong> privacidad@gymroutine.com
               </p>
             </section>

@@ -299,7 +299,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
             </h2>
             <div className="flex items-center gap-3 text-sm text-slate-400">
               <span className="flex items-center gap-1">
-                <span className="w-2 h-2 bg-blue-400 rounded-full" />
+                <span className="w-2 h-2 bg-amber-400 rounded-full" />
                 Serie {currentSetNumber}
               </span>
               <span>•</span>
@@ -333,7 +333,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
                   "focus:outline-none",
                   repsError
                     ? "focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                    : "focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20",
+                    : "focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20",
                   "transition-all duration-200"
                 )}
                 autoFocus
@@ -378,7 +378,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
                       "focus:outline-none",
                       weightError
                         ? "focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                        : "focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20",
+                        : "focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20",
                       "transition-all duration-200"
                     )}
                   />
@@ -391,7 +391,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
                     className={cn(
                       "flex-1 px-4 py-2 font-bold text-sm transition-all duration-200",
                       weightUnit === "kg"
-                        ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg"
+                        ? "bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-lg"
                         : "text-slate-400 hover:text-slate-200 hover:bg-slate-700/50"
                     )}
                   >
@@ -404,7 +404,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
                     className={cn(
                       "flex-1 px-4 py-2 font-bold text-sm transition-all duration-200",
                       weightUnit === "lbs"
-                        ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg"
+                        ? "bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-lg"
                         : "text-slate-400 hover:text-slate-200 hover:bg-slate-700/50"
                     )}
                   >
@@ -512,7 +512,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
           <button
             type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="w-full py-3 mb-4 text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3 mb-4 text-sm font-medium text-amber-400 hover:text-amber-300 transition-colors flex items-center justify-center gap-2"
           >
             {showAdvanced
               ? "Ocultar opciones avanzadas"
@@ -544,7 +544,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
                     type="checkbox"
                     checked={isWarmup}
                     onChange={(e) => setIsWarmup(e.target.checked)}
-                    className="w-5 h-5 rounded border-slate-600 text-blue-500 focus:ring-blue-500/20"
+                    className="w-5 h-5 rounded border-slate-600 text-amber-500 focus:ring-amber-500/20"
                   />
                   <span className="text-sm text-slate-300">Calentamiento</span>
                 </label>
@@ -553,7 +553,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
                     type="checkbox"
                     checked={isDropSet}
                     onChange={(e) => setIsDropSet(e.target.checked)}
-                    className="w-5 h-5 rounded border-slate-600 text-blue-500 focus:ring-blue-500/20"
+                    className="w-5 h-5 rounded border-slate-600 text-amber-500 focus:ring-amber-500/20"
                   />
                   <span className="text-sm text-slate-300">Drop Set</span>
                 </label>
@@ -562,7 +562,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
                     type="checkbox"
                     checked={isFailure}
                     onChange={(e) => setIsFailure(e.target.checked)}
-                    className="w-5 h-5 rounded border-slate-600 text-blue-500 focus:ring-blue-500/20"
+                    className="w-5 h-5 rounded border-slate-600 text-amber-500 focus:ring-amber-500/20"
                   />
                   <span className="text-sm text-slate-300">Al fallo</span>
                 </label>
@@ -582,7 +582,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
                     "w-full px-4 py-3 text-sm",
                     "bg-slate-800/50 border-2 border-slate-700",
                     "rounded-xl text-slate-50 placeholder-slate-500",
-                    "focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20",
+                    "focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20",
                     "transition-all duration-200 resize-none"
                   )}
                 />
@@ -613,9 +613,9 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
               }
               className={cn(
                 "flex-1 py-4 rounded-xl font-semibold",
-                "bg-gradient-to-r from-blue-500 to-blue-600",
-                "text-white shadow-lg shadow-blue-500/25",
-                "hover:from-blue-600 hover:to-blue-700",
+                "bg-gradient-to-r from-amber-500 to-amber-600",
+                "text-white shadow-lg shadow-amber-500/25",
+                "hover:from-amber-600 hover:to-amber-700",
                 "disabled:opacity-50 disabled:cursor-not-allowed",
                 "transition-all duration-200",
                 "flex items-center justify-center gap-2"

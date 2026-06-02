@@ -95,8 +95,8 @@ export const LandingPage: React.FC = () => {
       title: "Registro al Pie de la Letra",
       description:
         "Registra series, repeticiones, peso y RPE en cada entrenamiento. Nunca más olvides qué hiciste la última vez.",
-      gradient: "from-blue-500/20 to-blue-600/20",
-      iconColor: "text-blue-400",
+      gradient: "from-amber-500/20 to-amber-600/20",
+      iconColor: "text-amber-400",
       highlight: "Precisión total",
     },
     {
@@ -345,7 +345,7 @@ export const LandingPage: React.FC = () => {
       >
         {/* Background Effects */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
         </div>
 
@@ -821,7 +821,7 @@ export const LandingPage: React.FC = () => {
         }}
       >
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl" />
         </div>
 

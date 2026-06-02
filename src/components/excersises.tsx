@@ -16,8 +16,8 @@ export const Exercises: React.FC<ExerciseProps> = ({
 
   return (
     <div className="mb-8">
-      <h2 className="text-lg font-semibold text-blue-400 mb-4 flex items-center gap-2">
-        <span className="w-2 h-2 bg-blue-400 rounded-full" />
+      <h2 className="text-lg font-semibold text-amber-400 mb-4 flex items-center gap-2">
+        <span className="w-2 h-2 bg-amber-400 rounded-full" />
         {section.title}
       </h2>
 
@@ -71,7 +71,7 @@ export const Exercises: React.FC<ExerciseProps> = ({
             {onStartRest && (
               <button
                 onClick={() => onStartRest(exercise.name)}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 mb-4"
+                className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 mb-4"
               >
                 <Timer size={18} />
                 Iniciar descanso

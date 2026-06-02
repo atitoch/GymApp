@@ -139,7 +139,7 @@ export const CompleteWorkoutModal: React.FC<CompleteWorkoutModalProps> = ({
                 "w-full px-4 py-3 text-sm",
                 "bg-slate-800/50 border-2 border-slate-700",
                 "rounded-xl text-slate-50 placeholder-slate-500",
-                "focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20",
+                "focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20",
                 "transition-all duration-200 resize-none"
               )}
             />
