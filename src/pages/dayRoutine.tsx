@@ -22,7 +22,7 @@ import {
   completeWorkoutLog,
 } from '../services/workoutLog';
 import type { ExerciseLog } from '../types/workoutLog';
-import { ConfirmDialog } from '../components/ConfirmDialog';
+import { CompleteWorkoutModal } from '../components/CompleteWorkoutModal';
 import { Flag } from 'lucide-react';
 
 export const DayRoutine: React.FC = () => {
@@ -248,10 +248,10 @@ export const DayRoutine: React.FC = () => {
   };
 
   // Función para terminar el entrenamiento
-  const handleFinishWorkout = async () => {
+  const handleFinishWorkout = async (data: { rating?: number; notes?: string }) => {
     if (workoutLogId) {
       try {
-        await completeWorkoutLog(workoutLogId);
+        await completeWorkoutLog(workoutLogId, data.rating, data.notes);
       } catch {
         // Si falla, igual navegar — no bloquear al usuario
       }
@@ -354,6 +354,7 @@ export const DayRoutine: React.FC = () => {
             </button>
           </div>
         )}
+
       </div>
 
       {/* Timer flotante */}
@@ -367,17 +368,13 @@ export const DayRoutine: React.FC = () => {
         }}
       />
 
-      {/* Diálogo de confirmación para terminar */}
-      <ConfirmDialog
+      {/* Modal para terminar entrenamiento con rating y notas */}
+      <CompleteWorkoutModal
         isOpen={showFinishDialog}
         onClose={() => setShowFinishDialog(false)}
-        onConfirm={handleFinishWorkout}
-        title="Terminar entrenamiento"
-        message="¿Estás seguro de que quieres finalizar el entrenamiento? Tu progreso actual se guardará."
-        confirmText="Terminar"
-        cancelText="Continuar entrenando"
-        variant="warning"
-        icon={<Flag size={24} />}
+        onComplete={handleFinishWorkout}
+        completedSets={Array.from(exerciseLogs.values()).reduce((acc, sets) => acc + sets.length, 0)}
+        totalSets={Array.from(exerciseTargetSets.values()).reduce((acc, n) => acc + n, 0)}
       />
     </div>
   );
