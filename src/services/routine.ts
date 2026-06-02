@@ -1362,11 +1362,12 @@ export const fetchDayRoutine = async (
   const routinePattern = await fetchUserRoutinePattern(userId);
 
   if (!routinePattern) {
-    // Fallback: usar datos locales
     return getLocalDayRoutineAsCalculated(userId, dayNumber);
   }
 
-  return getRoutineForDay(routinePattern, dayNumber);
+  const result = getRoutineForDay(routinePattern, dayNumber);
+  if (!result) return null;
+  return { ...result, routineId: routinePattern.id };
 };
 
 /**

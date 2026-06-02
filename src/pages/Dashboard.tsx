@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Header } from "../components/header";
 import { RoutineList } from "../components/routineList";
 import { fetchUserRoutines } from "../services/routine";
+import { getWeeklyStats } from "../services/workoutLog";
 import { EmptyRoutine } from "../components/emptyRoutine";
 import { useAuth } from "../contexts/useAuth";
 import type { CalculatedDayRoutine } from "../types/routineType";
@@ -20,22 +21,32 @@ export const Dashboard: React.FC = () => {
     undefined
   );
   const [loading, setLoading] = useState(true);
+  const [weekStats, setWeekStats] = useState<{
+    completed_sessions: number;
+    days_trained: number;
+    total_duration_min: number;
+  } | null>(null);
 
   const loadRoutines = useCallback(async () => {
     if (!user?.id) return;
 
     setLoading(true);
     try {
-      // Obtener rutinas del backend para los próximos 7 días
-      const result = await fetchUserRoutines(user.id, 7);
+      const [result, stats] = await Promise.allSettled([
+        fetchUserRoutines(user.id, 7),
+        getWeeklyStats(),
+      ]);
 
-      if (result && result.routines && result.routines.length > 0) {
-        setRoutines(result.routines);
-        // Usar el currentDayNumber que viene del resultado
-        setCurrentDayNumber(result.currentDayNumber);
+      if (result.status === 'fulfilled' && result.value?.routines?.length > 0) {
+        setRoutines(result.value.routines);
+        setCurrentDayNumber(result.value.currentDayNumber);
       } else {
         setRoutines([]);
         setCurrentDayNumber(undefined);
+      }
+
+      if (stats.status === 'fulfilled') {
+        setWeekStats(stats.value);
       }
     } catch {
       // Error silencioso, se muestra estado vacío
@@ -84,20 +95,9 @@ export const Dashboard: React.FC = () => {
     );
   }
 
-  // Calcular estadísticas de la semana
-  const totalExercises = routines.reduce(
-    (acc, routine) =>
-      acc +
-      routine.sections.reduce(
-        (sectionAcc, section) => sectionAcc + section.exercises.length,
-        0
-      ),
-    0
-  );
-  const workoutDays = routines.filter(
-    (routine) => routine.dayName !== "DESCANSO"
-  ).length;
-  const restDays = routines.length - workoutDays;
+  const workoutDays = weekStats?.days_trained ?? routines.filter(r => r.dayName !== "DESCANSO").length;
+  const completedSessions = weekStats?.completed_sessions ?? 0;
+  const totalMinutes = weekStats?.total_duration_min ?? 0;
 
   return (
     <div
@@ -139,11 +139,11 @@ export const Dashboard: React.FC = () => {
                   themeClasses.text.tertiary
                 )}
               >
-                Ejercicios esta semana
+                Entrenos completados
               </h3>
             </div>
             <p className={cn("text-3xl font-bold", themeClasses.text.primary)}>
-              {totalExercises}
+              {completedSessions}
             </p>
           </div>
 
@@ -201,11 +201,11 @@ export const Dashboard: React.FC = () => {
                   themeClasses.text.tertiary
                 )}
               >
-                Días de descanso
+                Minutos esta semana
               </h3>
             </div>
             <p className={cn("text-3xl font-bold", themeClasses.text.primary)}>
-              {restDays}
+              {totalMinutes}
             </p>
           </div>
         </div>

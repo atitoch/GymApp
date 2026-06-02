@@ -163,8 +163,8 @@ export const DayRoutine: React.FC = () => {
       setWorkoutLogError(false);
       try {
         const workoutLog = await getOrCreateWorkoutLog(
-          undefined, // dayRoutineId
-          undefined, // routineId
+          currentRoutine.id,
+          currentRoutine.routineId,
         );
         setWorkoutLogId(workoutLog.id);
 

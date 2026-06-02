@@ -20,6 +20,7 @@ export interface DayRoutine {
   warmup?: string[];
   sections: Section[];
   cooldown?: string[];
+  id?: string; // UUID de day_routines (presente cuando viene del backend)
 }
 
 // ============================================
@@ -73,4 +74,5 @@ export interface CalculatedDayRoutine extends DayRoutine {
   cycleDay: number; // Día dentro del ciclo del patrón (0, 1, 2, ...)
   patternType: string; // Tipo del patrón para este día (PUSH, PULL, etc.)
   date: string; // Fecha correspondiente a este día
+  routineId?: string; // UUID de routines (presente cuando viene del backend)
 }
