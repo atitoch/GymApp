@@ -11,10 +11,10 @@ export const WarmUp: React.FC<WarmUpProps> = ({ currentRoutine }) => {
         <span className="w-2 h-2 bg-yellow-400 rounded-full" />
         Calentamiento
       </h2>
-      <div className="bg-slate-800/50 rounded-xl p-6 space-y-2">
+      <div className="bg-stone-800/50 rounded-xl p-6 space-y-2">
         {currentRoutine.warmup?.map((item, idx) => (
-          <div key={idx} className="flex items-start gap-3 text-slate-300">
-            <span className="text-slate-600 text-sm mt-1">•</span>
+          <div key={idx} className="flex items-start gap-3 text-stone-300">
+            <span className="text-stone-600 text-sm mt-1">•</span>
             <span>{item}</span>
           </div>
         ))}

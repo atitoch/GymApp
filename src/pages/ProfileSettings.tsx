@@ -94,7 +94,7 @@ function Section({
     <div>
       <div className="flex items-center gap-2 mb-3 px-1">
         <Icon size={14} className="text-indigo-400" />
-        <h2 className="text-xs font-black uppercase tracking-widest text-slate-500">
+        <h2 className="text-xs font-black uppercase tracking-widest text-stone-500">
           {title}
         </h2>
       </div>
@@ -132,14 +132,14 @@ function InputField({
 }) {
   return (
     <div className="px-4 py-3 flex items-center gap-3">
-      <span className="text-sm text-slate-400 min-w-28 shrink-0">{label}</span>
+      <span className="text-sm text-stone-400 min-w-28 shrink-0">{label}</span>
       <input
         type={type}
         value={value ?? ''}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         maxLength={maxLength}
-        className="flex-1 bg-transparent text-sm text-white placeholder-slate-600 outline-none text-right"
+        className="flex-1 bg-transparent text-sm text-white placeholder-stone-600 outline-none text-right"
       />
     </div>
   );
@@ -164,7 +164,7 @@ function NumberField({
 }) {
   return (
     <div className="px-4 py-3 flex items-center gap-3">
-      <span className="text-sm text-slate-400 flex-1">{label}</span>
+      <span className="text-sm text-stone-400 flex-1">{label}</span>
       <div className="flex items-center gap-1">
         <input
           type="number"
@@ -178,7 +178,7 @@ function NumberField({
           className="w-20 bg-transparent text-sm text-white outline-none text-right"
           placeholder="—"
         />
-        {unit && <span className="text-xs text-slate-500">{unit}</span>}
+        {unit && <span className="text-xs text-stone-500">{unit}</span>}
       </div>
     </div>
   );
@@ -198,9 +198,9 @@ function ToggleField({
   return (
     <div className="px-4 py-3 flex items-center gap-3">
       <div className="flex-1">
-        <p className="text-sm text-slate-300 font-medium">{label}</p>
+        <p className="text-sm text-stone-300 font-medium">{label}</p>
         {description && (
-          <p className="text-xs text-slate-600 mt-0.5">{description}</p>
+          <p className="text-xs text-stone-600 mt-0.5">{description}</p>
         )}
       </div>
       <button
@@ -234,7 +234,7 @@ function SelectField({
 }) {
   return (
     <div className="px-4 py-3 flex items-center gap-3">
-      <span className="text-sm text-slate-400 flex-1">{label}</span>
+      <span className="text-sm text-stone-400 flex-1">{label}</span>
       <select
         value={value ?? ''}
         onChange={(e) => onChange(e.target.value)}
@@ -267,13 +267,13 @@ function RestAdjust({
 }) {
   return (
     <div className="px-4 py-3 flex items-center gap-3">
-      <span className="text-sm text-slate-400 flex-1">
+      <span className="text-sm text-stone-400 flex-1">
         Descanso por defecto
       </span>
       <div className="flex items-center gap-2">
         <button
           onClick={() => onChange(Math.max(15, value - 15))}
-          className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all font-bold text-lg"
+          className="w-7 h-7 rounded-lg flex items-center justify-center text-stone-400 hover:text-white hover:bg-white/10 transition-all font-bold text-lg"
         >
           −
         </button>
@@ -282,7 +282,7 @@ function RestAdjust({
         </span>
         <button
           onClick={() => onChange(Math.min(600, value + 15))}
-          className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all font-bold text-lg"
+          className="w-7 h-7 rounded-lg flex items-center justify-center text-stone-400 hover:text-white hover:bg-white/10 transition-all font-bold text-lg"
         >
           +
         </button>
@@ -439,7 +439,7 @@ export default function ProfileSettings() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/dashboard')}
-              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-all"
+              className="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-all"
             >
               <ArrowLeft size={20} />
             </button>
@@ -449,7 +449,7 @@ export default function ProfileSettings() {
             {saveStatus === 'saving' && (
               <>
                 <Loader2 size={12} className="animate-spin text-indigo-400" />
-                <span className="text-slate-500">Guardando...</span>
+                <span className="text-stone-500">Guardando...</span>
               </>
             )}
             {saveStatus === 'saved' && (
@@ -490,7 +490,7 @@ export default function ProfileSettings() {
               <p className="text-base font-bold text-white">
                 {fullName || 'Sin nombre'}
               </p>
-              <p className="text-sm text-slate-500">{profile.email}</p>
+              <p className="text-sm text-stone-500">{profile.email}</p>
             </div>
           </div>
         )}
@@ -514,16 +514,16 @@ export default function ProfileSettings() {
             />
             <Divider />
             <div className="px-4 py-3">
-              <p className="text-sm text-slate-400 mb-2">Bio</p>
+              <p className="text-sm text-stone-400 mb-2">Bio</p>
               <textarea
                 value={profile.bio ?? ''}
                 onChange={(e) => updateField('bio', e.target.value)}
                 placeholder="Cuéntanos sobre ti y tus objetivos..."
                 maxLength={200}
                 rows={2}
-                className="w-full bg-transparent text-sm text-slate-300 placeholder-slate-600 outline-none resize-none leading-relaxed"
+                className="w-full bg-transparent text-sm text-stone-300 placeholder-stone-600 outline-none resize-none leading-relaxed"
               />
-              <p className="text-xs text-slate-700 text-right">
+              <p className="text-xs text-stone-700 text-right">
                 {(profile.bio ?? '').length}/200
               </p>
             </div>
@@ -634,14 +634,14 @@ export default function ProfileSettings() {
             }}
             className="w-full px-4 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors text-left"
           >
-            <Shield size={16} className="text-slate-500" />
+            <Shield size={16} className="text-stone-500" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-slate-300">
+              <p className="text-sm font-medium text-stone-300">
                 Cambiar contraseña
               </p>
-              <p className="text-xs text-slate-600">Próximamente</p>
+              <p className="text-xs text-stone-600">Próximamente</p>
             </div>
-            <ChevronRight size={14} className="text-slate-600" />
+            <ChevronRight size={14} className="text-stone-600" />
           </button>
         </Section>
 
@@ -666,13 +666,13 @@ export default function ProfileSettings() {
             </button>
           ) : (
             <div className="px-4 py-4 flex flex-col gap-3">
-              <p className="text-sm text-slate-400 text-center">
+              <p className="text-sm text-stone-400 text-center">
                 ¿Seguro que quieres cerrar sesión?
               </p>
               <div className="flex gap-2">
                 <button
                   onClick={() => setLogoutConfirm(false)}
-                  className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-slate-400 hover:text-white hover:bg-white/10 transition-all"
+                  className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-stone-400 hover:text-white hover:bg-white/10 transition-all"
                 >
                   Cancelar
                 </button>
@@ -690,7 +690,7 @@ export default function ProfileSettings() {
           )}
         </div>
 
-        <p className="text-center text-xs text-slate-700 pb-4">
+        <p className="text-center text-xs text-stone-700 pb-4">
           GymTrack v1.0.0 · Hecho con 💙 para atletas serios
         </p>
       </div>

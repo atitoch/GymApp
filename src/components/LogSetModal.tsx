@@ -278,7 +278,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
           "fixed inset-x-0 bottom-0 z-50",
           "md:inset-x-auto md:left-1/2 md:-translate-x-1/2", // Centrado en desktop
           "md:max-w-md md:w-full", // Ancho máximo en desktop
-          "bg-gradient-to-b from-slate-900 to-slate-800",
+          "bg-gradient-to-b from-stone-900 to-stone-800",
           "rounded-t-3xl md:rounded-2xl", // Bordes redondeados en desktop
           "shadow-2xl",
           "transform transition-transform duration-300 ease-out",
@@ -288,18 +288,18 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
       >
         {/* Handle bar */}
         <div className="flex justify-center pt-3 pb-2">
-          <div className="w-12 h-1.5 bg-slate-600 rounded-full" />
+          <div className="w-12 h-1.5 bg-stone-600 rounded-full" />
         </div>
 
         <div className="px-6 pb-8">
           {/* Header */}
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-slate-50 mb-1">
+            <h2 className="text-2xl font-bold text-stone-50 mb-1">
               {exerciseName}
             </h2>
-            <div className="flex items-center gap-3 text-sm text-slate-400">
+            <div className="flex items-center gap-3 text-sm text-stone-400">
               <span className="flex items-center gap-1">
-                <span className="w-2 h-2 bg-amber-400 rounded-full" />
+                <span className="w-2 h-2 bg-lime-400 rounded-full" />
                 Serie {currentSetNumber}
               </span>
               <span>•</span>
@@ -313,7 +313,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
           <div className="space-y-4 mb-6">
             {/* Reps */}
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-stone-300 mb-2">
                 Repeticiones *
               </label>
               <input
@@ -327,13 +327,13 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
                 max="999"
                 className={cn(
                   "w-full px-4 py-4 text-2xl font-bold text-center",
-                  "bg-slate-800/50 border-2",
-                  repsError ? "border-red-500" : "border-slate-700",
-                  "rounded-xl text-slate-50",
+                  "bg-stone-800/50 border-2",
+                  repsError ? "border-red-500" : "border-stone-700",
+                  "rounded-xl text-stone-50",
                   "focus:outline-none",
                   repsError
                     ? "focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                    : "focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20",
+                    : "focus:border-lime-400 focus:ring-2 focus:ring-lime-400/20",
                   "transition-all duration-200"
                 )}
                 autoFocus
@@ -358,7 +358,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
 
             {/* Weight */}
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-stone-300 mb-2">
                 Peso (opcional)
               </label>
               <div className="flex gap-2">
@@ -372,40 +372,40 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
                     placeholder="0"
                     className={cn(
                       "w-full px-4 py-4 text-2xl font-bold text-center",
-                      "bg-slate-800/50 border-2",
-                      weightError ? "border-red-500" : "border-slate-700",
-                      "rounded-xl text-slate-50",
+                      "bg-stone-800/50 border-2",
+                      weightError ? "border-red-500" : "border-stone-700",
+                      "rounded-xl text-stone-50",
                       "focus:outline-none",
                       weightError
                         ? "focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                        : "focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20",
+                        : "focus:border-lime-400 focus:ring-2 focus:ring-lime-400/20",
                       "transition-all duration-200"
                     )}
                   />
                 </div>
                 {/* Selector de unidad mejorado */}
-                <div className="flex bg-slate-800/50 border-2 border-slate-700 rounded-xl overflow-hidden min-w-[100px]">
+                <div className="flex bg-stone-800/50 border-2 border-stone-700 rounded-xl overflow-hidden min-w-[100px]">
                   <button
                     type="button"
                     onClick={() => handleUnitChange("kg")}
                     className={cn(
                       "flex-1 px-4 py-2 font-bold text-sm transition-all duration-200",
                       weightUnit === "kg"
-                        ? "bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-lg"
-                        : "text-slate-400 hover:text-slate-200 hover:bg-slate-700/50"
+                        ? "bg-gradient-to-br from-lime-400 to-lime-500 text-white shadow-lg"
+                        : "text-stone-400 hover:text-stone-200 hover:bg-stone-700/50"
                     )}
                   >
                     kg
                   </button>
-                  <div className="w-px bg-slate-700" />
+                  <div className="w-px bg-stone-700" />
                   <button
                     type="button"
                     onClick={() => handleUnitChange("lbs")}
                     className={cn(
                       "flex-1 px-4 py-2 font-bold text-sm transition-all duration-200",
                       weightUnit === "lbs"
-                        ? "bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-lg"
-                        : "text-slate-400 hover:text-slate-200 hover:bg-slate-700/50"
+                        ? "bg-gradient-to-br from-lime-400 to-lime-500 text-white shadow-lg"
+                        : "text-stone-400 hover:text-stone-200 hover:bg-stone-700/50"
                     )}
                   >
                     lbs
@@ -430,7 +430,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
               )}
               {/* Indicador de conversión */}
               {weight && !weightError && parseFloat(weight) > 0 && (
-                <p className="mt-2 text-xs text-slate-400 text-center">
+                <p className="mt-2 text-xs text-stone-400 text-center">
                   ≈{" "}
                   {weightUnit === "kg"
                     ? `${(parseFloat(weight) * 2.20462).toFixed(1)} lbs`
@@ -441,7 +441,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
 
             {/* RPE */}
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-stone-300 mb-2">
                 RPE (Esfuerzo percibido - Opcional)
               </label>
               <div className="flex gap-2 mb-2">
@@ -456,9 +456,9 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
                   max="10"
                   className={cn(
                     "flex-1 px-4 py-4 text-2xl font-bold text-center",
-                    "bg-slate-800/50 border-2",
-                    rpeError ? "border-red-500" : "border-slate-700",
-                    "rounded-xl text-slate-50",
+                    "bg-stone-800/50 border-2",
+                    rpeError ? "border-red-500" : "border-stone-700",
+                    "rounded-xl text-stone-50",
                     "focus:outline-none",
                     rpeError
                       ? "focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
@@ -498,7 +498,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
                       "transition-all duration-200",
                       rpe === value.toString()
                         ? "bg-green-500 text-white"
-                        : "bg-slate-800/50 text-slate-400 hover:bg-slate-700 hover:text-slate-200"
+                        : "bg-stone-800/50 text-stone-400 hover:bg-stone-700 hover:text-stone-200"
                     )}
                   >
                     {value}
@@ -512,7 +512,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
           <button
             type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="w-full py-3 mb-4 text-sm font-medium text-amber-400 hover:text-amber-300 transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3 mb-4 text-sm font-medium text-lime-400 hover:text-lime-300 transition-colors flex items-center justify-center gap-2"
           >
             {showAdvanced
               ? "Ocultar opciones avanzadas"
@@ -544,33 +544,33 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
                     type="checkbox"
                     checked={isWarmup}
                     onChange={(e) => setIsWarmup(e.target.checked)}
-                    className="w-5 h-5 rounded border-slate-600 text-amber-500 focus:ring-amber-500/20"
+                    className="w-5 h-5 rounded border-stone-600 text-lime-400 focus:ring-lime-400/20"
                   />
-                  <span className="text-sm text-slate-300">Calentamiento</span>
+                  <span className="text-sm text-stone-300">Calentamiento</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={isDropSet}
                     onChange={(e) => setIsDropSet(e.target.checked)}
-                    className="w-5 h-5 rounded border-slate-600 text-amber-500 focus:ring-amber-500/20"
+                    className="w-5 h-5 rounded border-stone-600 text-lime-400 focus:ring-lime-400/20"
                   />
-                  <span className="text-sm text-slate-300">Drop Set</span>
+                  <span className="text-sm text-stone-300">Drop Set</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={isFailure}
                     onChange={(e) => setIsFailure(e.target.checked)}
-                    className="w-5 h-5 rounded border-slate-600 text-amber-500 focus:ring-amber-500/20"
+                    className="w-5 h-5 rounded border-stone-600 text-lime-400 focus:ring-lime-400/20"
                   />
-                  <span className="text-sm text-slate-300">Al fallo</span>
+                  <span className="text-sm text-stone-300">Al fallo</span>
                 </label>
               </div>
 
               {/* Notes */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+                <label className="block text-sm font-medium text-stone-300 mb-2">
                   Notas
                 </label>
                 <textarea
@@ -580,9 +580,9 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
                   rows={3}
                   className={cn(
                     "w-full px-4 py-3 text-sm",
-                    "bg-slate-800/50 border-2 border-slate-700",
-                    "rounded-xl text-slate-50 placeholder-slate-500",
-                    "focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20",
+                    "bg-stone-800/50 border-2 border-stone-700",
+                    "rounded-xl text-stone-50 placeholder-stone-500",
+                    "focus:outline-none focus:border-lime-400 focus:ring-2 focus:ring-lime-400/20",
                     "transition-all duration-200 resize-none"
                   )}
                 />
@@ -598,8 +598,8 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
               disabled={isSaving}
               className={cn(
                 "flex-1 py-4 rounded-xl font-semibold",
-                "bg-slate-800 text-slate-300",
-                "hover:bg-slate-700 transition-colors",
+                "bg-stone-800 text-stone-300",
+                "hover:bg-stone-700 transition-colors",
                 "disabled:opacity-50 disabled:cursor-not-allowed"
               )}
             >
@@ -613,9 +613,9 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
               }
               className={cn(
                 "flex-1 py-4 rounded-xl font-semibold",
-                "bg-gradient-to-r from-amber-500 to-amber-600",
-                "text-white shadow-lg shadow-amber-500/25",
-                "hover:from-amber-600 hover:to-amber-700",
+                "bg-gradient-to-r from-lime-400 to-lime-500",
+                "text-white shadow-lg shadow-lime-400/25",
+                "hover:from-lime-500 hover:to-lime-600",
                 "disabled:opacity-50 disabled:cursor-not-allowed",
                 "transition-all duration-200",
                 "flex items-center justify-center gap-2"
@@ -667,9 +667,9 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
 
           {/* Last set info */}
           {lastSet && (
-            <div className="mt-4 p-3 bg-slate-800/30 rounded-lg border border-slate-700/50">
-              <div className="text-xs text-slate-400 mb-1">Última serie:</div>
-              <div className="text-sm text-slate-300">
+            <div className="mt-4 p-3 bg-stone-800/30 rounded-lg border border-stone-700/50">
+              <div className="text-xs text-stone-400 mb-1">Última serie:</div>
+              <div className="text-sm text-stone-300">
                 {lastSet.reps_completed} reps
                 {lastSet.weight_kg && ` × ${lastSet.weight_kg} kg`}
                 {lastSet.weight_lbs && ` × ${lastSet.weight_lbs} lbs`}

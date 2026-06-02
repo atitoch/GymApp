@@ -193,11 +193,11 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
               onClick={onClose}
               className={cn(
                 "flex-1 px-6 py-3.5 rounded-xl font-semibold",
-                "border-2 border-slate-700 bg-slate-800/80",
-                "text-slate-300 shadow-lg",
+                "border-2 border-stone-700 bg-stone-800/80",
+                "text-stone-300 shadow-lg",
                 "transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-out",
-                "hover:border-slate-600 hover:bg-slate-700/80",
-                "hover:text-slate-200 hover:shadow-xl",
+                "hover:border-stone-600 hover:bg-stone-700/80",
+                "hover:text-stone-200 hover:shadow-xl",
                 "active:scale-[0.98] active:transition-transform active:duration-100"
               )}
               style={{

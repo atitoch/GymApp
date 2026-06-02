@@ -170,7 +170,7 @@ function SetRowItem({
             color: row.saved ? '#34d399' : 'white',
           }}
         />
-        <span className="text-xs text-slate-600 shrink-0">{weightUnit}</span>
+        <span className="text-xs text-stone-600 shrink-0">{weightUnit}</span>
       </div>
 
       {/* Reps input */}
@@ -191,7 +191,7 @@ function SetRowItem({
             color: row.saved ? '#34d399' : 'white',
           }}
         />
-        <span className="text-xs text-slate-600 shrink-0">reps</span>
+        <span className="text-xs text-stone-600 shrink-0">reps</span>
       </div>
 
       {/* Save button */}
@@ -322,12 +322,12 @@ export default function ExerciseTracker({
 
           {/* Target + last session */}
           <div className="flex items-center gap-2 mt-1 flex-wrap">
-            <span className="text-xs text-slate-500">
+            <span className="text-xs text-stone-500">
               {exercise.sets} × {exercise.reps} reps
               {exercise.rpe && exercise.rpe !== '-' && ` · RPE ${exercise.rpe}`}
               {exercise.rest && exercise.rest !== '-' && (
                 <span className="inline-flex items-center gap-0.5 ml-1">
-                  <Clock size={9} className="text-slate-600" />
+                  <Clock size={9} className="text-stone-600" />
                   {exercise.rest}
                 </span>
               )}
@@ -341,7 +341,7 @@ export default function ExerciseTracker({
           </div>
 
           {exercise.notes && (
-            <p className="text-xs text-slate-600 mt-1 italic">
+            <p className="text-xs text-stone-600 mt-1 italic">
               {exercise.notes}
             </p>
           )}
@@ -368,9 +368,9 @@ export default function ExerciseTracker({
           </span>
           {isCurrentDay &&
             (expanded ? (
-              <ChevronUp size={14} className="text-slate-600" />
+              <ChevronUp size={14} className="text-stone-600" />
             ) : (
-              <ChevronDown size={14} className="text-slate-600" />
+              <ChevronDown size={14} className="text-stone-600" />
             ))}
         </div>
       </button>
@@ -380,11 +380,11 @@ export default function ExerciseTracker({
         <div className="px-3 pb-3">
           {/* Column headers */}
           <div className="flex items-center gap-2 px-1 mb-1">
-            <span className="text-xs text-slate-700 w-6 text-center">#</span>
-            <span className="text-xs text-slate-700 flex-1 text-center">
+            <span className="text-xs text-stone-700 w-6 text-center">#</span>
+            <span className="text-xs text-stone-700 flex-1 text-center">
               Peso
             </span>
-            <span className="text-xs text-slate-700 flex-1 text-center">
+            <span className="text-xs text-stone-700 flex-1 text-center">
               Reps
             </span>
             {isCurrentDay && <span className="w-8" />}
@@ -408,7 +408,7 @@ export default function ExerciseTracker({
 
           {/* No workoutLog warning */}
           {isCurrentDay && !workoutLogId && (
-            <p className="text-xs text-amber-500 mt-2 text-center">
+            <p className="text-xs text-lime-400 mt-2 text-center">
               Cargando sesión de entrenamiento...
             </p>
           )}

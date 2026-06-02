@@ -5,23 +5,23 @@ export const PrivacyPolicy: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50">
+    <div className="min-h-screen bg-stone-950 text-stone-50">
       <div className="max-w-4xl mx-auto px-6 py-12">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-amber-400 hover:text-amber-300 mb-8 transition-colors"
+          className="flex items-center gap-2 text-lime-400 hover:text-lime-300 mb-8 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
           Volver
         </button>
 
-        <div className="bg-slate-800/50 rounded-2xl p-8 md:p-12">
+        <div className="bg-stone-800/50 rounded-2xl p-8 md:p-12">
           <div className="flex items-center gap-3 mb-6">
-            <Shield className="w-8 h-8 text-amber-500" />
+            <Shield className="w-8 h-8 text-lime-400" />
             <h1 className="text-4xl font-bold">Política de Privacidad</h1>
           </div>
 
-          <p className="text-slate-400 mb-8">
+          <p className="text-stone-400 mb-8">
             Última actualización:{" "}
             {new Date().toLocaleDateString("es-MX", {
               year: "numeric",
@@ -33,17 +33,17 @@ export const PrivacyPolicy: React.FC = () => {
           <div className="prose prose-invert max-w-none space-y-8">
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-amber-500" />
+                <FileText className="w-6 h-6 text-lime-400" />
                 1. Identificación del Responsable
               </h2>
-              <p className="text-slate-300 leading-relaxed">
+              <p className="text-stone-300 leading-relaxed">
                 El responsable del tratamiento de sus datos personales es{" "}
                 <strong>GymTrack</strong>
                 (en adelante "la Aplicación" o "nosotros"). Para cualquier
                 consulta relacionada con el tratamiento de sus datos personales,
                 puede contactarnos a través de:
               </p>
-              <ul className="list-disc list-inside text-slate-300 space-y-2 ml-4">
+              <ul className="list-disc list-inside text-stone-300 space-y-2 ml-4">
                 <li>Correo electrónico: privacidad@gymroutine.com</li>
                 <li>
                   Dirección: [Dirección física de la empresa, Ciudad, Estado,
@@ -54,46 +54,46 @@ export const PrivacyPolicy: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <Eye className="w-6 h-6 text-amber-500" />
+                <Eye className="w-6 h-6 text-lime-400" />
                 2. Datos Personales que Recopilamos
               </h2>
-              <p className="text-slate-300 leading-relaxed mb-4">
+              <p className="text-stone-300 leading-relaxed mb-4">
                 Recopilamos los siguientes tipos de datos personales:
               </p>
-              <div className="bg-slate-900/50 rounded-lg p-6 space-y-4">
+              <div className="bg-stone-900/50 rounded-lg p-6 space-y-4">
                 <div>
-                  <h3 className="font-semibold text-slate-200 mb-2">
+                  <h3 className="font-semibold text-stone-200 mb-2">
                     Datos de Identificación:
                   </h3>
-                  <ul className="list-disc list-inside text-slate-300 space-y-1 ml-4">
+                  <ul className="list-disc list-inside text-stone-300 space-y-1 ml-4">
                     <li>Nombre completo</li>
                     <li>Correo electrónico</li>
                   </ul>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-200 mb-2">
+                  <h3 className="font-semibold text-stone-200 mb-2">
                     Datos de Autenticación:
                   </h3>
-                  <ul className="list-disc list-inside text-slate-300 space-y-1 ml-4">
+                  <ul className="list-disc list-inside text-stone-300 space-y-1 ml-4">
                     <li>Contraseña (almacenada de forma encriptada)</li>
                     <li>Tokens de autenticación</li>
                   </ul>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-200 mb-2">
+                  <h3 className="font-semibold text-stone-200 mb-2">
                     Datos de Uso:
                   </h3>
-                  <ul className="list-disc list-inside text-slate-300 space-y-1 ml-4">
+                  <ul className="list-disc list-inside text-stone-300 space-y-1 ml-4">
                     <li>Rutinas de entrenamiento creadas y personalizadas</li>
                     <li>Historial de uso de la aplicación</li>
                     <li>Preferencias de usuario</li>
                   </ul>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-200 mb-2">
+                  <h3 className="font-semibold text-stone-200 mb-2">
                     Datos Técnicos:
                   </h3>
-                  <ul className="list-disc list-inside text-slate-300 space-y-1 ml-4">
+                  <ul className="list-disc list-inside text-stone-300 space-y-1 ml-4">
                     <li>Dirección IP</li>
                     <li>Tipo de navegador y dispositivo</li>
                     <li>Fecha y hora de acceso</li>
@@ -104,18 +104,18 @@ export const PrivacyPolicy: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-amber-500" />
+                <FileText className="w-6 h-6 text-lime-400" />
                 3. Finalidades del Tratamiento
               </h2>
-              <p className="text-slate-300 leading-relaxed mb-4">
+              <p className="text-stone-300 leading-relaxed mb-4">
                 Utilizamos sus datos personales para las siguientes finalidades:
               </p>
               <div className="space-y-3">
-                <div className="bg-slate-900/50 rounded-lg p-4">
-                  <h3 className="font-semibold text-slate-200 mb-2">
+                <div className="bg-stone-900/50 rounded-lg p-4">
+                  <h3 className="font-semibold text-stone-200 mb-2">
                     Finalidades Primarias (Necesarias para el servicio):
                   </h3>
-                  <ul className="list-disc list-inside text-slate-300 space-y-1 ml-4">
+                  <ul className="list-disc list-inside text-stone-300 space-y-1 ml-4">
                     <li>Crear y gestionar su cuenta de usuario</li>
                     <li>
                       Proporcionar acceso a la aplicación y sus funcionalidades
@@ -128,11 +128,11 @@ export const PrivacyPolicy: React.FC = () => {
                     <li>Enviar notificaciones relacionadas con el servicio</li>
                   </ul>
                 </div>
-                <div className="bg-slate-900/50 rounded-lg p-4">
-                  <h3 className="font-semibold text-slate-200 mb-2">
+                <div className="bg-stone-900/50 rounded-lg p-4">
+                  <h3 className="font-semibold text-stone-200 mb-2">
                     Finalidades Secundarias (Con su consentimiento):
                   </h3>
-                  <ul className="list-disc list-inside text-slate-300 space-y-1 ml-4">
+                  <ul className="list-disc list-inside text-stone-300 space-y-1 ml-4">
                     <li>Enviar comunicaciones promocionales y marketing</li>
                     <li>Realizar análisis estadísticos y de uso</li>
                     <li>
@@ -146,13 +146,13 @@ export const PrivacyPolicy: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-amber-500" />
+                <FileText className="w-6 h-6 text-lime-400" />
                 4. Transferencias de Datos
               </h2>
-              <p className="text-slate-300 leading-relaxed mb-4">
+              <p className="text-stone-300 leading-relaxed mb-4">
                 Sus datos personales pueden ser compartidos con:
               </p>
-              <ul className="list-disc list-inside text-slate-300 space-y-2 ml-4">
+              <ul className="list-disc list-inside text-stone-300 space-y-2 ml-4">
                 <li>
                   <strong>Proveedores de servicios:</strong> Empresas que nos
                   ayudan a operar la aplicación (hosting, bases de datos,
@@ -164,7 +164,7 @@ export const PrivacyPolicy: React.FC = () => {
                   por orden judicial.
                 </li>
               </ul>
-              <p className="text-slate-300 leading-relaxed mt-4">
+              <p className="text-stone-300 leading-relaxed mt-4">
                 No vendemos, alquilamos ni compartimos sus datos personales con
                 terceros para fines comerciales sin su consentimiento explícito.
               </p>
@@ -172,54 +172,54 @@ export const PrivacyPolicy: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <Eye className="w-6 h-6 text-amber-500" />
+                <Eye className="w-6 h-6 text-lime-400" />
                 5. Derechos ARCO
               </h2>
-              <p className="text-slate-300 leading-relaxed mb-4">
+              <p className="text-stone-300 leading-relaxed mb-4">
                 Usted tiene derecho a ejercer los siguientes derechos sobre sus
                 datos personales:
               </p>
-              <div className="bg-slate-900/50 rounded-lg p-6 space-y-4">
+              <div className="bg-stone-900/50 rounded-lg p-6 space-y-4">
                 <div>
-                  <h3 className="font-semibold text-slate-200 mb-2">Acceso:</h3>
-                  <p className="text-slate-300">
+                  <h3 className="font-semibold text-stone-200 mb-2">Acceso:</h3>
+                  <p className="text-stone-300">
                     Conocer qué datos personales tenemos sobre usted y para qué
                     los utilizamos.
                   </p>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-200 mb-2">
+                  <h3 className="font-semibold text-stone-200 mb-2">
                     Rectificación:
                   </h3>
-                  <p className="text-slate-300">
+                  <p className="text-stone-300">
                     Solicitar la corrección de sus datos personales si son
                     inexactos o incompletos.
                   </p>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-200 mb-2">
+                  <h3 className="font-semibold text-stone-200 mb-2">
                     Cancelación:
                   </h3>
-                  <p className="text-slate-300">
+                  <p className="text-stone-300">
                     Solicitar que eliminemos sus datos personales de nuestros
                     registros cuando considere que no están siendo utilizados
                     conforme a los principios y deberes previstos en la ley.
                   </p>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-200 mb-2">
+                  <h3 className="font-semibold text-stone-200 mb-2">
                     Oposición:
                   </h3>
-                  <p className="text-slate-300">
+                  <p className="text-stone-300">
                     Oponerse al tratamiento de sus datos personales para fines
                     específicos.
                   </p>
                 </div>
               </div>
-              <p className="text-slate-300 leading-relaxed mt-4">
+              <p className="text-stone-300 leading-relaxed mt-4">
                 Para ejercer cualquiera de estos derechos, puede enviar una
                 solicitud a
-                <strong className="text-amber-400">
+                <strong className="text-lime-400">
                   {" "}
                   privacidad@gymroutine.com
                 </strong>{" "}
@@ -230,14 +230,14 @@ export const PrivacyPolicy: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <Lock className="w-6 h-6 text-amber-500" />
+                <Lock className="w-6 h-6 text-lime-400" />
                 6. Medidas de Seguridad
               </h2>
-              <p className="text-slate-300 leading-relaxed mb-4">
+              <p className="text-stone-300 leading-relaxed mb-4">
                 Implementamos medidas técnicas y organizativas para proteger sus
                 datos personales:
               </p>
-              <ul className="list-disc list-inside text-slate-300 space-y-2 ml-4">
+              <ul className="list-disc list-inside text-stone-300 space-y-2 ml-4">
                 <li>Encriptación de datos en tránsito (HTTPS/TLS)</li>
                 <li>Encriptación de contraseñas usando algoritmos seguros</li>
                 <li>Control de acceso mediante autenticación</li>
@@ -249,19 +249,19 @@ export const PrivacyPolicy: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-amber-500" />
+                <FileText className="w-6 h-6 text-lime-400" />
                 7. Cookies y Tecnologías Similares
               </h2>
-              <p className="text-slate-300 leading-relaxed mb-4">
+              <p className="text-stone-300 leading-relaxed mb-4">
                 Utilizamos cookies y tecnologías similares para:
               </p>
-              <ul className="list-disc list-inside text-slate-300 space-y-2 ml-4">
+              <ul className="list-disc list-inside text-stone-300 space-y-2 ml-4">
                 <li>Mantener su sesión activa</li>
                 <li>Recordar sus preferencias</li>
                 <li>Mejorar la funcionalidad de la aplicación</li>
                 <li>Analizar el uso de la aplicación</li>
               </ul>
-              <p className="text-slate-300 leading-relaxed mt-4">
+              <p className="text-stone-300 leading-relaxed mt-4">
                 Puede configurar su navegador para rechazar cookies, aunque esto
                 puede afectar algunas funcionalidades de la aplicación.
               </p>
@@ -269,10 +269,10 @@ export const PrivacyPolicy: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-amber-500" />
+                <FileText className="w-6 h-6 text-lime-400" />
                 8. Retención de Datos
               </h2>
-              <p className="text-slate-300 leading-relaxed">
+              <p className="text-stone-300 leading-relaxed">
                 Conservaremos sus datos personales durante el tiempo necesario
                 para cumplir con las finalidades descritas en esta política, y
                 mientras sea necesario para cumplir con obligaciones legales.
@@ -284,10 +284,10 @@ export const PrivacyPolicy: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-amber-500" />
+                <FileText className="w-6 h-6 text-lime-400" />
                 9. Menores de Edad
               </h2>
-              <p className="text-slate-300 leading-relaxed">
+              <p className="text-stone-300 leading-relaxed">
                 Nuestra aplicación está dirigida a usuarios mayores de 18 años.
                 Si un menor de edad desea utilizar nuestros servicios, debe
                 contar con el consentimiento de sus padres o tutores. Si
@@ -299,10 +299,10 @@ export const PrivacyPolicy: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-amber-500" />
+                <FileText className="w-6 h-6 text-lime-400" />
                 10. Modificaciones a esta Política
               </h2>
-              <p className="text-slate-300 leading-relaxed">
+              <p className="text-stone-300 leading-relaxed">
                 Nos reservamos el derecho de modificar esta Política de
                 Privacidad en cualquier momento. Le notificaremos sobre cambios
                 significativos mediante un aviso en la aplicación o por correo
@@ -313,10 +313,10 @@ export const PrivacyPolicy: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-amber-500" />
+                <FileText className="w-6 h-6 text-lime-400" />
                 11. Legislación Aplicable
               </h2>
-              <p className="text-slate-300 leading-relaxed">
+              <p className="text-stone-300 leading-relaxed">
                 Esta Política de Privacidad se rige por la{" "}
                 <strong>
                   Ley Federal de Protección de Datos Personales en Posesión de
@@ -326,15 +326,15 @@ export const PrivacyPolicy: React.FC = () => {
               </p>
             </section>
 
-            <section className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4 text-amber-400">
+            <section className="bg-lime-400/10 border border-lime-400/20 rounded-lg p-6">
+              <h2 className="text-xl font-semibold mb-4 text-lime-400">
                 Contacto
               </h2>
-              <p className="text-slate-300 leading-relaxed">
+              <p className="text-stone-300 leading-relaxed">
                 Si tiene preguntas sobre esta Política de Privacidad o sobre el
                 tratamiento de sus datos personales, puede contactarnos en:
               </p>
-              <p className="text-amber-400 mt-2">
+              <p className="text-lime-400 mt-2">
                 <strong>Email:</strong> privacidad@gymroutine.com
               </p>
             </section>

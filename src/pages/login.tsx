@@ -328,22 +328,22 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-stone-950 flex flex-col lg:flex-row">
       {/* Header móvil con menú hamburguesa */}
       <header
         ref={menuRef}
-        className="lg:hidden sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800"
+        className="lg:hidden sticky top-0 z-50 bg-stone-900/80 backdrop-blur-md border-b border-stone-800"
       >
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-lime-400 to-lime-500 rounded-xl flex items-center justify-center">
               <Dumbbell className="w-5 h-5 text-white" />
             </div>
             <span className="text-white font-semibold text-lg">GymTrack</span>
           </div>
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="p-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-2 text-stone-300 hover:text-white hover:bg-stone-800 rounded-lg transition-colors"
             aria-label="Toggle menu"
           >
             {isMenuOpen ? (
@@ -356,14 +356,14 @@ export const Login: React.FC = () => {
 
         {/* Menú desplegable */}
         {isMenuOpen && (
-          <div className="border-t border-slate-800 bg-slate-900/95 backdrop-blur-md">
+          <div className="border-t border-stone-800 bg-stone-900/95 backdrop-blur-md">
             <nav className="px-4 py-3 space-y-1">
               <button
                 onClick={() => {
                   navigate("/");
                   setIsMenuOpen(false);
                 }}
-                className="w-full text-left px-4 py-2.5 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+                className="w-full text-left px-4 py-2.5 text-stone-300 hover:text-white hover:bg-stone-800 rounded-lg transition-colors"
               >
                 Inicio
               </button>
@@ -372,7 +372,7 @@ export const Login: React.FC = () => {
                   navigate("/terms");
                   setIsMenuOpen(false);
                 }}
-                className="w-full text-left px-4 py-2.5 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+                className="w-full text-left px-4 py-2.5 text-stone-300 hover:text-white hover:bg-stone-800 rounded-lg transition-colors"
               >
                 Términos de Servicio
               </button>
@@ -381,7 +381,7 @@ export const Login: React.FC = () => {
                   navigate("/privacy");
                   setIsMenuOpen(false);
                 }}
-                className="w-full text-left px-4 py-2.5 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+                className="w-full text-left px-4 py-2.5 text-stone-300 hover:text-white hover:bg-stone-800 rounded-lg transition-colors"
               >
                 Política de Privacidad
               </button>
@@ -391,7 +391,7 @@ export const Login: React.FC = () => {
       </header>
 
       {/* Panel izquierdo - Información de la app */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-amber-600 via-amber-700 to-indigo-800 p-12 flex-col justify-between relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-lime-500 via-lime-600 to-indigo-800 p-12 flex-col justify-between relative overflow-hidden">
         {/* Efectos de fondo */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
@@ -409,10 +409,10 @@ export const Login: React.FC = () => {
           <h1 className="text-5xl font-bold text-white mb-6 leading-tight">
             Organiza tu entrenamiento
             <br />
-            <span className="text-amber-200">de forma inteligente</span>
+            <span className="text-lime-200">de forma inteligente</span>
           </h1>
 
-          <p className="text-amber-100 text-lg mb-12 max-w-md">
+          <p className="text-lime-100 text-lg mb-12 max-w-md">
             Planifica tus rutinas, sigue tu progreso y alcanza tus objetivos de
             fitness con nuestra plataforma.
           </p>
@@ -427,7 +427,7 @@ export const Login: React.FC = () => {
                 <h3 className="text-white font-semibold mb-1">
                   Rutinas Personalizadas
                 </h3>
-                <p className="text-amber-100 text-sm">
+                <p className="text-lime-100 text-sm">
                   Crea y gestiona rutinas adaptadas a tus objetivos y
                   disponibilidad.
                 </p>
@@ -442,7 +442,7 @@ export const Login: React.FC = () => {
                 <h3 className="text-white font-semibold mb-1">
                   Seguimiento de Progreso
                 </h3>
-                <p className="text-amber-100 text-sm">
+                <p className="text-lime-100 text-sm">
                   Monitorea tu evolución y mantén la motivación día a día.
                 </p>
               </div>
@@ -456,7 +456,7 @@ export const Login: React.FC = () => {
                 <h3 className="text-white font-semibold mb-1">
                   Patrones Inteligentes
                 </h3>
-                <p className="text-amber-100 text-sm">
+                <p className="text-lime-100 text-sm">
                   Sistema de días consecutivos que se adapta a tu ritmo de
                   entrenamiento.
                 </p>
@@ -467,7 +467,7 @@ export const Login: React.FC = () => {
 
         {/* Footer del panel izquierdo */}
         <div className="relative z-10">
-          <div className="flex items-center gap-2 text-amber-200 text-sm">
+          <div className="flex items-center gap-2 text-lime-200 text-sm">
             <CheckCircle2 className="w-4 h-4" />
             <span>100% Gratis</span>
             <span className="mx-2">•</span>
@@ -481,11 +481,11 @@ export const Login: React.FC = () => {
         <div className="w-full max-w-md">
           {/* Logo móvil */}
           <div className="lg:hidden text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl mb-4 shadow-lg shadow-amber-500/30">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-lime-400 to-lime-500 rounded-2xl mb-4 shadow-lg shadow-lime-400/30">
               <Dumbbell className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-slate-50 mb-2">GymTrack</h1>
-            <p className="text-slate-400">
+            <h1 className="text-3xl font-bold text-stone-50 mb-2">GymTrack</h1>
+            <p className="text-stone-400">
               {isRegistering
                 ? "Crea tu cuenta para comenzar"
                 : "Inicia sesión para continuar"}
@@ -494,10 +494,10 @@ export const Login: React.FC = () => {
 
           {/* Título desktop */}
           <div className="hidden lg:block mb-8">
-            <h2 className="text-3xl font-bold text-slate-50 mb-2">
+            <h2 className="text-3xl font-bold text-stone-50 mb-2">
               {isRegistering ? "Crear cuenta" : "Bienvenido de vuelta"}
             </h2>
-            <p className="text-slate-400">
+            <p className="text-stone-400">
               {isRegistering
                 ? "Comienza tu viaje hacia tus objetivos de fitness"
                 : "Inicia sesión para continuar con tu rutina"}
@@ -515,7 +515,7 @@ export const Login: React.FC = () => {
             <form onSubmit={handleSubmit} noValidate className="space-y-5">
               {isRegistering && (
                 <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-2">
+                  <label className="block text-sm font-medium text-stone-400 mb-2">
                     Nombre completo
                   </label>
                   <input
@@ -526,10 +526,10 @@ export const Login: React.FC = () => {
                     onBlur={handleBlur}
                     placeholder="John Doe"
                     disabled={isLoading}
-                    className={`w-full bg-slate-800/60 border border-slate-700/50 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:bg-slate-800/80 focus:border-slate-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                    className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-3 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                       fieldErrors.fullName && touchedFields.has("fullName")
                         ? "focus:ring-red-500/50 ring-2 ring-red-500/50 border-red-500/50"
-                        : "focus:ring-amber-500/50"
+                        : "focus:ring-lime-400/50"
                     }`}
                   />
                   {fieldErrors.fullName && touchedFields.has("fullName") && (
@@ -542,7 +542,7 @@ export const Login: React.FC = () => {
               )}
 
               <div>
-                <label className="block text-sm font-medium text-slate-400 mb-2">
+                <label className="block text-sm font-medium text-stone-400 mb-2">
                   Correo electrónico
                 </label>
                 <input
@@ -554,10 +554,10 @@ export const Login: React.FC = () => {
                   placeholder="tu@email.com"
                   disabled={isLoading}
                   autoComplete="email"
-                  className={`w-full bg-slate-800/60 border border-slate-700/50 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:bg-slate-800/80 focus:border-slate-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                  className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-3 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                     fieldErrors.email && touchedFields.has("email")
                       ? "focus:ring-red-500/50 ring-2 ring-red-500/50 border-red-500/50"
-                      : "focus:ring-amber-500/50"
+                      : "focus:ring-lime-400/50"
                   }`}
                 />
                 {fieldErrors.email && touchedFields.has("email") && (
@@ -569,7 +569,7 @@ export const Login: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-400 mb-2">
+                <label className="block text-sm font-medium text-stone-400 mb-2">
                   Contraseña
                 </label>
                 <div className="relative">
@@ -584,17 +584,17 @@ export const Login: React.FC = () => {
                     autoComplete={
                       isRegistering ? "new-password" : "current-password"
                     }
-                    className={`w-full bg-slate-800/60 border border-slate-700/50 rounded-lg px-4 py-3 pr-11 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:bg-slate-800/80 focus:border-slate-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                    className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-3 pr-11 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                       fieldErrors.password && touchedFields.has("password")
                         ? "focus:ring-red-500/50 ring-2 ring-red-500/50 border-red-500/50"
-                        : "focus:ring-amber-500/50"
+                        : "focus:ring-lime-400/50"
                     }`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     disabled={isLoading}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     aria-label={
                       showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
                     }
@@ -616,7 +616,7 @@ export const Login: React.FC = () => {
 
               {isRegistering && (
                 <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-2">
+                  <label className="block text-sm font-medium text-stone-400 mb-2">
                     Confirmar contraseña
                   </label>
                   <div className="relative">
@@ -629,11 +629,11 @@ export const Login: React.FC = () => {
                       placeholder="••••••••"
                       disabled={isLoading}
                       autoComplete="new-password"
-                      className={`w-full bg-slate-800/60 border border-slate-700/50 rounded-lg px-4 py-3 pr-11 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:bg-slate-800/80 focus:border-slate-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                      className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-3 pr-11 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                         fieldErrors.confirmPassword &&
                         touchedFields.has("confirmPassword")
                           ? "focus:ring-red-500/50 ring-2 ring-red-500/50 border-red-500/50"
-                          : "focus:ring-amber-500/50"
+                          : "focus:ring-lime-400/50"
                       }`}
                     />
                     <button
@@ -642,7 +642,7 @@ export const Login: React.FC = () => {
                         setShowConfirmPassword(!showConfirmPassword)
                       }
                       disabled={isLoading}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       aria-label={
                         showConfirmPassword
                           ? "Ocultar contraseña"
@@ -668,23 +668,23 @@ export const Login: React.FC = () => {
 
               {!isRegistering && (
                 <div className="flex items-center justify-between text-sm">
-                  <label className="flex items-center gap-2 text-slate-400 cursor-pointer group">
+                  <label className="flex items-center gap-2 text-stone-400 cursor-pointer group">
                     <input
                       type="checkbox"
                       name="rememberMe"
                       checked={formData.rememberMe}
                       onChange={handleInputChange}
                       disabled={isLoading}
-                      className="w-4 h-4 rounded border-slate-600 bg-slate-900/30 text-amber-500 focus:ring-2 focus:ring-amber-500/30 focus:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-4 h-4 rounded border-stone-600 bg-stone-900/30 text-lime-400 focus:ring-2 focus:ring-lime-400/30 focus:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
                     />
-                    <span className="group-hover:text-slate-300 transition-colors">
+                    <span className="group-hover:text-stone-300 transition-colors">
                       Recordarme
                     </span>
                   </label>
                   <button
                     type="button"
                     disabled={isLoading}
-                    className="text-amber-400 hover:text-amber-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                    className="text-lime-400 hover:text-lime-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                   >
                     ¿Olvidaste tu contraseña?
                   </button>
@@ -694,7 +694,7 @@ export const Login: React.FC = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-500 hover:to-lime-600 text-white font-semibold py-3 rounded-lg transition-all duration-300 shadow-lg shadow-lime-400/20 hover:shadow-lime-400/30 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
               >
                 {isLoading && <Loader2 className="w-5 h-5 animate-spin" />}
                 {isRegistering ? "Crear cuenta" : "Iniciar sesión"}
@@ -704,10 +704,10 @@ export const Login: React.FC = () => {
             {/* Divider - más sutil */}
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-800"></div>
+                <div className="w-full border-t border-stone-800"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-slate-950 text-slate-500">
+                <span className="px-4 bg-stone-950 text-stone-500">
                   O continúa con
                 </span>
               </div>
@@ -719,7 +719,7 @@ export const Login: React.FC = () => {
                 type="button"
                 onClick={handleGoogleLogin}
                 disabled={isLoading}
-                className="w-full bg-white/5 hover:bg-white/10 text-slate-300 font-medium py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-3 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="w-full bg-white/5 hover:bg-white/10 text-stone-300 font-medium py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-3 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path
@@ -746,7 +746,7 @@ export const Login: React.FC = () => {
                 type="button"
                 onClick={handleGitHubLogin}
                 disabled={isLoading}
-                className="w-full bg-white/5 hover:bg-white/10 text-slate-300 font-medium py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-3 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="w-full bg-white/5 hover:bg-white/10 text-stone-300 font-medium py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-3 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 <svg
                   className="w-5 h-5"
@@ -761,7 +761,7 @@ export const Login: React.FC = () => {
 
             {/* Toggle entre login y registro */}
             <div className="mt-6 text-center text-sm">
-              <span className="text-slate-400">
+              <span className="text-stone-400">
                 {isRegistering ? "¿Ya tienes cuenta?" : "¿No tienes cuenta?"}
               </span>{" "}
               <button
@@ -773,26 +773,26 @@ export const Login: React.FC = () => {
                   setTouchedFields(new Set());
                 }}
                 disabled={isLoading}
-                className="text-amber-400 hover:text-amber-300 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="text-lime-400 hover:text-lime-300 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isRegistering ? "Inicia sesión" : "Regístrate"}
               </button>
             </div>
 
             {/* Footer */}
-            <div className="mt-8 text-center text-xs text-slate-500">
+            <div className="mt-8 text-center text-xs text-stone-500">
               <p>Al continuar, aceptas nuestros</p>
               <div className="flex items-center justify-center gap-2 mt-1">
                 <button
                   onClick={() => navigate("/terms")}
-                  className="hover:text-slate-400 transition-colors"
+                  className="hover:text-stone-400 transition-colors"
                 >
                   Términos de servicio
                 </button>
                 <span>•</span>
                 <button
                   onClick={() => navigate("/privacy")}
-                  className="hover:text-slate-400 transition-colors"
+                  className="hover:text-stone-400 transition-colors"
                 >
                   Política de privacidad
                 </button>

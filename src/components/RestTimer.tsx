@@ -139,7 +139,7 @@ export default function RestTimer({
               Descanso
             </p>
             {exerciseName && (
-              <p className="text-sm text-slate-400 mt-0.5 truncate max-w-48">
+              <p className="text-sm text-stone-400 mt-0.5 truncate max-w-48">
                 Siguiente: {exerciseName}
               </p>
             )}
@@ -147,13 +147,13 @@ export default function RestTimer({
           <div className="flex items-center gap-2">
             <button
               onClick={() => setSoundEnabled((s) => !s)}
-              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+              className="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-colors"
             >
               {soundEnabled ? <Bell size={18} /> : <BellOff size={18} />}
             </button>
             <button
               onClick={onClose}
-              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+              className="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-colors"
             >
               <X size={18} />
             </button>
@@ -210,14 +210,14 @@ export default function RestTimer({
           <div className="flex items-center gap-4 mt-6">
             <button
               onClick={() => handleAdjust(-15)}
-              className="flex items-center gap-1 px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-all text-sm font-semibold"
+              className="flex items-center gap-1 px-3 py-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-all text-sm font-semibold"
             >
               <Minus size={14} /> 15s
             </button>
-            <div className="text-slate-600 text-xs">ajustar</div>
+            <div className="text-stone-600 text-xs">ajustar</div>
             <button
               onClick={() => handleAdjust(15)}
-              className="flex items-center gap-1 px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-all text-sm font-semibold"
+              className="flex items-center gap-1 px-3 py-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-all text-sm font-semibold"
             >
               <Plus size={14} /> 15s
             </button>

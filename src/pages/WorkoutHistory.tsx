@@ -158,7 +158,7 @@ function StatsSummary({
           <p className="text-xl font-black leading-none" style={{ color }}>
             {value}
           </p>
-          <p className="text-xs text-slate-600 mt-1 font-medium leading-tight">
+          <p className="text-xs text-stone-600 mt-1 font-medium leading-tight">
             {label}
           </p>
         </div>
@@ -193,7 +193,7 @@ function SessionCard({ session }: { session: SessionWithDayInfo }) {
               </span>
             )}
             {session.day_title && (
-              <span className="text-xs text-slate-500 truncate max-w-[160px]">
+              <span className="text-xs text-stone-500 truncate max-w-[160px]">
                 {session.day_title}
               </span>
             )}
@@ -201,23 +201,23 @@ function SessionCard({ session }: { session: SessionWithDayInfo }) {
               <span className="text-xs text-emerald-500 font-bold">✓</span>
             )}
           </div>
-          <p className="text-sm font-semibold text-slate-300">
+          <p className="text-sm font-semibold text-stone-300">
             {formatDate(session.workout_date)}
           </p>
           {session.notes && (
-            <p className="text-xs text-slate-600 mt-0.5 italic truncate">
+            <p className="text-xs text-stone-600 mt-0.5 italic truncate">
               {session.notes}
             </p>
           )}
           <div className="flex items-center gap-3 mt-2 flex-wrap">
             {!!session.duration_minutes && (
-              <span className="flex items-center gap-1 text-xs text-slate-500">
+              <span className="flex items-center gap-1 text-xs text-stone-500">
                 <Clock size={11} />
                 {session.duration_minutes} min
               </span>
             )}
             {!!session.total_volume && (
-              <span className="flex items-center gap-1 text-xs text-slate-500">
+              <span className="flex items-center gap-1 text-xs text-stone-500">
                 <Zap size={11} />
                 {Math.round(session.total_volume as number).toLocaleString()} kg
               </span>
@@ -232,7 +232,7 @@ function SessionCard({ session }: { session: SessionWithDayInfo }) {
         </div>
         {session.energy_level != null && (
           <div className="shrink-0 text-right">
-            <p className="text-xs text-slate-600">Energía</p>
+            <p className="text-xs text-stone-600">Energía</p>
             <p
               className="text-sm font-black"
               style={{
@@ -353,13 +353,13 @@ export default function WorkoutHistory() {
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
           <button
             onClick={() => navigate('/dashboard')}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-all"
+            className="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-all"
           >
             <ArrowLeft size={20} />
           </button>
           <div>
             <h1 className="text-lg font-black text-white">Historial</h1>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-stone-500">
               {total} entrenos registrados
             </p>
           </div>
@@ -376,17 +376,17 @@ export default function WorkoutHistory() {
             border: '1px solid rgba(255,255,255,0.08)',
           }}
         >
-          <Search size={15} className="text-slate-500 shrink-0" />
+          <Search size={15} className="text-stone-500 shrink-0" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar por tipo, fecha, notas..."
-            className="flex-1 bg-transparent text-sm text-slate-300 placeholder-slate-600 outline-none"
+            className="flex-1 bg-transparent text-sm text-stone-300 placeholder-stone-600 outline-none"
           />
           {search && (
             <button
               onClick={() => setSearch('')}
-              className="text-slate-500 hover:text-white transition-colors"
+              className="text-stone-500 hover:text-white transition-colors"
             >
               <XCircle size={15} />
             </button>
@@ -441,13 +441,13 @@ export default function WorkoutHistory() {
 
         {!loading && !error && filtered.length === 0 && (
           <div className="text-center py-20">
-            <Calendar size={44} className="text-slate-700 mx-auto mb-3" />
-            <p className="text-slate-500 font-semibold">
+            <Calendar size={44} className="text-stone-700 mx-auto mb-3" />
+            <p className="text-stone-500 font-semibold">
               {sessions.length === 0
                 ? 'Sin entrenos registrados aún'
                 : 'Sin resultados'}
             </p>
-            <p className="text-slate-600 text-sm mt-1">
+            <p className="text-stone-600 text-sm mt-1">
               {sessions.length === 0
                 ? 'Completa tu primer workout para verlo aquí'
                 : 'Prueba quitando filtros'}
@@ -460,14 +460,14 @@ export default function WorkoutHistory() {
           grouped.map(([month, list]) => (
             <div key={month}>
               <div className="flex items-center gap-3 mb-3">
-                <h2 className="text-xs font-black uppercase tracking-widest text-slate-600 capitalize">
+                <h2 className="text-xs font-black uppercase tracking-widest text-stone-600 capitalize">
                   {month}
                 </h2>
                 <div
                   className="flex-1 h-px"
                   style={{ background: 'rgba(255,255,255,0.05)' }}
                 />
-                <span className="text-xs text-slate-700">{list.length}</span>
+                <span className="text-xs text-stone-700">{list.length}</span>
               </div>
               <div className="space-y-2">
                 {list.map((s) => (
@@ -481,7 +481,7 @@ export default function WorkoutHistory() {
           <button
             onClick={loadMore}
             disabled={loadingMore}
-            className="w-full py-3 rounded-2xl text-sm font-semibold text-slate-400 hover:text-white transition-all"
+            className="w-full py-3 rounded-2xl text-sm font-semibold text-stone-400 hover:text-white transition-all"
             style={{
               background: 'rgba(255,255,255,0.04)',
               border: '1px solid rgba(255,255,255,0.06)',

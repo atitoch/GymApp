@@ -143,10 +143,10 @@ export default function ExerciseNotes({
           className={
             hasNote
               ? 'text-indigo-400'
-              : 'text-slate-600 group-hover:text-slate-400 transition-colors'
+              : 'text-stone-600 group-hover:text-stone-400 transition-colors'
           }
         />
-        <span className="group-hover:text-slate-300 transition-colors">
+        <span className="group-hover:text-stone-300 transition-colors">
           {hasNote ? 'Ver nota' : 'Agregar nota'}
         </span>
         {hasNote && (
@@ -156,9 +156,9 @@ export default function ExerciseNotes({
           />
         )}
         {expanded ? (
-          <ChevronUp size={12} className="text-slate-500" />
+          <ChevronUp size={12} className="text-stone-500" />
         ) : (
-          <ChevronDown size={12} className="text-slate-500" />
+          <ChevronDown size={12} className="text-stone-500" />
         )}
       </button>
 
@@ -183,14 +183,14 @@ export default function ExerciseNotes({
             }
             disabled={loading}
             rows={2}
-            className="w-full bg-transparent px-4 pt-3 pb-2 text-sm text-slate-300 placeholder-slate-600 resize-none outline-none leading-relaxed"
+            className="w-full bg-transparent px-4 pt-3 pb-2 text-sm text-stone-300 placeholder-stone-600 resize-none outline-none leading-relaxed"
             style={{ minHeight: '64px' }}
           />
 
           {/* Footer */}
           <div className="flex items-center justify-between px-4 pb-3">
             {/* Character count */}
-            <span className="text-xs text-slate-600">
+            <span className="text-xs text-stone-600">
               {note.length > 0 ? `${note.length} caracteres` : ''}
             </span>
 
@@ -204,7 +204,7 @@ export default function ExerciseNotes({
                       size={11}
                       className="animate-spin text-indigo-400"
                     />
-                    <span className="text-slate-500">Guardando...</span>
+                    <span className="text-stone-500">Guardando...</span>
                   </>
                 )}
                 {status === 'saved' && (
@@ -222,7 +222,7 @@ export default function ExerciseNotes({
               {hasNote && (
                 <button
                   onClick={handleDelete}
-                  className="text-slate-600 hover:text-red-400 transition-colors"
+                  className="text-stone-600 hover:text-red-400 transition-colors"
                   title="Eliminar nota"
                 >
                   <Trash2 size={13} />

@@ -14,7 +14,7 @@ export const DayRoutineSkeleton: React.FC = () => {
       )}
     >
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-slate-900/95 backdrop-blur-sm border-b border-slate-800">
+      <div className="sticky top-0 z-10 bg-stone-900/95 backdrop-blur-sm border-b border-stone-800">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <Skeleton width={120} height={18} className="sm:w-[150px] sm:h-5 mb-2 sm:mb-3" />
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">

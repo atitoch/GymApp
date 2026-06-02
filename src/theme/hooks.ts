@@ -32,40 +32,40 @@ export const useColors = (): ColorPalette => {
 export const useThemeClasses = () => {
   return {
     // Backgrounds
-    bgPrimary: "bg-slate-950",
-    bgSecondary: "bg-slate-900",
-    bgTertiary: "bg-slate-800",
-    bgOverlay: "bg-slate-900/50",
+    bgPrimary: "bg-stone-950",
+    bgSecondary: "bg-stone-900",
+    bgTertiary: "bg-stone-800",
+    bgOverlay: "bg-stone-900/50",
 
     // Text
-    textPrimary: "text-slate-50",
-    textSecondary: "text-slate-300",
-    textTertiary: "text-slate-400",
-    textPlaceholder: "text-slate-500",
+    textPrimary: "text-stone-50",
+    textSecondary: "text-stone-300",
+    textTertiary: "text-stone-400",
+    textPlaceholder: "text-stone-500",
 
     // Borders
-    borderDefault: "border-slate-700",
-    borderHover: "border-slate-600",
-    borderFocus: "border-amber-500",
+    borderDefault: "border-stone-700",
+    borderHover: "border-stone-600",
+    borderFocus: "border-lime-400",
 
     // Buttons
     btnPrimary:
-      "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white",
-    btnSecondary: "bg-slate-800 hover:bg-slate-700 text-slate-300",
-    btnGhost: "bg-transparent hover:bg-slate-800 text-amber-400",
+      "bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-500 hover:to-lime-600 text-white",
+    btnSecondary: "bg-stone-800 hover:bg-stone-700 text-stone-300",
+    btnGhost: "bg-transparent hover:bg-stone-800 text-lime-400",
 
     // Cards
-    card: "bg-slate-800 hover:bg-slate-700 border border-slate-700",
+    card: "bg-stone-800 hover:bg-stone-700 border border-stone-700",
 
     // Inputs
     input:
-      "bg-slate-900/50 border border-slate-700 focus:border-amber-500 text-slate-50 placeholder-slate-500",
+      "bg-stone-900/50 border border-stone-700 focus:border-lime-400 text-stone-50 placeholder-stone-500",
 
     // Status colors
     success: "text-green-500 bg-green-500/10 border-green-500/50",
-    warning: "text-amber-500 bg-amber-500/10 border-amber-500/50",
+    warning: "text-lime-400 bg-lime-400/10 border-lime-400/50",
     error: "text-red-500 bg-red-500/10 border-red-500/50",
-    info: "text-amber-500 bg-amber-500/10 border-amber-500/50",
+    info: "text-lime-400 bg-lime-400/10 border-lime-400/50",
   };
 };
 

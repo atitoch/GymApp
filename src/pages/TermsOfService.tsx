@@ -11,25 +11,25 @@ export const TermsOfService: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50">
+    <div className="min-h-screen bg-stone-950 text-stone-50">
       <div className="max-w-4xl mx-auto px-6 py-12">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-amber-400 hover:text-amber-300 mb-8 transition-colors"
+          className="flex items-center gap-2 text-lime-400 hover:text-lime-300 mb-8 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
           Volver
         </button>
 
-        <div className="bg-slate-800/50 rounded-2xl p-8 md:p-12">
+        <div className="bg-stone-800/50 rounded-2xl p-8 md:p-12">
           <div className="flex items-center gap-3 mb-6">
-            <Scale className="w-8 h-8 text-amber-500" />
+            <Scale className="w-8 h-8 text-lime-400" />
             <h1 className="text-4xl font-bold">
               Términos y Condiciones de Uso
             </h1>
           </div>
 
-          <p className="text-slate-400 mb-8">
+          <p className="text-stone-400 mb-8">
             Última actualización:{" "}
             {new Date().toLocaleDateString("es-MX", {
               year: "numeric",
@@ -41,17 +41,17 @@ export const TermsOfService: React.FC = () => {
           <div className="prose prose-invert max-w-none space-y-8">
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-amber-500" />
+                <FileText className="w-6 h-6 text-lime-400" />
                 1. Aceptación de los Términos
               </h2>
-              <p className="text-slate-300 leading-relaxed">
+              <p className="text-stone-300 leading-relaxed">
                 Al acceder y utilizar la aplicación <strong>GymTrack</strong>{" "}
                 (en adelante "la Aplicación" o "el Servicio"), usted acepta
                 quedar vinculado por estos Términos y Condiciones de Uso. Si no
                 está de acuerdo con alguna parte de estos términos, no debe
                 utilizar la Aplicación.
               </p>
-              <p className="text-slate-300 leading-relaxed mt-4">
+              <p className="text-stone-300 leading-relaxed mt-4">
                 Estos términos constituyen un acuerdo legal entre usted y{" "}
                 <strong>GymTrack</strong>. Al crear una cuenta o utilizar
                 nuestros servicios, confirma que ha leído, entendido y acepta
@@ -61,13 +61,13 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-amber-500" />
+                <FileText className="w-6 h-6 text-lime-400" />
                 2. Descripción del Servicio
               </h2>
-              <p className="text-slate-300 leading-relaxed mb-4">
+              <p className="text-stone-300 leading-relaxed mb-4">
                 GymTrack es una aplicación web que permite a los usuarios:
               </p>
-              <ul className="list-disc list-inside text-slate-300 space-y-2 ml-4">
+              <ul className="list-disc list-inside text-stone-300 space-y-2 ml-4">
                 <li>
                   Crear y gestionar rutinas de entrenamiento personalizadas
                 </li>
@@ -77,7 +77,7 @@ export const TermsOfService: React.FC = () => {
                   Acceder a contenido relacionado con fitness y entrenamiento
                 </li>
               </ul>
-              <p className="text-slate-300 leading-relaxed mt-4">
+              <p className="text-stone-300 leading-relaxed mt-4">
                 Nos reservamos el derecho de modificar, suspender o discontinuar
                 cualquier aspecto del Servicio en cualquier momento, con o sin
                 previo aviso.
@@ -86,19 +86,19 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <Shield className="w-6 h-6 text-amber-500" />
+                <Shield className="w-6 h-6 text-lime-400" />
                 3. Cuenta de Usuario
               </h2>
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-semibold text-slate-200 mb-2">
+                  <h3 className="font-semibold text-stone-200 mb-2">
                     3.1. Registro
                   </h3>
-                  <p className="text-slate-300 leading-relaxed">
+                  <p className="text-stone-300 leading-relaxed">
                     Para utilizar ciertas funcionalidades de la Aplicación, debe
                     crear una cuenta. Usted se compromete a:
                   </p>
-                  <ul className="list-disc list-inside text-slate-300 space-y-1 ml-4 mt-2">
+                  <ul className="list-disc list-inside text-stone-300 space-y-1 ml-4 mt-2">
                     <li>Proporcionar información veraz, precisa y completa</li>
                     <li>
                       Mantener y actualizar su información cuando sea necesario
@@ -115,10 +115,10 @@ export const TermsOfService: React.FC = () => {
                   </ul>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-200 mb-2">
+                  <h3 className="font-semibold text-stone-200 mb-2">
                     3.2. Elegibilidad
                   </h3>
-                  <p className="text-slate-300 leading-relaxed">
+                  <p className="text-stone-300 leading-relaxed">
                     Debe tener al menos 18 años de edad para utilizar la
                     Aplicación. Si es menor de 18 años, debe contar con el
                     consentimiento y supervisión de un padre o tutor legal.
@@ -129,15 +129,15 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <AlertTriangle className="w-6 h-6 text-amber-500" />
+                <AlertTriangle className="w-6 h-6 text-lime-400" />
                 4. Uso Aceptable
               </h2>
-              <p className="text-slate-300 leading-relaxed mb-4">
+              <p className="text-stone-300 leading-relaxed mb-4">
                 Usted se compromete a utilizar la Aplicación de manera legal y
                 apropiada. Está prohibido:
               </p>
               <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-6">
-                <ul className="list-disc list-inside text-slate-300 space-y-2 ml-4">
+                <ul className="list-disc list-inside text-stone-300 space-y-2 ml-4">
                   <li>
                     Utilizar la Aplicación para fines ilegales o no autorizados
                   </li>
@@ -170,24 +170,24 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-amber-500" />
+                <FileText className="w-6 h-6 text-lime-400" />
                 5. Propiedad Intelectual
               </h2>
-              <p className="text-slate-300 leading-relaxed mb-4">
+              <p className="text-stone-300 leading-relaxed mb-4">
                 Todos los derechos de propiedad intelectual sobre la Aplicación,
                 incluyendo pero no limitado a:
               </p>
-              <ul className="list-disc list-inside text-slate-300 space-y-2 ml-4">
+              <ul className="list-disc list-inside text-stone-300 space-y-2 ml-4">
                 <li>Diseño, código fuente, gráficos, logos e iconos</li>
                 <li>Contenido, textos, imágenes y materiales</li>
                 <li>Marcas comerciales y nombres comerciales</li>
               </ul>
-              <p className="text-slate-300 leading-relaxed mt-4">
+              <p className="text-stone-300 leading-relaxed mt-4">
                 Son propiedad exclusiva de GymTrack o de sus licenciantes. Usted
                 no adquiere ningún derecho de propiedad sobre estos elementos al
                 utilizar la Aplicación.
               </p>
-              <p className="text-slate-300 leading-relaxed mt-4">
+              <p className="text-stone-300 leading-relaxed mt-4">
                 El contenido que usted cree y almacene en la Aplicación
                 (rutinas, ejercicios, etc.) permanece bajo su propiedad. Sin
                 embargo, al utilizar la Aplicación, nos otorga una licencia no
@@ -198,24 +198,24 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-amber-500" />
+                <FileText className="w-6 h-6 text-lime-400" />
                 6. Limitación de Responsabilidad
               </h2>
               <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-6 space-y-4">
-                <p className="text-slate-300 leading-relaxed">
+                <p className="text-stone-300 leading-relaxed">
                   <strong className="text-yellow-400">IMPORTANTE:</strong> La
                   información proporcionada en la Aplicación es solo para fines
                   informativos y educativos. No constituye asesoramiento médico,
                   nutricional o profesional de entrenamiento.
                 </p>
                 <div>
-                  <h3 className="font-semibold text-slate-200 mb-2">
+                  <h3 className="font-semibold text-stone-200 mb-2">
                     6.1. Exención de Responsabilidad
                   </h3>
-                  <p className="text-slate-300 leading-relaxed">
+                  <p className="text-stone-300 leading-relaxed">
                     GymTrack no se hace responsable de:
                   </p>
-                  <ul className="list-disc list-inside text-slate-300 space-y-1 ml-4 mt-2">
+                  <ul className="list-disc list-inside text-stone-300 space-y-1 ml-4 mt-2">
                     <li>
                       Lesiones o daños resultantes del uso de las rutinas o
                       ejercicios sugeridos
@@ -231,10 +231,10 @@ export const TermsOfService: React.FC = () => {
                   </ul>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-200 mb-2">
+                  <h3 className="font-semibold text-stone-200 mb-2">
                     6.2. Recomendación Médica
                   </h3>
-                  <p className="text-slate-300 leading-relaxed">
+                  <p className="text-stone-300 leading-relaxed">
                     Antes de comenzar cualquier programa de ejercicios, consulte
                     con un médico o profesional de la salud. No utilice la
                     Aplicación si tiene alguna condición médica que pueda verse
@@ -246,10 +246,10 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-amber-500" />
+                <FileText className="w-6 h-6 text-lime-400" />
                 7. Disponibilidad del Servicio
               </h2>
-              <p className="text-slate-300 leading-relaxed">
+              <p className="text-stone-300 leading-relaxed">
                 Nos esforzamos por mantener la Aplicación disponible de manera
                 continua, pero no garantizamos que el Servicio esté disponible
                 en todo momento. Podemos interrumpir el servicio para
@@ -261,15 +261,15 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-amber-500" />
+                <FileText className="w-6 h-6 text-lime-400" />
                 8. Cancelación y Terminación
               </h2>
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-semibold text-slate-200 mb-2">
+                  <h3 className="font-semibold text-stone-200 mb-2">
                     8.1. Por el Usuario
                   </h3>
-                  <p className="text-slate-300 leading-relaxed">
+                  <p className="text-stone-300 leading-relaxed">
                     Puede cancelar su cuenta en cualquier momento a través de la
                     configuración de la Aplicación o contactándonos
                     directamente. Al cancelar, sus datos personales serán
@@ -278,14 +278,14 @@ export const TermsOfService: React.FC = () => {
                   </p>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-200 mb-2">
+                  <h3 className="font-semibold text-stone-200 mb-2">
                     8.2. Por Nosotros
                   </h3>
-                  <p className="text-slate-300 leading-relaxed">
+                  <p className="text-stone-300 leading-relaxed">
                     Nos reservamos el derecho de suspender o terminar su acceso
                     a la Aplicación, con o sin previo aviso, si:
                   </p>
-                  <ul className="list-disc list-inside text-slate-300 space-y-1 ml-4 mt-2">
+                  <ul className="list-disc list-inside text-stone-300 space-y-1 ml-4 mt-2">
                     <li>Viola estos Términos y Condiciones</li>
                     <li>
                       Utiliza la Aplicación de manera fraudulenta o ilegal
@@ -299,22 +299,22 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-amber-500" />
+                <FileText className="w-6 h-6 text-lime-400" />
                 9. Modificaciones a los Términos
               </h2>
-              <p className="text-slate-300 leading-relaxed">
+              <p className="text-stone-300 leading-relaxed">
                 Nos reservamos el derecho de modificar estos Términos y
                 Condiciones en cualquier momento. Le notificaremos sobre cambios
                 significativos mediante:
               </p>
-              <ul className="list-disc list-inside text-slate-300 space-y-2 ml-4 mt-4">
+              <ul className="list-disc list-inside text-stone-300 space-y-2 ml-4 mt-4">
                 <li>Un aviso prominente en la Aplicación</li>
                 <li>
                   Correo electrónico a la dirección asociada con su cuenta
                 </li>
                 <li>Actualización de la fecha de "Última actualización"</li>
               </ul>
-              <p className="text-slate-300 leading-relaxed mt-4">
+              <p className="text-stone-300 leading-relaxed mt-4">
                 El uso continuado de la Aplicación después de los cambios
                 constituye su aceptación de los nuevos términos. Si no está de
                 acuerdo con los cambios, debe dejar de utilizar la Aplicación y
@@ -324,10 +324,10 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-amber-500" />
+                <FileText className="w-6 h-6 text-lime-400" />
                 10. Enlaces a Terceros
               </h2>
-              <p className="text-slate-300 leading-relaxed">
+              <p className="text-stone-300 leading-relaxed">
                 La Aplicación puede contener enlaces a sitios web o servicios de
                 terceros. No tenemos control sobre el contenido, políticas de
                 privacidad o prácticas de estos sitios de terceros. No nos
@@ -338,17 +338,17 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-amber-500" />
+                <FileText className="w-6 h-6 text-lime-400" />
                 11. Indemnización
               </h2>
-              <p className="text-slate-300 leading-relaxed">
+              <p className="text-stone-300 leading-relaxed">
                 Usted acepta indemnizar, defender y eximir de responsabilidad a
                 GymTrack, sus afiliados, directores, empleados y agentes de
                 cualquier reclamo, daño, obligación, pérdida, responsabilidad,
                 costo o deuda, y gastos (incluyendo honorarios de abogados) que
                 surjan de:
               </p>
-              <ul className="list-disc list-inside text-slate-300 space-y-1 ml-4 mt-2">
+              <ul className="list-disc list-inside text-stone-300 space-y-1 ml-4 mt-2">
                 <li>Su uso o mal uso de la Aplicación</li>
                 <li>Su violación de estos Términos y Condiciones</li>
                 <li>Su violación de cualquier derecho de terceros</li>
@@ -361,10 +361,10 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-amber-500" />
+                <FileText className="w-6 h-6 text-lime-400" />
                 12. Legislación Aplicable y Jurisdicción
               </h2>
-              <p className="text-slate-300 leading-relaxed">
+              <p className="text-stone-300 leading-relaxed">
                 Estos Términos y Condiciones se rigen e interpretan de acuerdo
                 con las leyes de los Estados Unidos Mexicanos. Cualquier disputa
                 que surja de o esté relacionada con estos términos o con el uso
@@ -375,21 +375,21 @@ export const TermsOfService: React.FC = () => {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-amber-500" />
+                <FileText className="w-6 h-6 text-lime-400" />
                 13. Disposiciones Generales
               </h2>
               <div className="space-y-3">
-                <p className="text-slate-300 leading-relaxed">
+                <p className="text-stone-300 leading-relaxed">
                   <strong>13.1. Divisibilidad:</strong> Si alguna disposición de
                   estos términos se considera inválida o inaplicable, las
                   disposiciones restantes permanecerán en pleno vigor y efecto.
                 </p>
-                <p className="text-slate-300 leading-relaxed">
+                <p className="text-stone-300 leading-relaxed">
                   <strong>13.2. Renuncia:</strong> El hecho de que no ejerzamos
                   algún derecho o disposición de estos términos no constituye
                   una renuncia a tal derecho o disposición.
                 </p>
-                <p className="text-slate-300 leading-relaxed">
+                <p className="text-stone-300 leading-relaxed">
                   <strong>13.3. Acuerdo Completo:</strong> Estos términos
                   constituyen el acuerdo completo entre usted y GymTrack
                   respecto al uso de la Aplicación.
@@ -397,15 +397,15 @@ export const TermsOfService: React.FC = () => {
               </div>
             </section>
 
-            <section className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4 text-amber-400">
+            <section className="bg-lime-400/10 border border-lime-400/20 rounded-lg p-6">
+              <h2 className="text-xl font-semibold mb-4 text-lime-400">
                 Contacto
               </h2>
-              <p className="text-slate-300 leading-relaxed">
+              <p className="text-stone-300 leading-relaxed">
                 Si tiene preguntas sobre estos Términos y Condiciones, puede
                 contactarnos en:
               </p>
-              <p className="text-amber-400 mt-2">
+              <p className="text-lime-400 mt-2">
                 <strong>Email:</strong> support@gymtrack.com
               </p>
             </section>

@@ -55,7 +55,7 @@ export const Toast: React.FC<ToastProps> = ({
   const colors = {
     success: "bg-green-500 text-white",
     error: "bg-red-500 text-white",
-    info: "bg-amber-500 text-white",
+    info: "bg-lime-400 text-white",
   };
 
   return (

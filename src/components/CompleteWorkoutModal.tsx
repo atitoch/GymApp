@@ -52,7 +52,7 @@ export const CompleteWorkoutModal: React.FC<CompleteWorkoutModalProps> = ({
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div
           className={cn(
-            "bg-gradient-to-b from-slate-900 to-slate-800",
+            "bg-gradient-to-b from-stone-900 to-stone-800",
             "rounded-2xl shadow-2xl",
             "w-full max-w-md",
             "p-6",
@@ -76,10 +76,10 @@ export const CompleteWorkoutModal: React.FC<CompleteWorkoutModalProps> = ({
                 />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-slate-50 mb-2">
+            <h2 className="text-2xl font-bold text-stone-50 mb-2">
               ¿Finalizar Entrenamiento?
             </h2>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-stone-400">
               Has completado {completedSets} de {totalSets} series (
               {Math.round(progressPercentage)}%)
             </p>
@@ -87,7 +87,7 @@ export const CompleteWorkoutModal: React.FC<CompleteWorkoutModalProps> = ({
 
           {/* Rating */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-slate-300 mb-3 text-center">
+            <label className="block text-sm font-medium text-stone-300 mb-3 text-center">
               ¿Cómo te sentiste? (Opcional)
             </label>
             <div className="flex justify-center gap-2">
@@ -101,7 +101,7 @@ export const CompleteWorkoutModal: React.FC<CompleteWorkoutModalProps> = ({
                     "flex items-center justify-center",
                     rating >= value
                       ? "bg-yellow-500 text-white scale-110"
-                      : "bg-slate-700/50 text-slate-500 hover:bg-slate-600 hover:scale-105"
+                      : "bg-stone-700/50 text-stone-500 hover:bg-stone-600 hover:scale-105"
                   )}
                 >
                   <svg
@@ -115,7 +115,7 @@ export const CompleteWorkoutModal: React.FC<CompleteWorkoutModalProps> = ({
               ))}
             </div>
             {rating > 0 && (
-              <p className="text-center text-xs text-slate-400 mt-2">
+              <p className="text-center text-xs text-stone-400 mt-2">
                 {rating === 1 && "Mal día"}
                 {rating === 2 && "No fue el mejor"}
                 {rating === 3 && "Normal"}
@@ -127,7 +127,7 @@ export const CompleteWorkoutModal: React.FC<CompleteWorkoutModalProps> = ({
 
           {/* Notes */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-stone-300 mb-2">
               Notas (Opcional)
             </label>
             <textarea
@@ -137,9 +137,9 @@ export const CompleteWorkoutModal: React.FC<CompleteWorkoutModalProps> = ({
               rows={3}
               className={cn(
                 "w-full px-4 py-3 text-sm",
-                "bg-slate-800/50 border-2 border-slate-700",
-                "rounded-xl text-slate-50 placeholder-slate-500",
-                "focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20",
+                "bg-stone-800/50 border-2 border-stone-700",
+                "rounded-xl text-stone-50 placeholder-stone-500",
+                "focus:outline-none focus:border-lime-400 focus:ring-2 focus:ring-lime-400/20",
                 "transition-all duration-200 resize-none"
               )}
             />
@@ -153,8 +153,8 @@ export const CompleteWorkoutModal: React.FC<CompleteWorkoutModalProps> = ({
               disabled={isSaving}
               className={cn(
                 "flex-1 py-3 rounded-xl font-semibold",
-                "bg-slate-800 text-slate-300",
-                "hover:bg-slate-700 transition-colors",
+                "bg-stone-800 text-stone-300",
+                "hover:bg-stone-700 transition-colors",
                 "disabled:opacity-50 disabled:cursor-not-allowed"
               )}
             >

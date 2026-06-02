@@ -46,10 +46,10 @@ export const AuthCallback = () => {
   }, [searchParams, navigate, setAuthData]);
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+    <div className="min-h-screen bg-stone-950 flex items-center justify-center">
       <div className="text-center">
-        <Loader2 className="w-8 h-8 animate-spin text-amber-500 mx-auto mb-4" />
-        <p className="text-slate-400">Completando autenticación...</p>
+        <Loader2 className="w-8 h-8 animate-spin text-lime-400 mx-auto mb-4" />
+        <p className="text-stone-400">Completando autenticación...</p>
       </div>
     </div>
   );

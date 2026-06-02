@@ -5,98 +5,99 @@
 
 import type { ColorPalette, ThemeConfig } from './types';
 
-// Paleta base (por defecto)
+// Paleta base — Lima eléctrico sobre negro cálido
+// Inspirado en Nike Training, WHOOP, F1. Alto contraste, energético, único.
 const basePalette: ColorPalette = {
   primary: {
-    50: '#fffbeb',
-    100: '#fef3c7',
-    200: '#fde68a',
-    300: '#fcd34d',
-    400: '#fbbf24',
-    500: '#f59e0b', // Amber principal
-    600: '#d97706',
-    700: '#b45309',
-    800: '#92400e',
-    900: '#78350f',
-    950: '#451a03',
+    50:  '#f7fee7',
+    100: '#ecfccb',
+    200: '#d9f99d',
+    300: '#bef264',
+    400: '#a3e635', // acento principal — lima eléctrico
+    500: '#84cc16', // profundidad
+    600: '#65a30d',
+    700: '#4d7c0f',
+    800: '#3f6212',
+    900: '#365314',
+    950: '#1a2e05',
   },
-  
+
   secondary: {
-    50: '#f0fdf4',
+    50:  '#f0fdf4',
     100: '#dcfce7',
     200: '#bbf7d0',
     300: '#86efac',
     400: '#4ade80',
-    500: '#22c55e', // Green secundario
+    500: '#22c55e',
     600: '#16a34a',
     700: '#15803d',
     800: '#166534',
     900: '#14532d',
     950: '#052e16',
   },
-  
+
   background: {
-    primary: '#020617', // slate-950
-    secondary: '#0f172a', // slate-900
-    tertiary: '#1e293b', // slate-800
-    overlay: 'rgba(15, 23, 42, 0.5)', // slate-900/50
+    primary:   '#0c0a09', // stone-950 — negro cálido, no azulado
+    secondary: '#1c1917', // stone-900
+    tertiary:  '#292524', // stone-800
+    overlay:   'rgba(28, 25, 23, 0.6)', // stone-900/60
   },
-  
+
   text: {
-    primary: '#f8fafc', // slate-50
-    secondary: '#cbd5e1', // slate-300
-    tertiary: '#94a3b8', // slate-400
-    inverse: '#0f172a', // slate-900
-    placeholder: '#64748b', // slate-500
+    primary:     '#fafaf9', // stone-50 — blanco cálido
+    secondary:   '#d6d3d1', // stone-300
+    tertiary:    '#a8a29e', // stone-400
+    inverse:     '#0c0a09',
+    placeholder: '#78716c', // stone-500
   },
-  
+
   status: {
-    success: '#22c55e', // green-500
-    warning: '#f59e0b', // amber-500
-    error: '#ef4444', // red-500
-    info: '#f59e0b', // amber-500
+    success: '#a3e635', // mismo lima — completado
+    warning: '#fbbf24', // lime-400
+    error:   '#f87171', // red-400
+    info:    '#a3e635',
   },
-  
+
   border: {
-    default: '#334155', // slate-700
-    hover: '#475569', // slate-600
-    focus: '#f59e0b', // amber-500
-    error: '#ef4444', // red-500
+    default: '#44403c', // stone-700
+    hover:   '#57534e', // stone-600
+    focus:   '#a3e635', // lima eléctrico
+    error:   '#f87171',
   },
-  
+
   button: {
     primary: {
-      bg: 'linear-gradient(to right, #f59e0b, #d97706)', // from-amber-500 to-amber-600
-      hover: 'linear-gradient(to right, #d97706, #b45309)', // from-amber-600 to-amber-700
-      text: '#ffffff',
-      shadow: 'rgba(245, 158, 11, 0.3)', // amber-500/30
+      bg:     'linear-gradient(135deg, #a3e635, #84cc16)',
+      hover:  'linear-gradient(135deg, #bef264, #a3e635)',
+      text:   '#0c0a09', // texto oscuro sobre lima — mejor legibilidad
+      shadow: 'rgba(163, 230, 53, 0.25)',
     },
     secondary: {
-      bg: '#1e293b', // slate-800
-      hover: '#334155', // slate-700
-      text: '#cbd5e1', // slate-300
-      border: '#334155', // slate-700
+      bg:     '#292524', // stone-800
+      hover:  '#44403c', // stone-700
+      text:   '#d6d3d1',
+      border: '#44403c',
     },
     ghost: {
-      bg: 'transparent',
-      hover: '#1e293b', // slate-800
-      text: '#f59e0b', // amber-400
+      bg:   'transparent',
+      hover: '#1c1917',
+      text:  '#a3e635',
     },
   },
-  
+
   input: {
-    bg: 'rgba(15, 23, 42, 0.5)', // slate-900/50
-    border: '#334155', // slate-700
-    focus: '#f59e0b', // amber-500
-    placeholder: '#64748b', // slate-500
-    text: '#f8fafc', // slate-50
+    bg:          'rgba(28, 25, 23, 0.6)',
+    border:      '#44403c',
+    focus:       '#a3e635',
+    placeholder: '#78716c',
+    text:        '#fafaf9',
   },
-  
+
   card: {
-    bg: '#1e293b', // slate-800
-    hover: '#334155', // slate-700
-    border: '#334155', // slate-700
-    shadow: 'rgba(245, 158, 11, 0.15)', // amber-500/20
+    bg:     '#1c1917',
+    hover:  '#292524',
+    border: '#44403c',
+    shadow: 'rgba(163, 230, 53, 0.08)',
   },
 };
 

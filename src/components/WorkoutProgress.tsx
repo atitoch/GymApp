@@ -70,7 +70,7 @@ export default function WorkoutProgress({
               style={{ color: colors.from }}
               className={pct > 0 ? "animate-pulse" : "opacity-40"}
             />
-            <span className="text-xs font-semibold text-slate-300">
+            <span className="text-xs font-semibold text-stone-300">
               {getEncouragement(pct)}
             </span>
           </div>
@@ -79,7 +79,7 @@ export default function WorkoutProgress({
           <span className="text-xs font-bold tabular-nums" style={{ color: colors.from }}>
             {completed}/{total} ejercicios
             {estimatedMinutes && completed < total && (
-              <span className="text-slate-500 font-normal ml-1">
+              <span className="text-stone-500 font-normal ml-1">
                 · ~{Math.round(estimatedMinutes * (1 - pct / 100))} min restantes
               </span>
             )}
@@ -118,7 +118,7 @@ export default function WorkoutProgress({
                 ) : (
                   <Circle
                     size={14}
-                    className="text-slate-600"
+                    className="text-stone-600"
                   />
                 )}
               </div>

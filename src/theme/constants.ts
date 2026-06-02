@@ -8,83 +8,83 @@
 export const themeClasses = {
   // ===== BACKGROUNDS =====
   backgrounds: {
-    primary: "bg-slate-950",
-    secondary: "bg-slate-900",
-    tertiary: "bg-slate-800",
-    overlay: "bg-slate-900/50",
-    card: "bg-slate-800",
-    cardHover: "bg-slate-700",
-    input: "bg-slate-900/50",
-    buttonPrimary: "bg-gradient-to-r from-amber-500 to-amber-600",
-    buttonPrimaryHover: "hover:from-amber-600 hover:to-amber-700",
-    buttonSecondary: "bg-slate-800",
-    buttonSecondaryHover: "hover:bg-slate-700",
+    primary: "bg-stone-950",
+    secondary: "bg-stone-900",
+    tertiary: "bg-stone-800",
+    overlay: "bg-stone-900/50",
+    card: "bg-stone-800",
+    cardHover: "bg-stone-700",
+    input: "bg-stone-900/50",
+    buttonPrimary: "bg-gradient-to-r from-lime-400 to-lime-500",
+    buttonPrimaryHover: "hover:from-lime-500 hover:to-lime-600",
+    buttonSecondary: "bg-stone-800",
+    buttonSecondaryHover: "hover:bg-stone-700",
     buttonGhost: "bg-transparent",
-    buttonGhostHover: "hover:bg-slate-800",
+    buttonGhostHover: "hover:bg-stone-800",
   },
 
   // ===== TEXT =====
   text: {
-    primary: "text-slate-50",
-    secondary: "text-slate-300",
-    tertiary: "text-slate-400",
-    placeholder: "text-slate-500",
-    inverse: "text-slate-900",
+    primary: "text-stone-50",
+    secondary: "text-stone-300",
+    tertiary: "text-stone-400",
+    placeholder: "text-stone-500",
+    inverse: "text-stone-900",
     white: "text-white",
     // Primary colors
-    accent: "text-amber-500",
-    accentHover: "hover:text-amber-400",
-    accentLight: "text-amber-400",
+    accent: "text-lime-400",
+    accentHover: "hover:text-lime-400",
+    accentLight: "text-lime-400",
     // Status colors
     success: "text-green-400",
-    warning: "text-amber-500",
+    warning: "text-lime-400",
     error: "text-red-400",
-    info: "text-amber-500",
+    info: "text-lime-400",
   },
 
   // ===== BORDERS =====
   borders: {
-    default: "border-slate-700",
-    hover: "border-slate-600",
-    focus: "border-amber-500",
+    default: "border-stone-700",
+    hover: "border-stone-600",
+    focus: "border-lime-400",
     error: "border-red-500",
-    card: "border-slate-700",
-    input: "border-slate-700",
-    inputFocus: "focus:border-amber-500",
+    card: "border-stone-700",
+    input: "border-stone-700",
+    inputFocus: "focus:border-lime-400",
   },
 
   // ===== BUTTONS =====
   buttons: {
     primary:
-      "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold py-2.5 rounded-lg transition-all duration-300 shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100",
+      "bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-500 hover:to-lime-600 text-white font-semibold py-2.5 rounded-lg transition-all duration-300 shadow-lg shadow-lime-400/30 hover:shadow-lime-400/50 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100",
     secondary:
-      "bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium py-2.5 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed",
+      "bg-stone-800 hover:bg-stone-700 text-stone-300 font-medium py-2.5 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed",
     ghost:
-      "bg-transparent hover:bg-slate-800 text-amber-400 hover:text-amber-300 font-medium py-2.5 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed",
-    icon: "p-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors",
+      "bg-transparent hover:bg-stone-800 text-lime-400 hover:text-lime-300 font-medium py-2.5 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed",
+    icon: "p-2 bg-stone-800 hover:bg-stone-700 rounded-lg transition-colors",
   },
 
   // ===== INPUTS =====
   inputs: {
-    base: "w-full bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed",
+    base: "w-full bg-stone-900/50 border border-stone-700 rounded-lg px-4 py-2.5 text-stone-50 placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-lime-400/50 focus:border-lime-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed",
     text: "text-sm",
   },
 
   // ===== CARDS =====
   cards: {
-    base: "bg-slate-800 rounded-xl p-6",
-    hover: "hover:bg-slate-700/50 transition-colors",
+    base: "bg-stone-800 rounded-xl p-6",
+    hover: "hover:bg-stone-700/50 transition-colors",
     interactive:
-      "bg-slate-800 hover:bg-slate-700 rounded-xl p-6 transition-all duration-300 hover:scale-105",
-    withShadow: "hover:shadow-xl hover:shadow-amber-500/20",
+      "bg-stone-800 hover:bg-stone-700 rounded-xl p-6 transition-all duration-300 hover:scale-105",
+    withShadow: "hover:shadow-xl hover:shadow-lime-400/20",
   },
 
   // ===== STATUS =====
   status: {
     success: "text-green-400 bg-green-500/10 border border-green-500/50",
-    warning: "text-amber-500 bg-amber-500/10 border border-amber-500/50",
+    warning: "text-lime-400 bg-lime-400/10 border border-lime-400/50",
     error: "text-red-400 bg-red-500/10 border border-red-500/50",
-    info: "text-amber-400 bg-amber-500/10 border border-amber-500/50",
+    info: "text-lime-400 bg-lime-400/10 border border-lime-400/50",
   },
 
   // ===== LAYOUT =====
@@ -106,7 +106,7 @@ export const themeClasses = {
   effects: {
     backdrop: "backdrop-blur-sm",
     shadow: "shadow-2xl",
-    shadowPrimary: "shadow-lg shadow-amber-500/30",
+    shadowPrimary: "shadow-lg shadow-lime-400/30",
     glow: "animate-pulse",
     scale: "hover:scale-105",
     scaleButton: "hover:scale-[1.02]",

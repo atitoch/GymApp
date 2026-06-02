@@ -298,8 +298,8 @@ export const DayRoutine: React.FC = () => {
 
         {currentRoutine.sections.map((section, sIdx) => (
           <div key={sIdx} className="mb-8">
-            <h2 className="text-lg font-semibold text-amber-400 mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 bg-amber-400 rounded-full" />
+            <h2 className="text-lg font-semibold text-lime-400 mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 bg-lime-400 rounded-full" />
               {section.title}
             </h2>
             <div className="space-y-4">
