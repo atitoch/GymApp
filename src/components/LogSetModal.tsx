@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { cn } from "../theme/constants";
 import type { Exercise } from "../types/routineType";
 import type { ExerciseLog } from "../types/workoutLog";
+import { useToast } from "../hooks/useToast";
+import { Toast } from "./Toast";
 
 interface LogSetModalProps {
   isOpen: boolean;
@@ -31,6 +33,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
   lastSet,
   onSave,
 }) => {
+  const { toasts, showToast, hideToast } = useToast();
   const [reps, setReps] = useState<string>("");
   const [weight, setWeight] = useState<string>("");
   const [weightUnit, setWeightUnit] = useState<"kg" | "lbs">("lbs"); // Por defecto lbs
@@ -237,10 +240,10 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
     try {
       const weightValue = weight ? parseFloat(weight) : undefined;
       const data = {
-        reps_completed: parseInt(reps),
+        reps_completed: parseInt(reps, 10),
         weight_kg: weightUnit === "kg" ? weightValue : undefined,
         weight_lbs: weightUnit === "lbs" ? weightValue : undefined,
-        rpe_actual: rpe ? parseInt(rpe) : undefined,
+        rpe_actual: rpe ? parseInt(rpe, 10) : undefined,
         notes: notes || undefined,
         is_warmup: isWarmup || undefined,
         is_drop_set: isDropSet || undefined,
@@ -251,7 +254,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
       onClose();
     } catch (error) {
       console.error("Error al guardar la serie:", error);
-      alert("Error al guardar la serie. Por favor intenta de nuevo.");
+      showToast("Error al guardar la serie. Intenta de nuevo.", "error");
     } finally {
       setIsSaving(false);
     }
@@ -266,6 +269,9 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
 
   return (
     <>
+      {toasts.map((t) => (
+        <Toast key={t.id} message={t.message} type={t.type} onClose={() => hideToast(t.id)} />
+      ))}
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300"
