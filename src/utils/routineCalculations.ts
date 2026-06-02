@@ -348,21 +348,35 @@ export const getRoutinesForRange = (
 };
 
 /**
- * Obtiene las rutinas para mostrar la semana completa (lunes a domingo)
- * Siempre muestra los días 1-7 del patrón (una semana completa)
+ * Obtiene las rutinas del ciclo actual completo
+ * Calcula el primer día del ciclo en curso y muestra todos sus días,
+ * de modo que las fechas siempre correspondan a la semana actual.
  * @param routinePattern Patrón de rutina del backend
  * @param _currentDay (ignorado) - Se mantiene por compatibilidad
- * @param daysToShow Número de días a mostrar (default: 7)
- * @returns Array de rutinas calculadas para la semana completa
+ * @param _daysToShow (ignorado) - Se usa la longitud del ciclo
+ * @returns Array de rutinas calculadas para el ciclo actual
  */
 export const getRoutinesForDisplay = (
   routinePattern: RoutinePattern,
   _currentDay?: number,
-  daysToShow: number = 7
+  _daysToShow: number = 7
 ): CalculatedDayRoutine[] => {
-  // Siempre mostrar desde el día 1 hasta daysToShow (típicamente 7 para una semana)
-  // Esto muestra la semana completa de lunes a domingo
-  return getRoutinesForRange(routinePattern, 1, daysToShow);
+  const cycleLength = routinePattern.pattern.length;
+  if (cycleLength === 0) return [];
+
+  // Calcular el día actual dentro del ciclo completo
+  const currentDay = calculateDayNumber(
+    routinePattern.startDate,
+    undefined,
+    routinePattern.startDayOfWeek
+  );
+
+  // Encontrar el primer día del ciclo actual
+  // Ej: ciclo de 7 días, día actual = 9 → cicloInicio = 8 (días 8-14)
+  const cycleStart =
+    Math.floor((Math.max(currentDay, 1) - 1) / cycleLength) * cycleLength + 1;
+
+  return getRoutinesForRange(routinePattern, cycleStart, cycleStart + cycleLength - 1);
 };
 
 /**
