@@ -42,15 +42,16 @@ export const CompleteWorkoutModal: React.FC<CompleteWorkoutModalProps> = ({
 
   return (
     <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity duration-300"
-        onClick={onClose}
-      />
+      {/* Blur overlay (non-interactive) */}
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50" />
 
-      {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Clickable wrapper — click outside the card to close */}
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        onClick={onClose}
+      >
         <div
+          onClick={(e) => e.stopPropagation()}
           className={cn(
             "bg-gradient-to-b from-stone-900 to-stone-800",
             "rounded-2xl shadow-2xl",
