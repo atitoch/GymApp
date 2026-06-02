@@ -131,15 +131,15 @@ function InputField({
   maxLength?: number;
 }) {
   return (
-    <div className="px-4 py-3 flex items-center gap-3">
-      <span className="text-sm text-stone-400 min-w-28 shrink-0">{label}</span>
+    <div className="px-4 py-3 flex items-center justify-between gap-3 min-w-0">
+      <span className="text-sm text-stone-400 shrink-0">{label}</span>
       <input
         type={type}
         value={value ?? ''}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         maxLength={maxLength}
-        className="flex-1 bg-transparent text-sm text-white placeholder-stone-600 outline-none text-right"
+        className="min-w-0 flex-1 bg-transparent text-sm text-white placeholder-stone-600 outline-none text-right truncate focus:truncate-none"
       />
     </div>
   );
@@ -427,7 +427,7 @@ export default function ProfileSettings() {
       <div
         className="sticky top-0 z-20"
         style={{
-          background: 'rgba(10,15,30,0.85)',
+          background: 'rgba(12,10,9,0.90)',
           backdropFilter: 'blur(12px)',
           borderBottom: '1px solid rgba(255,255,255,0.05)',
         }}
