@@ -71,7 +71,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
   // Resetear al cerrar
   useEffect(() => {
     if (!isOpen) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setReps("");
         setWeight("");
         setRpe("");
@@ -84,6 +84,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
         setWeightError("");
         setRpeError("");
       }, 300);
+      return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
