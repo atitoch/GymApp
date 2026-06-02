@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Calendar, LogOut, Home, Dumbbell, History, User } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { LogOut, Home, Dumbbell, History, User, Menu, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/useAuth';
 import { themeClasses, cn } from '../theme/constants';
@@ -19,119 +19,112 @@ export const Header: React.FC<HeaderProps> = ({
   const navigate = useNavigate();
   const colors = useColors();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
-  const handleLogout = async () => {
-    setShowLogoutDialog(true);
-  };
-
-  const confirmLogout = async () => {
-    await logout();
-  };
+  // Cerrar menú al click fuera
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleBack = () => {
-    if (handleBackToSelect) {
-      handleBackToSelect();
-    } else {
-      navigate('/dashboard');
-    }
+    if (handleBackToSelect) handleBackToSelect();
+    else navigate('/dashboard');
   };
 
-  // Usar el usuario autenticado
   const displayName = authUser?.name || authUser?.email || 'Usuario';
   const displayInitial = displayName[0]?.toUpperCase() || 'U';
 
-  // Generar color basado en el nombre del usuario para consistencia
   const getUserColor = (name: string): string => {
-    const colors = [
-      '#a3e635', // blue
-      '#8b5cf6', // purple
-      '#ec4899', // pink
-      '#10b981', // green
-      '#f59e0b', // amber
-      '#ef4444', // red
-    ];
-    const index = name.charCodeAt(0) % colors.length;
-    return colors[index];
+    const palette = ['#a3e635', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444'];
+    return palette[name.charCodeAt(0) % palette.length];
   };
 
   const userColor = getUserColor(displayName);
 
+  const menuItems = [
+    ...(showBackButton ? [{ icon: Home, label: 'Dashboard', action: () => navigate('/dashboard') }] : []),
+    { icon: History, label: 'Historial', action: () => navigate('/history') },
+    { icon: User, label: 'Perfil', action: () => navigate('/profile') },
+    { icon: LogOut, label: 'Cerrar sesión', action: () => setShowLogoutDialog(true), danger: true },
+  ];
+
   return (
     <>
-      <div className={cn(themeClasses.layout.flexBetween, 'mb-8')}>
-        <div className={themeClasses.layout.flexCenter + ' gap-4'}>
-          {showBackButton && (
+      <div className={cn(themeClasses.layout.flexBetween, 'mb-8 gap-3 min-w-0')}>
+        {/* Izquierda: avatar + nombre */}
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          {showBackButton ? (
             <button
               onClick={handleBack}
-              className="w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold transition-transform hover:scale-110"
-              style={{
-                backgroundColor: userColor,
-                color: colors.text.inverse,
-              }}
+              className="w-11 h-11 shrink-0 rounded-full flex items-center justify-center text-xl font-bold transition-transform hover:scale-110"
+              style={{ backgroundColor: userColor, color: colors.text.inverse }}
               title="Volver al dashboard"
             >
               {displayInitial}
             </button>
-          )}
-          {!showBackButton && (
+          ) : (
             <div
-              className="w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold"
-              style={{
-                backgroundColor: userColor,
-                color: colors.text.inverse,
-              }}
+              className="w-11 h-11 shrink-0 rounded-full flex items-center justify-center text-xl font-bold"
+              style={{ backgroundColor: userColor, color: colors.text.inverse }}
             >
               {displayInitial}
             </div>
           )}
-          <div>
-            <h1 className={cn('text-3xl font-bold', themeClasses.text.primary)}>
+          <div className="min-w-0">
+            <h1 className={cn('text-xl sm:text-2xl font-bold truncate', themeClasses.text.primary)}>
               {displayName}
             </h1>
-            <p className={themeClasses.text.tertiary}>
+            <p className={cn('text-sm', themeClasses.text.tertiary)}>
               {showBackButton ? 'Rutina' : 'Mi Panel'}
             </p>
           </div>
         </div>
-        <div className={cn(themeClasses.layout.flexCenter, 'gap-4')}>
-          {showBackButton && (
-            <button
-              onClick={() => navigate('/dashboard')}
-              className={themeClasses.buttons.icon}
-              title="Ir al dashboard"
+
+        {/* Derecha: menú hamburguesa */}
+        <div className="relative shrink-0" ref={menuRef}>
+          <button
+            onClick={() => setMenuOpen((v) => !v)}
+            className={cn(themeClasses.buttons.icon, 'w-10 h-10')}
+            title="Menú"
+          >
+            {menuOpen
+              ? <X className={cn('w-5 h-5', themeClasses.text.primary)} />
+              : <Menu className={cn('w-5 h-5', themeClasses.text.primary)} />
+            }
+          </button>
+
+          {menuOpen && (
+            <div
+              className="absolute right-0 top-12 z-50 w-48 rounded-xl shadow-2xl overflow-hidden"
+              style={{ background: colors.background.tertiary, border: `1px solid ${colors.border.default}` }}
             >
-              <Home className={cn('w-5 h-5', themeClasses.text.tertiary)} />
-            </button>
+              {menuItems.map(({ icon: Icon, label, action, danger }) => (
+                <button
+                  key={label}
+                  onClick={() => { action(); setMenuOpen(false); }}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors hover:bg-white/5 text-left"
+                  style={{ color: danger ? '#f87171' : colors.text.secondary }}
+                >
+                  <Icon className="w-4 h-4 shrink-0" />
+                  {label}
+                </button>
+              ))}
+            </div>
           )}
-          <button
-            onClick={() => navigate('/history')}
-            className={themeClasses.buttons.icon}
-            title="Historial de entrenamientos"
-          >
-            <History className={cn('w-5 h-5', themeClasses.text.tertiary)} />
-          </button>
-          <button
-            onClick={() => navigate('/profile')}
-            className={themeClasses.buttons.icon}
-            title="Configuración de perfil"
-          >
-            <User className={cn('w-5 h-5', themeClasses.text.tertiary)} />
-          </button>
-          <Calendar className={cn('w-8 h-8', themeClasses.text.primary)} />
-          <button
-            onClick={handleLogout}
-            className={themeClasses.buttons.icon}
-            title="Cerrar sesión"
-          >
-            <LogOut className={cn('w-5 h-5', themeClasses.text.tertiary)} />
-          </button>
         </div>
       </div>
 
       <ConfirmDialog
         isOpen={showLogoutDialog}
         onClose={() => setShowLogoutDialog(false)}
-        onConfirm={confirmLogout}
+        onConfirm={logout}
         title="¡Gran trabajo hoy! 💪"
         message="¿Confirmas que deseas cerrar sesión? Nos vemos en tu próximo entrenamiento."
         confirmText="Cerrar sesión"
