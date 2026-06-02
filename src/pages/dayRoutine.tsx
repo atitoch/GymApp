@@ -207,7 +207,7 @@ export const DayRoutine: React.FC = () => {
       reps_completed?: number;
       weight_kg?: number;
       weight_lbs?: number;
-      rpe?: number;
+      rpe_actual?: number;
       notes?: string;
     },
   ) => {

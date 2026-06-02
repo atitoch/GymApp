@@ -253,7 +253,7 @@ export const authenticatedPatch = async <T>(
 ): Promise<T> => {
   try {
     const response = await authenticatedFetch(endpoint, {
-      method: 'PUT',
+      method: 'PATCH',
       body: data ? JSON.stringify(data) : undefined,
     });
 

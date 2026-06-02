@@ -1,6 +1,6 @@
 import {
   authenticatedGet,
-  authenticatedPost,
+  authenticatedPut,
   authenticatedDelete,
 } from '../utils/api';
 
@@ -34,11 +34,10 @@ export const getExerciseNote = async (
 ): Promise<ExerciseNote | null> => {
   try {
     const data = await authenticatedGet<ExerciseNote>(
-      `/exercises/notes/${encodeURIComponent(exerciseName)}`,
+      `/exercise-notes/${encodeURIComponent(exerciseName)}`,
     );
     return data || null;
   } catch {
-    // Si es 404, no existe la nota
     return null;
   }
 };
@@ -49,7 +48,10 @@ export const getExerciseNote = async (
 export const upsertExerciseNote = async (
   data: CreateExerciseNoteData,
 ): Promise<ExerciseNote> => {
-  return await authenticatedPost<ExerciseNote>(`/exercises/notes`, data);
+  return await authenticatedPut<ExerciseNote>(
+    `/exercise-notes/${encodeURIComponent(data.exercise_name)}`,
+    { note: data.note },
+  );
 };
 
 /**
@@ -59,6 +61,6 @@ export const deleteExerciseNote = async (
   exerciseName: string,
 ): Promise<void> => {
   await authenticatedDelete<void>(
-    `/exercises/notes/${encodeURIComponent(exerciseName)}`,
+    `/exercise-notes/${encodeURIComponent(exerciseName)}`,
   );
 };
