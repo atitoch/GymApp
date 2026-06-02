@@ -4,6 +4,14 @@ const API_BASE_URL = import.meta.env.VITE_API_URL;
 import type { ApiResponse } from '../types/api';
 import { parseApiError, handleFetchError } from './errorHandler';
 
+const parseJsonResponse = async <T>(response: Response): Promise<T> => {
+  const contentType = response.headers.get('content-type');
+  if (!contentType?.includes('application/json')) {
+    throw new Error(`Respuesta inesperada del servidor (${response.status})`);
+  }
+  return response.json();
+};
+
 const TOKEN_KEY = 'auth_token';
 const REFRESH_TOKEN_KEY = 'auth_refresh_token';
 const USER_KEY = 'auth_user';
@@ -158,14 +166,9 @@ export const authenticatedGet = async <T>(endpoint: string): Promise<T> => {
       throw await parseApiError(response);
     }
 
-    const data: ApiResponse<T> = await response.json();
+    const data: ApiResponse<T> = await parseJsonResponse(response);
 
-    // El backend puede devolver los datos directamente o dentro de data
-    if (data.data !== undefined) {
-      return data.data;
-    }
-
-    // Si no hay data, asumir que la respuesta completa es T
+    if (data.data !== undefined) return data.data;
     return data as unknown as T;
   } catch (error) {
     throw handleFetchError(error);
@@ -194,14 +197,9 @@ export const authenticatedPost = async <T>(
       throw await parseApiError(response);
     }
 
-    const responseData: ApiResponse<T> = await response.json();
+    const responseData: ApiResponse<T> = await parseJsonResponse(response);
 
-    // El backend puede devolver los datos directamente o dentro de data
-    if (responseData.data !== undefined) {
-      return responseData.data;
-    }
-
-    // Si no hay data, asumir que la respuesta completa es T
+    if (responseData.data !== undefined) return responseData.data;
     return responseData as unknown as T;
   } catch (error) {
     throw handleFetchError(error);
@@ -230,14 +228,9 @@ export const authenticatedPut = async <T>(
       throw await parseApiError(response);
     }
 
-    const responseData: ApiResponse<T> = await response.json();
+    const responseData: ApiResponse<T> = await parseJsonResponse(response);
 
-    // El backend puede devolver los datos directamente o dentro de data
-    if (responseData.data !== undefined) {
-      return responseData.data;
-    }
-
-    // Si no hay data, asumir que la respuesta completa es T
+    if (responseData.data !== undefined) return responseData.data;
     return responseData as unknown as T;
   } catch (error) {
     throw handleFetchError(error);
@@ -266,14 +259,9 @@ export const authenticatedPatch = async <T>(
       throw await parseApiError(response);
     }
 
-    const responseData: ApiResponse<T> = await response.json();
+    const responseData: ApiResponse<T> = await parseJsonResponse(response);
 
-    // El backend puede devolver los datos directamente o dentro de data
-    if (responseData.data !== undefined) {
-      return responseData.data;
-    }
-
-    // Si no hay data, asumir que la respuesta completa es T
+    if (responseData.data !== undefined) return responseData.data;
     return responseData as unknown as T;
   } catch (error) {
     throw handleFetchError(error);
@@ -298,14 +286,9 @@ export const authenticatedDelete = async <T>(endpoint: string): Promise<T> => {
       throw await parseApiError(response);
     }
 
-    const responseData: ApiResponse<T> = await response.json();
+    const responseData: ApiResponse<T> = await parseJsonResponse(response);
 
-    // El backend puede devolver los datos directamente o dentro de data
-    if (responseData.data !== undefined) {
-      return responseData.data;
-    }
-
-    // Si no hay data, asumir que la respuesta completa es T
+    if (responseData.data !== undefined) return responseData.data;
     return responseData as unknown as T;
   } catch (error) {
     throw handleFetchError(error);

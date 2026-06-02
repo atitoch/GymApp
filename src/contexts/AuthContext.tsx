@@ -42,10 +42,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
           // Establecer el token y usuario primero (optimistic) para evitar redirección inmediata
           setToken(storedToken);
           try {
-            setUser(JSON.parse(storedUser));
-            // NO intentar refrescar el token automáticamente al cargar
-            // El token se refrescará automáticamente cuando sea necesario (cuando una petición falle con 401)
-            // Esto evita limpiar la sesión si el refresh token está expirado pero el token actual sigue siendo válido
+            const parsed = JSON.parse(storedUser);
+            if (
+              parsed &&
+              typeof parsed.id === 'string' &&
+              typeof parsed.email === 'string'
+            ) {
+              setUser(parsed);
+            } else {
+              clearSession();
+              setIsLoading(false);
+              return;
+            }
           } catch {
             clearSession();
             setIsLoading(false);
