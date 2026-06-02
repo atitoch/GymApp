@@ -196,10 +196,18 @@ export const DayRoutine: React.FC = () => {
 
         setExerciseLogs(logsMap);
 
-        // Actualizar statuses — usar función para leer el Map más reciente
+        // Actualizar statuses — derivar targetSets de currentRoutine directamente
+        // (exerciseTargetSets es state y puede estar stale en este closure)
+        const freshTargetSets = new Map<string, number>();
+        currentRoutine.sections.forEach((section) => {
+          section.exercises.forEach((ex) => {
+            freshTargetSets.set(ex.name, parseTargetSets(ex.sets));
+          });
+        });
+
         setExerciseStatuses((prev) =>
           prev.map((ex) => {
-            const targetSets = exerciseTargetSets.get(ex.name) ?? 0;
+            const targetSets = freshTargetSets.get(ex.name) ?? 0;
             const completedSetsCount = logsMap.get(ex.name)?.length ?? 0;
             return {
               ...ex,
