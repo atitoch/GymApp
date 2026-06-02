@@ -27,10 +27,12 @@ export const DayHeader: React.FC<DayHeaderProps> = ({
       : `Día ${currentRoutine.day}`;
   };
 
-  // Formatear la fecha para mostrar
+  // Formatear la fecha en hora local — new Date("YYYY-MM-DD") se interpreta como UTC
+  // lo que en CST (UTC-6) retrocede un día. Se parsea manualmente para evitarlo.
   const formatDate = (): string | null => {
     if (isCalculatedRoutine(currentRoutine) && currentRoutine.date) {
-      const date = new Date(currentRoutine.date);
+      const [y, m, d] = currentRoutine.date.split("-").map(Number);
+      const date = new Date(y, m - 1, d); // hora local, sin conversión UTC
       return date.toLocaleDateString("es-ES", {
         weekday: "long",
         day: "numeric",
