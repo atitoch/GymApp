@@ -19,6 +19,7 @@ import {
   getOrCreateWorkoutLog,
   logExerciseSet,
   getWorkoutExerciseLogs,
+  completeWorkoutLog,
 } from '../services/workoutLog';
 import type { ExerciseLog } from '../types/workoutLog';
 import { ConfirmDialog } from '../components/ConfirmDialog';
@@ -229,9 +230,8 @@ export const DayRoutine: React.FC = () => {
       updated.set(exerciseName, newSets);
 
       // Verificar si se completaron todas las series del ejercicio
-      const targetSets = exerciseTargetSets.get(exerciseName) || 0;
-      if (newSets.length >= targetSets) {
-        // Marcar ejercicio como completado solo si tiene todas las series
+      const targetSets = exerciseTargetSets.get(exerciseName) ?? 0;
+      if (targetSets > 0 && newSets.length >= targetSets) {
         setExerciseStatuses((prevStatuses) =>
           prevStatuses.map((ex) =>
             ex.name === exerciseName ? { ...ex, completed: true } : ex,
@@ -244,7 +244,14 @@ export const DayRoutine: React.FC = () => {
   };
 
   // Función para terminar el entrenamiento
-  const handleFinishWorkout = () => {
+  const handleFinishWorkout = async () => {
+    if (workoutLogId) {
+      try {
+        await completeWorkoutLog(workoutLogId);
+      } catch {
+        // Si falla, igual navegar — no bloquear al usuario
+      }
+    }
     navigate('/dashboard');
   };
 
