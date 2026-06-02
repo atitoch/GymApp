@@ -49,6 +49,12 @@ export default function RestTimer({
     }
   }, [isOpen, defaultSeconds]);
 
+  // Use refs so the interval always sees the latest callbacks without restarting
+  const playBeepRef = useRef(playBeep);
+  const onCompleteRef = useRef(onComplete);
+  useEffect(() => { playBeepRef.current = playBeep; }, [playBeep]);
+  useEffect(() => { onCompleteRef.current = onComplete; }, [onComplete]);
+
   // Tick
   useEffect(() => {
     if (!isRunning || !isOpen) return;
@@ -56,10 +62,9 @@ export default function RestTimer({
     intervalRef.current = setInterval(() => {
       setRemaining((prev) => {
         if (prev === 1) {
-          // Completed — play sound, enter overtime
-          playBeep();
+          playBeepRef.current();
           setOvertime(true);
-          onComplete?.();
+          onCompleteRef.current?.();
         }
         return prev - 1;
       });

@@ -23,7 +23,8 @@ import {
 } from '../services/workoutLog';
 import type { ExerciseLog } from '../types/workoutLog';
 import { CompleteWorkoutModal } from '../components/CompleteWorkoutModal';
-import { Flag } from 'lucide-react';
+import { Flag, Timer } from 'lucide-react';
+import { getUserProfile } from '../services/profile';
 
 export const DayRoutine: React.FC = () => {
   const { dayIndex } = useParams<{
@@ -48,6 +49,8 @@ export const DayRoutine: React.FC = () => {
     Map<string, number>
   >(new Map());
   const [workoutLogError, setWorkoutLogError] = useState(false);
+  const [weightUnit, setWeightUnit] = useState<'kg' | 'lbs'>('kg');
+  const [defaultRestSeconds, setDefaultRestSeconds] = useState(90);
 
   useEffect(() => {
     const loadRoutine = async () => {
@@ -124,6 +127,16 @@ export const DayRoutine: React.FC = () => {
 
     loadRoutine();
   }, [dayIndex, user?.id]);
+
+  // Cargar preferencias del perfil (unidad de peso, tiempo de descanso)
+  useEffect(() => {
+    getUserProfile().then((profile) => {
+      if (profile) {
+        setWeightUnit(profile.weight_unit);
+        setDefaultRestSeconds(profile.default_rest_seconds);
+      }
+    });
+  }, []);
 
   // Función helper para parsear el número de sets objetivo
   const parseTargetSets = (sets: string): number => {
@@ -324,7 +337,7 @@ export const DayRoutine: React.FC = () => {
                   onLogSet={handleLogSet}
                   isCurrentDay={isCurrentDay}
                   workoutLogError={workoutLogError}
-                  weightUnit="kg"
+                  weightUnit={weightUnit}
                 />
               ))}
             </div>
@@ -337,9 +350,21 @@ export const DayRoutine: React.FC = () => {
 
         {showTips && <Tips />}
 
-        {/* Botón de terminar entrenamiento */}
+        {/* Botones de acción */}
         {isCurrentDay && (
-          <div className="mt-8 flex justify-center">
+          <div className="mt-8 flex justify-center gap-3">
+            <button
+              onClick={() => setTimerOpen(true)}
+              className="px-5 py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 flex items-center gap-2"
+              style={{
+                background: 'rgba(163,230,53,0.12)',
+                border: '1px solid rgba(163,230,53,0.3)',
+                color: '#a3e635',
+              }}
+            >
+              <Timer size={18} />
+              Timer
+            </button>
             <button
               onClick={() => setShowFinishDialog(true)}
               className="px-6 py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 flex items-center gap-2"
@@ -350,7 +375,7 @@ export const DayRoutine: React.FC = () => {
               }}
             >
               <Flag size={18} />
-              Terminar entrenamiento
+              Terminar
             </button>
           </div>
         )}
@@ -361,11 +386,9 @@ export const DayRoutine: React.FC = () => {
       <RestTimer
         isOpen={timerOpen}
         onClose={() => setTimerOpen(false)}
-        defaultSeconds={90}
+        defaultSeconds={defaultRestSeconds}
         exerciseName=""
-        onComplete={() => {
-          // opcional: callback cuando termina el timer
-        }}
+        onComplete={() => setTimerOpen(false)}
       />
 
       {/* Modal para terminar entrenamiento con rating y notas */}
