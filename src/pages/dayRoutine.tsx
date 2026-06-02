@@ -130,12 +130,16 @@ export const DayRoutine: React.FC = () => {
 
   // Cargar preferencias del perfil (unidad de peso, tiempo de descanso)
   useEffect(() => {
-    getUserProfile().then((profile) => {
-      if (profile) {
-        setWeightUnit(profile.weight_unit);
-        setDefaultRestSeconds(profile.default_rest_seconds);
-      }
-    });
+    getUserProfile()
+      .then((profile) => {
+        if (profile) {
+          setWeightUnit(profile.weight_unit);
+          setDefaultRestSeconds(profile.default_rest_seconds);
+        }
+      })
+      .catch(() => {
+        // Preferences unavailable — defaults remain
+      });
   }, []);
 
   // Función helper para parsear el número de sets objetivo

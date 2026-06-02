@@ -26,6 +26,17 @@ function useExerciseNote(exerciseName: string, userId: string) {
   const [status, setStatus] = useState<SaveStatus>('idle');
   const [loading, setLoading] = useState(true);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const statusTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+      if (statusTimeoutRef.current) clearTimeout(statusTimeoutRef.current);
+    };
+  }, []);
 
   // Cargar nota existente
   useEffect(() => {
@@ -59,22 +70,23 @@ function useExerciseNote(exerciseName: string, userId: string) {
       saveTimeoutRef.current = setTimeout(async () => {
         try {
           if (!value.trim()) {
-            // Si está vacío, eliminar la nota
             await exerciseService.deleteExerciseNote(exerciseName);
-            setStatus('saved');
+            if (mountedRef.current) setStatus('saved');
           } else {
-            // Guardar o actualizar la nota
             await exerciseService.upsertExerciseNote({
               exercise_name: exerciseName,
               note: value,
             });
-            setStatus('saved');
+            if (mountedRef.current) setStatus('saved');
           }
         } catch (error) {
           console.error('Error saving note:', error);
-          setStatus('error');
+          if (mountedRef.current) setStatus('error');
         }
-        setTimeout(() => setStatus('idle'), 2000);
+        if (statusTimeoutRef.current) clearTimeout(statusTimeoutRef.current);
+        statusTimeoutRef.current = setTimeout(() => {
+          if (mountedRef.current) setStatus('idle');
+        }, 2000);
       }, 1500);
     },
     [exerciseName],
@@ -90,12 +102,15 @@ function useExerciseNote(exerciseName: string, userId: string) {
     setStatus('saving');
     try {
       await exerciseService.deleteExerciseNote(exerciseName);
-      setStatus('saved');
+      if (mountedRef.current) setStatus('saved');
     } catch (error) {
       console.error('Error deleting note:', error);
-      setStatus('error');
+      if (mountedRef.current) setStatus('error');
     }
-    setTimeout(() => setStatus('idle'), 1500);
+    if (statusTimeoutRef.current) clearTimeout(statusTimeoutRef.current);
+    statusTimeoutRef.current = setTimeout(() => {
+      if (mountedRef.current) setStatus('idle');
+    }, 1500);
   };
 
   return { note, loading, status, handleChange, handleDelete };
