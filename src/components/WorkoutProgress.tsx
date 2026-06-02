@@ -18,7 +18,7 @@ interface WorkoutProgressProps {
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 const DAY_COLORS: Record<string, { from: string; to: string; glow: string }> = {
-  PUSH: { from: "#3b82f6", to: "#6366f1", glow: "rgba(99,102,241,0.35)" },
+  PUSH: { from: "#a3e635", to: "#84cc16", glow: "rgba(163,230,53,0.35)" },
   PULL: { from: "#8b5cf6", to: "#ec4899", glow: "rgba(236,72,153,0.3)" },
   LEG:  { from: "#10b981", to: "#06b6d4", glow: "rgba(16,185,129,0.3)" },
   DESCANSO: { from: "#64748b", to: "#475569", glow: "rgba(100,116,139,0.2)" },

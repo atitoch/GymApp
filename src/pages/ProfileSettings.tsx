@@ -72,7 +72,7 @@ function Avatar({
       style={{
         width: size,
         height: size,
-        background: 'linear-gradient(135deg,#3b82f6,#6366f1)',
+        background: 'linear-gradient(135deg,#a3e635,#84cc16)',
         fontSize: size * 0.3,
       }}
     >
@@ -93,7 +93,7 @@ function Section({
   return (
     <div>
       <div className="flex items-center gap-2 mb-3 px-1">
-        <Icon size={14} className="text-indigo-400" />
+        <Icon size={14} className="text-lime-400" />
         <h2 className="text-xs font-black uppercase tracking-widest text-stone-500">
           {title}
         </h2>
@@ -208,7 +208,7 @@ function ToggleField({
         className="relative w-11 h-6 rounded-full transition-all duration-300 shrink-0"
         style={{
           background: value
-            ? 'linear-gradient(135deg,#3b82f6,#6366f1)'
+            ? 'linear-gradient(135deg,#a3e635,#84cc16)'
             : 'rgba(255,255,255,0.1)',
         }}
       >
@@ -241,14 +241,14 @@ function SelectField({
         className="bg-transparent text-sm text-white outline-none text-right"
         style={{ background: 'transparent' }}
       >
-        <option value="" style={{ background: '#0f172a' }}>
+        <option value="" style={{ background: '#1c1917' }}>
           Sin especificar
         </option>
         {options.map((o) => (
           <option
             key={o.value}
             value={o.value}
-            style={{ background: '#0f172a' }}
+            style={{ background: '#1c1917' }}
           >
             {o.label}
           </option>
@@ -377,7 +377,7 @@ export default function ProfileSettings() {
       setLoading(false);
     }
     load();
-  }, [navigate, user]);
+  }, [navigate, user?.id]);
 
   // Auto-save con debounce 1s
   const updateField = <K extends keyof UserProfile>(
@@ -409,11 +409,8 @@ export default function ProfileSettings() {
 
   if (loading)
     return (
-      <div
-        className="min-h-screen flex items-center justify-center"
-        style={{ background: '#0a0f1e' }}
-      >
-        <Loader2 size={32} className="text-indigo-400 animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-stone-950">
+        <Loader2 size={32} className="text-lime-400 animate-spin" />
       </div>
     );
 
@@ -424,7 +421,7 @@ export default function ProfileSettings() {
   return (
     <div
       className="min-h-screen pb-20"
-      style={{ background: 'linear-gradient(135deg,#0a0f1e 0%,#0f172a 100%)' }}
+      style={{ background: 'linear-gradient(135deg,#0c0a09 0%,#1c1917 100%)' }}
     >
       {/* Header */}
       <div
@@ -448,7 +445,7 @@ export default function ProfileSettings() {
           <div className="flex items-center gap-1.5 text-xs">
             {saveStatus === 'saving' && (
               <>
-                <Loader2 size={12} className="animate-spin text-indigo-400" />
+                <Loader2 size={12} className="animate-spin text-lime-400" />
                 <span className="text-stone-500">Guardando...</span>
               </>
             )}

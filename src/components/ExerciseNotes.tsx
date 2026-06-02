@@ -142,7 +142,7 @@ export default function ExerciseNotes({
           size={13}
           className={
             hasNote
-              ? 'text-indigo-400'
+              ? 'text-lime-400'
               : 'text-stone-600 group-hover:text-stone-400 transition-colors'
           }
         />
@@ -152,7 +152,7 @@ export default function ExerciseNotes({
         {hasNote && (
           <span
             className="w-1.5 h-1.5 rounded-full"
-            style={{ background: '#6366f1' }}
+            style={{ background: '#84cc16' }}
           />
         )}
         {expanded ? (
@@ -167,8 +167,8 @@ export default function ExerciseNotes({
         <div
           className="mt-2 rounded-xl overflow-hidden"
           style={{
-            background: 'rgba(99,102,241,0.06)',
-            border: '1px solid rgba(99,102,241,0.2)',
+            background: 'rgba(163,230,53,0.06)',
+            border: '1px solid rgba(163,230,53,0.2)',
           }}
         >
           {/* Textarea */}
@@ -202,7 +202,7 @@ export default function ExerciseNotes({
                   <>
                     <Loader2
                       size={11}
-                      className="animate-spin text-indigo-400"
+                      className="animate-spin text-lime-400"
                     />
                     <span className="text-stone-500">Guardando...</span>
                   </>

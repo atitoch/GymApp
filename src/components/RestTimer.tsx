@@ -113,7 +113,7 @@ export default function RestTimer({
       ? "#ef4444"
       : remaining <= 10
       ? "#f59e0b"
-      : "#3b82f6";
+      : "#a3e635";
 
   if (!isOpen) return null;
 
@@ -127,15 +127,15 @@ export default function RestTimer({
       <div
         className="relative w-full sm:w-96 rounded-t-3xl sm:rounded-3xl overflow-hidden"
         style={{
-          background: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)",
-          border: "1px solid rgba(99,102,241,0.3)",
-          boxShadow: "0 0 60px rgba(99,102,241,0.2)",
+          background: "linear-gradient(135deg, #1c1917 0%, #1c1917 100%)",
+          border: "1px solid rgba(163,230,53,0.3)",
+          boxShadow: "0 0 60px rgba(163,230,53,0.2)",
         }}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-6 pb-2">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-indigo-400">
+            <p className="text-xs font-semibold uppercase tracking-widest text-lime-400">
               Descanso
             </p>
             {exerciseName && (
@@ -231,8 +231,8 @@ export default function RestTimer({
             onClick={handleSkip}
             className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-sm transition-all active:scale-95"
             style={{
-              background: "linear-gradient(135deg, #3b82f6, #6366f1)",
-              boxShadow: "0 4px 20px rgba(99,102,241,0.4)",
+              background: "linear-gradient(135deg, #a3e635, #84cc16)",
+              boxShadow: "0 4px 20px rgba(163,230,53,0.4)",
               color: "white",
             }}
           >
@@ -254,11 +254,11 @@ export default function RestTimer({
               className="px-3 py-1 rounded-full text-xs font-semibold transition-all"
               style={{
                 background: totalSeconds === s
-                  ? "rgba(99,102,241,0.4)"
+                  ? "rgba(163,230,53,0.4)"
                   : "rgba(255,255,255,0.05)",
                 color: totalSeconds === s ? "#a5b4fc" : "#64748b",
                 border: totalSeconds === s
-                  ? "1px solid rgba(99,102,241,0.5)"
+                  ? "1px solid rgba(163,230,53,0.5)"
                   : "1px solid transparent",
               }}
             >

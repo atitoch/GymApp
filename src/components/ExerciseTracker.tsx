@@ -206,12 +206,12 @@ function SetRowItem({
             background: row.saved
               ? 'rgba(16,185,129,0.2)'
               : canSave
-                ? 'linear-gradient(135deg,#3b82f6,#6366f1)'
+                ? 'linear-gradient(135deg,#a3e635,#84cc16)'
                 : 'rgba(255,255,255,0.05)',
             opacity: !canSave && !row.saved ? 0.4 : 1,
             boxShadow:
               canSave && !row.saved
-                ? '0 2px 12px rgba(99,102,241,0.35)'
+                ? '0 2px 12px rgba(163,230,53,0.35)'
                 : 'none',
           }}
         >
@@ -377,7 +377,7 @@ export default function ExerciseTracker({
               background: allDone
                 ? 'rgba(16,185,129,0.15)'
                 : completedCount > 0
-                  ? 'rgba(99,102,241,0.15)'
+                  ? 'rgba(163,230,53,0.15)'
                   : 'rgba(255,255,255,0.05)',
               color: allDone
                 ? '#34d399'

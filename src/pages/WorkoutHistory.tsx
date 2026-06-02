@@ -120,7 +120,7 @@ function StatsSummary({
       label: 'Entrenos totales',
       value: total,
       icon: Dumbbell,
-      color: '#3b82f6',
+      color: '#a3e635',
     },
     {
       label: 'Esta semana',
@@ -340,7 +340,7 @@ export default function WorkoutHistory() {
   return (
     <div
       className="min-h-screen pb-24"
-      style={{ background: 'linear-gradient(135deg,#0a0f1e 0%,#0f172a 100%)' }}
+      style={{ background: 'linear-gradient(135deg,#0c0a09 0%,#1c1917 100%)' }}
     >
       <div
         className="sticky top-0 z-20"
@@ -404,11 +404,11 @@ export default function WorkoutHistory() {
                 className="shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-all"
                 style={{
                   background: active
-                    ? (s?.bg ?? 'rgba(99,102,241,0.2)')
+                    ? (s?.bg ?? 'rgba(163,230,53,0.2)')
                     : 'rgba(255,255,255,0.04)',
                   color: active ? (s?.text ?? '#a5b4fc') : '#64748b',
                   border: active
-                    ? `1px solid ${s?.border ?? 'rgba(99,102,241,0.35)'}`
+                    ? `1px solid ${s?.border ?? 'rgba(163,230,53,0.35)'}`
                     : '1px solid rgba(255,255,255,0.05)',
                 }}
               >

@@ -43,7 +43,7 @@ export const Header: React.FC<HeaderProps> = ({
   // Generar color basado en el nombre del usuario para consistencia
   const getUserColor = (name: string): string => {
     const colors = [
-      '#3b82f6', // blue
+      '#a3e635', // blue
       '#8b5cf6', // purple
       '#ec4899', // pink
       '#10b981', // green
