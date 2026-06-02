@@ -1,4 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { useToast } from '../hooks/useToast';
+import { Toast } from './Toast';
 import { Check, ChevronDown, ChevronUp, Clock, TrendingUp } from 'lucide-react';
 import type {
   ExerciseLog,
@@ -237,6 +239,7 @@ export default function ExerciseTracker({
   isCurrentDay,
   weightUnit = 'kg',
 }: ExerciseTrackerProps) {
+  const { toasts, showToast, hideToast } = useToast();
   const targetSets = parseTargetSets(exercise.sets);
   const targetReps = parseTargetReps(exercise.reps);
 
@@ -275,22 +278,41 @@ export default function ExerciseTracker({
 
     updateRow(rowIndex, { saving: true });
 
+    const repsValue = parseInt(row.reps, 10);
+    const weightValue = parseFloat(row.weight);
+
+    if (isNaN(repsValue) || repsValue <= 0) {
+      showToast('Ingresa un número de repeticiones válido', 'error');
+      updateRow(rowIndex, { saving: false });
+      return;
+    }
+    if (isNaN(weightValue) || weightValue < 0) {
+      showToast('Ingresa un peso válido', 'error');
+      updateRow(rowIndex, { saving: false });
+      return;
+    }
+
     try {
       await onLogSet(exercise.name, {
-        reps_completed: Number(row.reps),
-        weight_kg: weightUnit === 'kg' ? Number(row.weight) : undefined,
-        weight_lbs: weightUnit === 'lbs' ? Number(row.weight) : undefined,
+        reps_completed: repsValue,
+        weight_kg: weightUnit === 'kg' ? weightValue : undefined,
+        weight_lbs: weightUnit === 'lbs' ? weightValue : undefined,
       });
       updateRow(rowIndex, { saving: false, saved: true });
     } catch {
       updateRow(rowIndex, { saving: false });
+      showToast('Error al guardar el set. Intenta de nuevo.', 'error');
     }
   };
 
   const completedCount = rows.filter((r) => r.saved).length;
-  const allDone = completedCount === targetSets;
+  const allDone = targetSets > 0 && completedCount >= targetSets;
 
   return (
+    <>
+      {toasts.map((t) => (
+        <Toast key={t.id} message={t.message} type={t.type} onClose={() => hideToast(t.id)} />
+      ))}
     <div
       className="rounded-2xl overflow-hidden transition-all"
       style={{
@@ -415,5 +437,6 @@ export default function ExerciseTracker({
         </div>
       )}
     </div>
+    </>
   );
 }
