@@ -47,7 +47,7 @@ export interface UpdateProfileData {
  */
 export const getUserProfile = async (): Promise<UserProfile | null> => {
   try {
-    return await authenticatedGet<UserProfile>(`/profile`);
+    return await authenticatedGet<UserProfile>(`/users/profile`);
   } catch {
     return null;
   }
