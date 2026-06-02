@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+html,
+body,
+#root {
+  background-color: #0c0a09; /* stone-950 — evita área blanca al hacer scroll */
+  overflow-x: hidden;
+  width: 100%;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
