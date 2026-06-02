@@ -31,6 +31,8 @@ interface ExerciseTrackerProps {
   ) => Promise<void>;
   /** true si el día es el actual y se puede registrar */
   isCurrentDay: boolean;
+  /** true si falló la inicialización del workout log */
+  workoutLogError?: boolean;
   weightUnit?: 'kg' | 'lbs';
 }
 
@@ -237,6 +239,7 @@ export default function ExerciseTracker({
   completedSets,
   onLogSet,
   isCurrentDay,
+  workoutLogError = false,
   weightUnit = 'kg',
 }: ExerciseTrackerProps) {
   const { toasts, showToast, hideToast } = useToast();
@@ -428,10 +431,12 @@ export default function ExerciseTracker({
             ))}
           </div>
 
-          {/* No workoutLog warning */}
+          {/* Estado del workout log */}
           {isCurrentDay && !workoutLogId && (
-            <p className="text-xs text-lime-400 mt-2 text-center">
-              Cargando sesión de entrenamiento...
+            <p className={`text-xs mt-2 text-center ${workoutLogError ? 'text-red-400' : 'text-stone-500'}`}>
+              {workoutLogError
+                ? 'No se pudo conectar con el servidor. Verifica tu conexión.'
+                : 'Iniciando sesión...'}
             </p>
           )}
         </div>

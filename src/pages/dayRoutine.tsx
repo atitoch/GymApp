@@ -47,6 +47,7 @@ export const DayRoutine: React.FC = () => {
   const [exerciseTargetSets, setExerciseTargetSets] = useState<
     Map<string, number>
   >(new Map());
+  const [workoutLogError, setWorkoutLogError] = useState(false);
 
   useEffect(() => {
     const loadRoutine = async () => {
@@ -153,10 +154,13 @@ export const DayRoutine: React.FC = () => {
   }, [currentRoutine]);
 
   // Inicializar workout log cuando la rutina está lista
+  // exerciseTargetSets se excluye del dep array porque es un Map (nueva referencia en cada render)
+  // Solo necesitamos que corra cuando la rutina o el estado del día cambien
   useEffect(() => {
     const initWorkoutLog = async () => {
       if (!currentRoutine || !isCurrentDay) return;
 
+      setWorkoutLogError(false);
       try {
         const workoutLog = await getOrCreateWorkoutLog(
           undefined, // dayRoutineId
@@ -175,26 +179,26 @@ export const DayRoutine: React.FC = () => {
 
         setExerciseLogs(logsMap);
 
-        // Actualizar statuses basados en logs existentes
-        // Solo marcar como completado si tiene todas las series
+        // Actualizar statuses — usar función para leer el Map más reciente
         setExerciseStatuses((prev) =>
           prev.map((ex) => {
             const targetSets = exerciseTargetSets.get(ex.name) ?? 0;
             const completedSetsCount = logsMap.get(ex.name)?.length ?? 0;
             return {
               ...ex,
-              // Solo completar si hay al menos un set objetivo definido
               completed: targetSets > 0 && completedSetsCount >= targetSets,
             };
           }),
         );
       } catch (error) {
         console.error('Error al inicializar workout log:', error);
+        setWorkoutLogError(true);
       }
     };
 
     initWorkoutLog();
-  }, [currentRoutine, isCurrentDay, exerciseTargetSets]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentRoutine, isCurrentDay]);
 
   // Función para registrar un set
   const handleLogSet = async (
@@ -319,6 +323,7 @@ export const DayRoutine: React.FC = () => {
                   completedSets={exerciseLogs.get(exercise.name) || []}
                   onLogSet={handleLogSet}
                   isCurrentDay={isCurrentDay}
+                  workoutLogError={workoutLogError}
                   weightUnit="kg"
                 />
               ))}
