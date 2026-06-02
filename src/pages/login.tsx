@@ -694,7 +694,7 @@ export const Login: React.FC = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-500 hover:to-lime-600 text-white font-semibold py-3 rounded-lg transition-all duration-300 shadow-lg shadow-lime-400/20 hover:shadow-lime-400/30 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-500 hover:to-lime-600 text-stone-900 font-semibold py-3 rounded-lg transition-all duration-300 shadow-lg shadow-lime-400/20 hover:shadow-lime-400/30 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
               >
                 {isLoading && <Loader2 className="w-5 h-5 animate-spin" />}
                 {isRegistering ? "Crear cuenta" : "Iniciar sesión"}

@@ -66,7 +66,7 @@ export const VerifyEmail = () => {
           </p>
           <button
             onClick={() => navigate("/login")}
-            className="w-full bg-lime-400 hover:bg-lime-500 text-white font-semibold py-3 rounded-lg transition-colors"
+            className="w-full bg-lime-400 hover:bg-lime-500 text-stone-900 font-semibold py-3 rounded-lg transition-colors"
           >
             Ir al inicio de sesión
           </button>
@@ -142,7 +142,7 @@ export const VerifyEmail = () => {
             <button
               onClick={handleResendEmail}
               disabled={isResending || !email}
-              className="w-full bg-lime-400 hover:bg-lime-500 disabled:bg-stone-700 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-lime-400 hover:bg-lime-500 disabled:bg-stone-700 disabled:cursor-not-allowed text-stone-900 font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
             >
               {isResending ? (
                 <>
@@ -207,7 +207,7 @@ export const VerifyEmail = () => {
             <button
               onClick={handleResendEmail}
               disabled={isResending}
-              className="w-full bg-lime-400 hover:bg-lime-500 disabled:bg-stone-700 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-lime-400 hover:bg-lime-500 disabled:bg-stone-700 disabled:cursor-not-allowed text-stone-900 font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
             >
               {isResending ? (
                 <>

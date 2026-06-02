@@ -71,7 +71,7 @@ export const Exercises: React.FC<ExerciseProps> = ({
             {onStartRest && (
               <button
                 onClick={() => onStartRest(exercise.name)}
-                className="w-full bg-lime-500 hover:bg-lime-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 mb-4"
+                className="w-full bg-lime-500 hover:bg-lime-600 text-stone-900 font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 mb-4"
               >
                 <Timer size={18} />
                 Iniciar descanso

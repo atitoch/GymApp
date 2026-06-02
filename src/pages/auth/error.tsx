@@ -28,7 +28,7 @@ export const AuthError = () => {
         <p className="text-stone-400 mb-6">{errorMessage}</p>
         <button
           onClick={() => navigate("/login")}
-          className="w-full bg-lime-400 hover:bg-lime-500 text-white font-semibold py-3 rounded-lg transition-colors"
+          className="w-full bg-lime-400 hover:bg-lime-500 text-stone-900 font-semibold py-3 rounded-lg transition-colors"
         >
           Volver al inicio de sesión
         </button>

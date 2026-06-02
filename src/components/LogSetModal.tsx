@@ -397,7 +397,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
                     className={cn(
                       "flex-1 px-4 py-2 font-bold text-sm transition-all duration-200",
                       weightUnit === "kg"
-                        ? "bg-gradient-to-br from-lime-400 to-lime-500 text-white shadow-lg"
+                        ? "bg-gradient-to-br from-lime-400 to-lime-500 text-stone-900 shadow-lg"
                         : "text-stone-400 hover:text-stone-200 hover:bg-stone-700/50"
                     )}
                   >
@@ -410,7 +410,7 @@ export const LogSetModal: React.FC<LogSetModalProps> = ({
                     className={cn(
                       "flex-1 px-4 py-2 font-bold text-sm transition-all duration-200",
                       weightUnit === "lbs"
-                        ? "bg-gradient-to-br from-lime-400 to-lime-500 text-white shadow-lg"
+                        ? "bg-gradient-to-br from-lime-400 to-lime-500 text-stone-900 shadow-lg"
                         : "text-stone-400 hover:text-stone-200 hover:bg-stone-700/50"
                     )}
                   >
