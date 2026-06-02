@@ -5,6 +5,7 @@ import { DayHeader } from '../components/dayHeader';
 import { Tips } from '../components/tips';
 import { WarmUp } from '../components/warmUp';
 import { routineData, fetchDayRoutine } from '../services/routine';
+import { getTodayInUserTimezone } from '../utils/routineCalculations';
 import type { CalculatedDayRoutine } from '../types/routineType';
 import { themeClasses, cn } from '../theme/constants';
 import { useAuth } from '../contexts/useAuth';
@@ -145,9 +146,8 @@ export const DayRoutine: React.FC = () => {
       });
       setExerciseTargetSets(setsMap);
 
-      // Verificar si es el día actual
-      const today = new Date().toISOString().split('T')[0];
-      setIsCurrentDay(currentRoutine.date === today);
+      // Verificar si es el día actual usando hora local (no UTC)
+      setIsCurrentDay(currentRoutine.date === getTodayInUserTimezone());
     }
   }, [currentRoutine]);
 
@@ -178,11 +178,12 @@ export const DayRoutine: React.FC = () => {
         // Solo marcar como completado si tiene todas las series
         setExerciseStatuses((prev) =>
           prev.map((ex) => {
-            const targetSets = exerciseTargetSets.get(ex.name) || 0;
-            const completedSetsCount = logsMap.get(ex.name)?.length || 0;
+            const targetSets = exerciseTargetSets.get(ex.name) ?? 0;
+            const completedSetsCount = logsMap.get(ex.name)?.length ?? 0;
             return {
               ...ex,
-              completed: completedSetsCount >= targetSets,
+              // Solo completar si hay al menos un set objetivo definido
+              completed: targetSets > 0 && completedSetsCount >= targetSets,
             };
           }),
         );
