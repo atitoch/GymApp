@@ -302,10 +302,15 @@ export default function ProfileSettings() {
   const [error, setError] = useState<string | null>(null);
   const [logoutConfirm, setLogoutConfirm] = useState(false);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const statusTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mountedRef = useRef(true);
 
   useEffect(() => {
+    mountedRef.current = true;
     return () => {
+      mountedRef.current = false;
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+      if (statusTimeoutRef.current) clearTimeout(statusTimeoutRef.current);
     };
   }, []);
 
@@ -396,16 +401,18 @@ export default function ProfileSettings() {
     setSaveStatus('saving');
     saveTimeoutRef.current = setTimeout(async () => {
       try {
-        // Enviar el campo directamente al backend
         await profileService.updateUserProfile({
           [field]: value,
         } as profileService.UpdateProfileData);
-        setSaveStatus('saved');
+        if (mountedRef.current) setSaveStatus('saved');
       } catch (err) {
         console.error('Error updating profile:', err);
-        setSaveStatus('error');
+        if (mountedRef.current) setSaveStatus('error');
       }
-      setTimeout(() => setSaveStatus('idle'), 2500);
+      if (statusTimeoutRef.current) clearTimeout(statusTimeoutRef.current);
+      statusTimeoutRef.current = setTimeout(() => {
+        if (mountedRef.current) setSaveStatus('idle');
+      }, 2500);
     }, 1000);
   };
 
