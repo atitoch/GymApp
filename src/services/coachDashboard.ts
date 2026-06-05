@@ -35,25 +35,58 @@ export interface CoachRoutine {
   is_cyclic: boolean;
 }
 
-export const getMyCoachProfile = () => authenticatedGet<CoachProfile>('/coach/profile');
-export const updateMyCoachProfile = (data: Partial<CoachProfile>) => authenticatedPut<CoachProfile>('/coach/profile', data);
-export const getMyClients = () => authenticatedGet<ClientRelationship[]>('/coach/clients');
-export const getPendingRequests = () => authenticatedGet<ClientRelationship[]>('/coach/connections/pending');
-export const acceptRequest = (id: string) => authenticatedPost(`/coach/connections/${id}/accept`, {});
-export const rejectRequest = (id: string) => authenticatedPost(`/coach/connections/${id}/reject`, {});
-export const getClientDetail = (userId: string) => authenticatedGet<any>(`/coach/clients/${userId}`);
-export const addComment = (userId: string, data: { comment: string; comment_type: string; is_private?: boolean }) => authenticatedPost<CoachComment>(`/coach/clients/${userId}/comments`, data);
-export const getClientComments = (userId: string) => authenticatedGet<CoachComment[]>(`/coach/clients/${userId}/comments`);
-export const assignRoutine = (userId: string, routineId: string) => authenticatedPost(`/coach/clients/${userId}/assign-routine`, { routine_id: routineId });
-export const getMyRoutines = () => authenticatedGet<CoachRoutine[]>('/coach/routines');
 export interface MyCoachData {
   coach: (CoachProfile & { relationship_id: string; connected_since?: string }) | null;
   comments: { id: string; comment: string; comment_type: string; created_at: string }[];
   assigned_routine: { id: string; name: string; total_days?: number; is_cyclic: boolean } | null;
 }
 
+export const getMyCoachProfile = () => authenticatedGet<CoachProfile>('/coach/profile');
+export const updateMyCoachProfile = (data: Partial<CoachProfile>) => authenticatedPut<CoachProfile>('/coach/profile', data);
+
+export const getMyClients = async (): Promise<ClientRelationship[]> => {
+  const res = await authenticatedGet<{ clients: ClientRelationship[] }>('/coach/clients');
+  return res.clients ?? [];
+};
+
+export const getPendingRequests = async (): Promise<ClientRelationship[]> => {
+  const res = await authenticatedGet<{ requests: ClientRelationship[] }>('/coach/connections/pending');
+  return res.requests ?? [];
+};
+
+export const acceptRequest = (id: string) => authenticatedPost(`/coach/connections/${id}/accept`, {});
+export const rejectRequest = (id: string) => authenticatedPost(`/coach/connections/${id}/reject`, {});
+export const getClientDetail = (userId: string) => authenticatedGet<any>(`/coach/clients/${userId}`);
+
+export const addComment = (userId: string, data: { comment: string; comment_type: string; is_private?: boolean }) =>
+  authenticatedPost<CoachComment>(`/coach/clients/${userId}/comments`, data);
+
+export const getClientComments = async (userId: string): Promise<CoachComment[]> => {
+  const res = await authenticatedGet<{ comments: CoachComment[] }>(`/coach/clients/${userId}/comments`);
+  return res.comments ?? [];
+};
+
+export const assignRoutine = (userId: string, routineId: string) =>
+  authenticatedPost(`/coach/clients/${userId}/assign-routine`, { routine_id: routineId });
+
+export const getMyRoutines = async (): Promise<CoachRoutine[]> => {
+  const res = await authenticatedGet<{ routines: CoachRoutine[] }>('/coach/routines');
+  return res.routines ?? [];
+};
+
 export const getMyCoach = () => authenticatedGet<MyCoachData>('/coaches/my-coach');
-export const listCoaches = () => authenticatedGet<any[]>('/coaches');
-export const getCoachPublicProfile = (coachId: string) => authenticatedGet<{ coach: CoachProfile & { users?: { first_name?: string; last_name?: string } } }>(`/coaches/${coachId}`);
+
+export const listCoaches = async (): Promise<any[]> => {
+  const res = await authenticatedGet<{ coaches: any[] }>('/coaches');
+  return res.coaches ?? [];
+};
+
+export const getCoachPublicProfile = (coachId: string) =>
+  authenticatedGet<{ coach: CoachProfile & { users?: { first_name?: string; last_name?: string } } }>(`/coaches/${coachId}`);
+
 export const requestConnection = (coachId: string) => authenticatedPost(`/coaches/${coachId}/connect`, {});
-export const getMyConnections = () => authenticatedGet<any[]>('/coaches/my-connections');
+
+export const getMyConnections = async (): Promise<any[]> => {
+  const res = await authenticatedGet<{ connections: any[] }>('/coaches/my-connections');
+  return res.connections ?? [];
+};
