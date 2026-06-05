@@ -339,14 +339,14 @@ export const DayRoutine: React.FC = () => {
       <div className={cn(themeClasses.layout.container, 'py-8')}>
         {currentRoutine.warmup && <WarmUp currentRoutine={currentRoutine} />}
 
-        {currentRoutine.sections.map((section, sIdx) => (
+        {(currentRoutine.sections ?? []).map((section, sIdx) => (
           <div key={sIdx} className="mb-8">
             <h2 className="text-lg font-semibold text-lime-400 mb-4 flex items-center gap-2">
               <span className="w-2 h-2 bg-lime-400 rounded-full" />
               {section.title}
             </h2>
             <div className="space-y-4">
-              {section.exercises.map((exercise, eIdx) => (
+              {(section.exercises ?? []).map((exercise, eIdx) => (
                 <ExerciseTracker
                   key={eIdx}
                   exercise={exercise}

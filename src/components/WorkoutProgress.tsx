@@ -104,7 +104,7 @@ export default function WorkoutProgress({
         {/* Exercise dots */}
         {total <= 12 && (
           <div className="flex items-center gap-1.5 mt-2 overflow-x-auto pb-0.5">
-            {exercises.map((ex, i) => (
+            {(exercises ?? []).map((ex, i) => (
               <div
                 key={i}
                 title={ex.name}

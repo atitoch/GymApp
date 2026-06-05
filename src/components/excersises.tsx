@@ -22,7 +22,7 @@ export const Exercises: React.FC<ExerciseProps> = ({
       </h2>
 
       <div className="space-y-4">
-        {section.exercises.map((exercise, eIdx) => (
+        {(section.exercises ?? []).map((exercise, eIdx) => (
           <div
             key={eIdx}
             className="bg-stone-800 rounded-xl p-6 hover:bg-stone-700/50 transition-colors"
