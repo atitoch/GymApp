@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { LogOut, Home, Dumbbell, History, User, Menu, X, ShieldCheck, Users2, Users } from 'lucide-react';
+import { LogOut, Home, Dumbbell, History, User, Menu, X, ShieldCheck, Users2, UserCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/useAuth';
 import { themeClasses, cn } from '../theme/constants';
@@ -53,7 +53,7 @@ export const Header: React.FC<HeaderProps> = ({
     { icon: History, label: 'Historial', action: () => navigate('/history') },
     { icon: User, label: 'Perfil', action: () => navigate('/profile') },
     ...(authUser?.role === 'coach' ? [{ icon: Users2, label: 'Mis clientes', action: () => navigate('/coach') }] : []),
-    ...(authUser?.role === 'user' ? [{ icon: Users, label: 'Entrenadores', action: () => navigate('/coaches') }] : []),
+    ...(authUser?.role === 'user' ? [{ icon: UserCheck, label: 'Mi Coach', action: () => navigate('/my-coach') }] : []),
     ...(authUser?.role === 'admin' ? [{ icon: ShieldCheck, label: 'Admin', action: () => navigate('/admin') }] : []),
     { icon: LogOut, label: 'Cerrar sesión', action: () => setShowLogoutDialog(true), danger: true },
   ];
