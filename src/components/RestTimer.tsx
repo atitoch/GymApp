@@ -49,6 +49,27 @@ export default function RestTimer({
     }
   }, [isOpen, defaultSeconds]);
 
+  // Web Audio API beep
+  const playBeep = useCallback(() => {
+    if (!soundEnabled) return;
+    try {
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      audioCtxRef.current = ctx;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 880;
+      osc.type = "sine";
+      gain.gain.setValueAtTime(0.5, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.8);
+    } catch {
+      // Ignore AudioContext errors
+    }
+  }, [soundEnabled]);
+
   // Use refs so the interval always sees the latest callbacks without restarting
   const playBeepRef = useRef(playBeep);
   const onCompleteRef = useRef(onComplete);
@@ -74,27 +95,6 @@ export default function RestTimer({
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [isRunning, isOpen]);
-
-  // Web Audio API beep
-  const playBeep = useCallback(() => {
-    if (!soundEnabled) return;
-    try {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      audioCtxRef.current = ctx;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.frequency.value = 880;
-      osc.type = "sine";
-      gain.gain.setValueAtTime(0.5, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + 0.8);
-    } catch {
-      // Ignore AudioContext errors
-    }
-  }, [soundEnabled]);
 
   const handleSkip = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);

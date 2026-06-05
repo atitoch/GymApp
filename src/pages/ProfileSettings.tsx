@@ -635,6 +635,26 @@ export default function ProfileSettings() {
           </Section>
         )}
 
+        {(user?.role === 'user' || user?.coachStatus === 'pending') && (
+          <Section title="Entrenador" icon={Dumbbell}>
+            <button
+              onClick={() => navigate('/apply-as-coach')}
+              className="w-full px-4 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors text-left"
+            >
+              <Dumbbell size={16} className="text-lime-400" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-stone-300">
+                  Conviértete en entrenador
+                </p>
+                {user?.coachStatus === 'pending' && (
+                  <p className="text-xs text-yellow-400">Solicitud pendiente</p>
+                )}
+              </div>
+              <ChevronRight size={14} className="text-stone-600" />
+            </button>
+          </Section>
+        )}
+
         <Section title="Cuenta" icon={Shield}>
           <button
             onClick={() => {

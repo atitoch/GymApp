@@ -9,6 +9,8 @@ export interface User {
   id: string;
   email: string;
   name?: string;
+  role?: 'user' | 'coach' | 'admin';
+  coachStatus?: 'pending' | 'approved' | 'rejected' | null;
 }
 
 export interface AuthContextType {
@@ -16,6 +18,7 @@ export interface AuthContextType {
   token: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  isAdmin: boolean;
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
