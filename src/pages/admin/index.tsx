@@ -144,7 +144,7 @@ export const AdminDashboard: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {Object.entries(eventSummary.last24h).map(([type, count]) => (
+                  {Object.entries(eventSummary.last24h ?? {}).map(([type, count]) => (
                     <tr key={type} className="border-b border-stone-800/50">
                       <td className="py-2 pr-4 text-stone-300 font-mono text-xs">{type}</td>
                       <td className={`py-2 pr-4 text-right font-medium ${type === 'login_fail' && count > 10 ? 'text-red-400' : 'text-stone-100'}`}>

@@ -60,7 +60,7 @@ export const AdminSystemHealth: React.FC = () => {
       limit: PAGE_SIZE,
       page: page + 1,
     })
-      .then(data => { setEvents(data.events); setTotal(data.pagination.total); })
+      .then(data => { setEvents(data.events ?? []); setTotal(data.pagination?.total ?? 0); })
       .catch(() => setError('Error al cargar eventos'))
       .finally(() => setEventsLoading(false));
   }, [eventTypeFilter, page]);
