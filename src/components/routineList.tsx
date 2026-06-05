@@ -160,8 +160,8 @@ export const RoutineList: React.FC<RoutineListProps> = ({
               >
                 <Dumbbell className="w-4 h-4" />
                 <span>
-                  {routine.sections.reduce(
-                    (acc, s) => acc + s.exercises.length,
+                  {(routine.sections ?? []).reduce(
+                    (acc, s) => acc + (s.exercises?.length ?? 0),
                     0
                   )}{" "}
                   ejercicios

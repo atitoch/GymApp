@@ -212,7 +212,7 @@ export const AdminApplications: React.FC = () => {
     setLoading(true);
     setError(null);
     getCoachApplications(filter)
-      .then(setApplications)
+      .then(data => setApplications(data ?? []))
       .catch(() => setError('Error al cargar solicitudes'))
       .finally(() => setLoading(false));
   };

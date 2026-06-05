@@ -40,8 +40,8 @@ export const AdminUsers: React.FC = () => {
       page: page + 1,
     })
       .then(data => {
-        setUsers(data.users);
-        setTotal(data.pagination.total);
+        setUsers(data.users ?? []);
+        setTotal(data.pagination?.total ?? 0);
       })
       .catch(() => setError('Error al cargar usuarios'))
       .finally(() => setLoading(false));
