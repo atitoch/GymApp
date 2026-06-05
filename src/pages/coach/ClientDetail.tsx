@@ -45,6 +45,8 @@ export const ClientDetail: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const [selectedRoutineId, setSelectedRoutineId] = useState('');
+  const [startMode, setStartMode] = useState<'monday' | 'today'>('monday');
+  const [showResetWarning, setShowResetWarning] = useState(false);
   const [assignMsg, setAssignMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [assigning, setAssigning] = useState(false);
 
@@ -78,10 +80,16 @@ export const ClientDetail: React.FC = () => {
 
   const handleAssignRoutine = async () => {
     if (!userId || !selectedRoutineId) return;
+    const alreadyHasRoutine = (clientData as any)?.routine_id;
+    if (alreadyHasRoutine && !showResetWarning) {
+      setShowResetWarning(true);
+      return;
+    }
+    setShowResetWarning(false);
     setAssigning(true);
     setAssignMsg(null);
     try {
-      await assignRoutine(userId, selectedRoutineId);
+      await assignRoutine(userId, selectedRoutineId, startMode);
       setAssignMsg({ type: 'success', text: 'Rutina asignada exitosamente' });
     } catch (e: any) {
       setAssignMsg({ type: 'error', text: e?.message ?? 'Error al asignar rutina' });
@@ -225,7 +233,7 @@ export const ClientDetail: React.FC = () => {
             <>
               <select
                 value={selectedRoutineId}
-                onChange={(e) => setSelectedRoutineId(e.target.value)}
+                onChange={(e) => { setSelectedRoutineId(e.target.value); setShowResetWarning(false); }}
                 className="w-full bg-stone-800 border border-stone-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-lime-400"
               >
                 <option value="">Selecciona una rutina...</option>
@@ -235,18 +243,53 @@ export const ClientDetail: React.FC = () => {
                   </option>
                 ))}
               </select>
+
+              {/* Inicio de la rutina */}
+              <div className="flex gap-3 text-sm">
+                {(['monday', 'today'] as const).map((mode) => (
+                  <label key={mode} className="flex items-center gap-2 cursor-pointer text-stone-300">
+                    <input
+                      type="radio"
+                      name="start_mode"
+                      value={mode}
+                      checked={startMode === mode}
+                      onChange={() => setStartMode(mode)}
+                      className="accent-lime-400"
+                    />
+                    {mode === 'monday' ? '◉ Empezar el lunes (recomendado)' : '○ Empezar hoy'}
+                  </label>
+                ))}
+              </div>
+
+              {/* Aviso de reset */}
+              {showResetWarning && (
+                <div className="bg-yellow-400/10 border border-yellow-400/30 rounded-lg p-3 text-sm text-yellow-300 space-y-2">
+                  <p>⚠️ Este cliente ya tiene una rutina asignada. Reasignar <strong>reiniciará su rutina</strong> (el historial de entrenamientos se conserva).</p>
+                  <div className="flex gap-2">
+                    <button onClick={handleAssignRoutine} disabled={assigning} className="px-3 py-1 bg-yellow-400 text-stone-950 font-bold rounded text-xs hover:bg-yellow-300 disabled:opacity-50">
+                      Confirmar
+                    </button>
+                    <button onClick={() => setShowResetWarning(false)} className="px-3 py-1 bg-stone-700 text-stone-300 rounded text-xs hover:bg-stone-600">
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {assignMsg && (
                 <p className={`text-sm ${assignMsg.type === 'success' ? 'text-lime-400' : 'text-red-400'}`}>
                   {assignMsg.text}
                 </p>
               )}
-              <button
-                onClick={handleAssignRoutine}
-                disabled={assigning || !selectedRoutineId}
-                className="px-4 py-1.5 bg-lime-400 text-black font-medium text-sm rounded-lg hover:bg-lime-300 disabled:opacity-50 transition-colors"
-              >
-                {assigning ? 'Asignando...' : 'Asignar rutina'}
-              </button>
+              {!showResetWarning && (
+                <button
+                  onClick={handleAssignRoutine}
+                  disabled={assigning || !selectedRoutineId}
+                  className="px-4 py-1.5 bg-lime-400 text-black font-medium text-sm rounded-lg hover:bg-lime-300 disabled:opacity-50 transition-colors"
+                >
+                  {assigning ? 'Asignando...' : 'Asignar rutina'}
+                </button>
+              )}
             </>
           )}
         </div>

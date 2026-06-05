@@ -1360,9 +1360,10 @@ const fetchWeekRoutine = async (weekOffset = 0): Promise<WeekRoutineResponse | n
 export const fetchUserRoutines = async (
   userId: string,
   daysToShow: number = 7,
+  weekOffset: number = 0,
 ): Promise<UserRoutinesResult> => {
   // Try new week endpoint first (starts from Monday, has isToday)
-  const weekData = await fetchWeekRoutine(0);
+  const weekData = await fetchWeekRoutine(weekOffset);
 
   if (weekData?.days && weekData.days.length > 0) {
     const today = new Date();

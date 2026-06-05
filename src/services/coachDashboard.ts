@@ -66,8 +66,8 @@ export const getClientComments = async (userId: string): Promise<CoachComment[]>
   return res.comments ?? [];
 };
 
-export const assignRoutine = (userId: string, routineId: string) =>
-  authenticatedPost(`/coach/clients/${userId}/assign-routine`, { routine_id: routineId });
+export const assignRoutine = (userId: string, routineId: string, startMode: 'today' | 'monday' = 'monday') =>
+  authenticatedPost(`/coach/clients/${userId}/assign-routine`, { routine_id: routineId, start_mode: startMode });
 
 export const getMyRoutines = async (): Promise<CoachRoutine[]> => {
   const res = await authenticatedGet<{ routines: CoachRoutine[] }>('/coach/routines');

@@ -10,7 +10,7 @@ import { useAuth } from "../contexts/useAuth";
 import type { CalculatedDayRoutine } from "../types/routineType";
 import { themeClasses, cn } from "../theme/constants";
 import { useColors } from "../theme";
-import { Dumbbell, Calendar, TrendingUp, Sparkles, ChevronRight } from "lucide-react";
+import { Dumbbell, Calendar, TrendingUp, Sparkles, ChevronRight, ChevronLeft } from "lucide-react";
 import { DashboardSkeleton } from "../components/DashboardSkeleton";
 
 export const Dashboard: React.FC = () => {
@@ -19,9 +19,9 @@ export const Dashboard: React.FC = () => {
   const colors = useColors();
   const [routines, setRoutines] = useState<CalculatedDayRoutine[]>([]);
   const [myCoachData, setMyCoachData] = useState<MyCoachData | null>(null);
-  const [currentDayNumber, setCurrentDayNumber] = useState<number | undefined>(
-    undefined
-  );
+  const [currentDayNumber, setCurrentDayNumber] = useState<number | undefined>(undefined);
+  const [weekOffset, setWeekOffset] = useState(0);
+  const [weekLabel, setWeekLabel] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [weekStats, setWeekStats] = useState<{
     completed_sessions: number;
@@ -35,7 +35,7 @@ export const Dashboard: React.FC = () => {
     setLoading(true);
     try {
       const [result, stats, coachResult] = await Promise.allSettled([
-        fetchUserRoutines(user.id, 7),
+        fetchUserRoutines(user.id, 7, weekOffset),
         getWeeklyStats(),
         getMyCoach(),
       ]);
@@ -47,9 +47,16 @@ export const Dashboard: React.FC = () => {
       if (result.status === 'fulfilled' && result.value?.routines?.length > 0) {
         setRoutines(result.value.routines);
         setCurrentDayNumber(result.value.currentDayNumber);
+        // Build week label from first and last day dates
+        const days = result.value.routines;
+        if (days.length >= 7 && days[0].date && days[6].date) {
+          const fmt = (d: string) => new Date(`${d}T12:00:00`).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+          setWeekLabel(`${fmt(days[0].date)} – ${fmt(days[6].date)}`);
+        }
       } else {
         setRoutines([]);
         setCurrentDayNumber(undefined);
+        setWeekLabel('');
       }
 
       if (stats.status === 'fulfilled') {
@@ -60,7 +67,7 @@ export const Dashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [user?.id]);
+  }, [user?.id, weekOffset]);
 
   useEffect(() => {
     loadRoutines();
@@ -218,15 +225,42 @@ export const Dashboard: React.FC = () => {
         </div>
 
         {/* Título de la semana */}
-        <div className="mb-6">
-          <h2
-            className={cn("text-2xl font-bold mb-2", themeClasses.text.primary)}
-          >
-            Tu Semana de Entrenamiento
-          </h2>
-          <p className={themeClasses.text.tertiary}>
-            Selecciona un día para ver los detalles de tu rutina
-          </p>
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <div>
+            <h2 className={cn("text-2xl font-bold mb-1", themeClasses.text.primary)}>
+              {weekOffset === 0 ? 'Esta semana' : weekOffset > 0 ? `Semana +${weekOffset}` : `Semana ${weekOffset}`}
+            </h2>
+            {weekLabel && (
+              <p className={themeClasses.text.tertiary}>{weekLabel}</p>
+            )}
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => setWeekOffset(w => w - 1)}
+              className="p-2 rounded-xl hover:bg-white/10 transition-all"
+              style={{ color: colors.text.secondary }}
+              title="Semana anterior"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            {weekOffset !== 0 && (
+              <button
+                onClick={() => setWeekOffset(0)}
+                className="px-3 py-1 text-xs rounded-lg font-medium transition-all"
+                style={{ background: colors.primary[500] + '20', color: colors.primary[400] }}
+              >
+                Hoy
+              </button>
+            )}
+            <button
+              onClick={() => setWeekOffset(w => w + 1)}
+              className="p-2 rounded-xl hover:bg-white/10 transition-all"
+              style={{ color: colors.text.secondary }}
+              title="Próxima semana"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </div>
         </div>
 
         {/* Panel semanal de entrenamientos */}
