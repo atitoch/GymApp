@@ -24,18 +24,25 @@ export interface MyApplication {
   documents: CoachDocument[];
 }
 
-export const applyAsCoach = () =>
-  authenticatedPost<CoachApplication>('/coach/apply', {});
+export const applyAsCoach = async (): Promise<CoachApplication> => {
+  const res = await authenticatedPost<{ application: CoachApplication }>('/coach/apply', {});
+  return res.application;
+};
 
-export const getMyApplication = () =>
-  authenticatedGet<MyApplication>('/coach/application');
+export const getMyApplication = async (): Promise<MyApplication> => {
+  const res = await authenticatedGet<{ application: CoachApplication; documents: CoachDocument[] }>('/coach/application');
+  return { application: res.application, documents: res.documents ?? [] };
+};
 
-export const uploadCoachDocument = (data: {
+export const uploadCoachDocument = async (data: {
   application_id: string;
   document_type: CoachDocument['document_type'];
   file_url: string;
   file_name?: string;
-}) => authenticatedPost<CoachDocument>('/coach/documents', data);
+}): Promise<CoachDocument> => {
+  const res = await authenticatedPost<{ document: CoachDocument }>('/coach/documents', data);
+  return res.document;
+};
 
 export const getUploadUrl = (data: {
   application_id: string;
