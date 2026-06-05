@@ -76,7 +76,10 @@ export const Dashboard: React.FC = () => {
   const handleDaySelect = (dayNumber: number) => {
     const dayRoutine = routines.find(r => r.dayNumber === dayNumber);
     navigate(`/routine/${dayNumber}`, {
-      state: { date: dayRoutine?.date ?? null },
+      state: {
+        date: dayRoutine?.date ?? null,
+        routine: dayRoutine ?? null,  // full routine with sections/exercises
+      },
     });
   };
 

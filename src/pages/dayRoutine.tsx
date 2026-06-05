@@ -33,6 +33,7 @@ export const DayRoutine: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dateFromNav: string | null = (location.state as any)?.date ?? null;
+  const routineFromNav: any | null = (location.state as any)?.routine ?? null;
   const { user } = useAuth();
   const [currentRoutine, setCurrentRoutine] =
     useState<CalculatedDayRoutine | null>(null);
@@ -62,8 +63,10 @@ export const DayRoutine: React.FC = () => {
       const dayNumber = Number(dayIndex);
 
       try {
-        // Si viene fecha desde el dashboard, usarla para buscar la rutina correcta
-        const fetchedRoutine = dateFromNav
+        // If full routine came from Dashboard (already has sections/exercises), use it directly
+        const fetchedRoutine = routineFromNav
+          ? (routineFromNav as CalculatedDayRoutine)
+          : dateFromNav
           ? await fetchDayRoutineByDate(dateFromNav, dayNumber)
           : await fetchDayRoutine(user.id, dayNumber);
 
