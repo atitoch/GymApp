@@ -2,7 +2,7 @@ import { authenticatedGet, authenticatedPost } from '../utils/api';
 
 export interface AdminStats {
   users: { total: number; byRole: Record<string, number> };
-  applications: { pending: number; approved: number; rejected: number };
+  applications: { total: number; byStatus: { pending: number; approved: number; rejected: number } };
   routines: { total: number };
 }
 

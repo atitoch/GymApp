@@ -91,7 +91,7 @@ export const AdminDashboard: React.FC = () => {
               <ClipboardList className="w-4 h-4 text-stone-400" />
               <span className="text-stone-400 text-xs">Solicitudes pendientes</span>
             </div>
-            <p className="text-3xl font-bold text-lime-400">{stats?.applications.pending ?? '—'}</p>
+            <p className="text-3xl font-bold text-lime-400">{stats?.applications.byStatus?.pending ?? '—'}</p>
           </div>
           <div className="bg-stone-900 rounded-2xl p-5 border border-stone-800">
             <div className="flex items-center gap-2 mb-1">
