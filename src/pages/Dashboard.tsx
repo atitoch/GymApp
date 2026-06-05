@@ -74,7 +74,10 @@ export const Dashboard: React.FC = () => {
   }, [loadRoutines]);
 
   const handleDaySelect = (dayNumber: number) => {
-    navigate(`/routine/${dayNumber}`);
+    const dayRoutine = routines.find(r => r.dayNumber === dayNumber);
+    navigate(`/routine/${dayNumber}`, {
+      state: { date: dayRoutine?.date ?? null },
+    });
   };
 
   const handleBackToDashboard = () => {

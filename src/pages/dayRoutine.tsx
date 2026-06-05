@@ -1,10 +1,10 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Cooldown } from '../components/cooldown';
 import { DayHeader } from '../components/dayHeader';
 import { Tips } from '../components/tips';
 import { WarmUp } from '../components/warmUp';
-import { routineData, fetchDayRoutine } from '../services/routine';
+import { routineData, fetchDayRoutine, fetchDayRoutineByDate } from '../services/routine';
 import { getTodayInUserTimezone } from '../utils/routineCalculations';
 import type { CalculatedDayRoutine } from '../types/routineType';
 import { themeClasses, cn } from '../theme/constants';
@@ -31,6 +31,8 @@ export const DayRoutine: React.FC = () => {
     dayIndex: string;
   }>();
   const navigate = useNavigate();
+  const location = useLocation();
+  const dateFromNav: string | null = (location.state as any)?.date ?? null;
   const { user } = useAuth();
   const [currentRoutine, setCurrentRoutine] =
     useState<CalculatedDayRoutine | null>(null);
@@ -60,8 +62,10 @@ export const DayRoutine: React.FC = () => {
       const dayNumber = Number(dayIndex);
 
       try {
-        // Intentar obtener rutina del backend
-        const fetchedRoutine = await fetchDayRoutine(user.id, dayNumber);
+        // Si viene fecha desde el dashboard, usarla para buscar la rutina correcta
+        const fetchedRoutine = dateFromNav
+          ? await fetchDayRoutineByDate(dateFromNav, dayNumber)
+          : await fetchDayRoutine(user.id, dayNumber);
 
         if (fetchedRoutine) {
           setCurrentRoutine(fetchedRoutine);
@@ -72,15 +76,17 @@ export const DayRoutine: React.FC = () => {
           const localRoutine = localRoutines[index];
 
           if (localRoutine) {
-            const today = new Date();
-            const targetDate = new Date(today);
-            targetDate.setDate(today.getDate() + (dayNumber - 1));
-
-            // Usar hora local para evitar problemas de zona horaria
-            const year = targetDate.getFullYear();
-            const month = String(targetDate.getMonth() + 1).padStart(2, '0');
-            const day = String(targetDate.getDate()).padStart(2, '0');
-            const dateString = `${year}-${month}-${day}`;
+            // Use the date from navigation if available (correct day of week)
+            let dateString = dateFromNav ?? '';
+            if (!dateString) {
+              const today = new Date();
+              const targetDate = new Date(today);
+              targetDate.setDate(today.getDate() + (dayNumber - 1));
+              const year = targetDate.getFullYear();
+              const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+              const day = String(targetDate.getDate()).padStart(2, '0');
+              dateString = `${year}-${month}-${day}`;
+            }
 
             const convertedRoutine: CalculatedDayRoutine = {
               ...localRoutine,

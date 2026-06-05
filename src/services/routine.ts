@@ -1420,6 +1420,29 @@ export const fetchUserRoutines = async (
  * @param dayNumber Día consecutivo desde el inicio
  * @returns Rutina calculada para ese día
  */
+// Fetches routine for a specific date using /api/routine-cycle/date/:date
+export const fetchDayRoutineByDate = async (
+  date: string,
+  dayNumber: number,
+): Promise<CalculatedDayRoutine | null> => {
+  try {
+    const data = await authenticatedGet<any>(`/routine-cycle/date/${date}`);
+    if (!data) return null;
+    // Backend wraps in { routine, date, dayInCycle, ... }
+    const routine = data.routine ?? data;
+    return {
+      ...routine,
+      day: dayNumber,
+      dayNumber,
+      cycleDay: data.dayInCycle ?? dayNumber - 1,
+      patternType: routine.dayName ?? routine.patternName ?? '',
+      date,
+    };
+  } catch {
+    return null;
+  }
+};
+
 export const fetchDayRoutine = async (
   userId: string,
   dayNumber: number,
