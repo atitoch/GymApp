@@ -5,7 +5,6 @@ import {
   getMessages,
   sendMessage,
   markAsRead,
-  subscribeToMessages,
   type Message,
 } from '../services/messages';
 import { useAuth } from '../contexts/useAuth';
@@ -52,18 +51,18 @@ export const Chat: React.FC = () => {
     setLoading(true);
     load(0).finally(() => setLoading(false));
 
-    // Mark as read when opening the thread
     markAsRead(partnerId).catch(() => {});
 
-    // Real-time subscription
-    const unsub = subscribeToMessages(user.id, (msg) => {
-      if (msg.sender_id === partnerId) {
-        setMessages((prev) => [...prev, msg]);
-        markAsRead(partnerId).catch(() => {});
-      }
-    });
+    // Poll for new messages every 4 seconds
+    const interval = setInterval(async () => {
+      try {
+        const res = await getMessages(partnerId, 0);
+        setTotal(res.total);
+        setMessages(res.messages ?? []);
+      } catch {}
+    }, 4000);
 
-    return () => { unsub(); };
+    return () => clearInterval(interval);
   }, [partnerId, user?.id, load]);
 
   // Scroll to bottom on new messages

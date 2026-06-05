@@ -1,6 +1,4 @@
 import { authenticatedGet, authenticatedPost, authenticatedFetch } from '../utils/api';
-import { supabase } from '../config/supabase';
-import type { RealtimePostgresInsertPayload } from '@supabase/supabase-js';
 
 export interface Message {
   id: string;
@@ -47,28 +45,4 @@ export const markAsRead = (partnerId: string): Promise<void> => {
 export const getUnreadCount = async (): Promise<number> => {
   const res = await authenticatedGet<{ unread: number }>('/messages/unread-count');
   return res.unread ?? 0;
-};
-
-// Supabase Realtime subscription for new messages
-export const subscribeToMessages = (
-  myUserId: string,
-  onNewMessage: (msg: Message) => void,
-) => {
-  const channel = supabase
-    .channel('my-messages')
-    .on(
-      'postgres_changes',
-      {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'messages',
-        filter: `receiver_id=eq.${myUserId}`,
-      },
-      (payload: RealtimePostgresInsertPayload<Message>) => {
-        onNewMessage(payload.new as Message);
-      },
-    )
-    .subscribe();
-
-  return () => supabase.removeChannel(channel);
 };
