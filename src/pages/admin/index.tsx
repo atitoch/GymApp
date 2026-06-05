@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, Users, ClipboardList, Dumbbell, Activity, ArrowRight, Loader2 } from 'lucide-react';
+import { ShieldCheck, Users, ClipboardList, Dumbbell, Activity, ArrowRight, Loader2, LogOut } from 'lucide-react';
+import { useAuth } from '../../contexts/useAuth';
 import {
   getAdminStats,
   getSystemHealth,
@@ -26,6 +27,7 @@ const dbLatencyColor = (ms: number) => {
 
 export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [health, setHealth] = useState<SystemHealth | null>(null);
   const [eventSummary, setEventSummary] = useState<AuthEventsSummary | null>(null);
@@ -52,9 +54,18 @@ export const AdminDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-stone-950 p-6">
       <div className="max-w-5xl mx-auto space-y-6">
-        <div className="flex items-center gap-3 mb-2">
-          <ShieldCheck className="w-7 h-7 text-lime-400" />
-          <h1 className="text-2xl font-bold text-stone-100">Panel de Administración</h1>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-3">
+            <ShieldCheck className="w-7 h-7 text-lime-400" />
+            <h1 className="text-2xl font-bold text-stone-100">Panel de Administración</h1>
+          </div>
+          <button
+            onClick={() => logout()}
+            className="flex items-center gap-2 text-sm text-stone-400 hover:text-white hover:bg-white/10 px-3 py-2 rounded-xl transition-all"
+          >
+            <LogOut size={16} />
+            Cerrar sesión
+          </button>
         </div>
 
         {error && <p className="text-red-400 text-sm">{error}</p>}
