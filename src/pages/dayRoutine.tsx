@@ -157,15 +157,15 @@ export const DayRoutine: React.FC = () => {
   // Inicializa los statuses cuando cargas la rutina del día
   useEffect(() => {
     if (currentRoutine) {
-      const allExercises = currentRoutine.sections.flatMap((s) =>
-        s.exercises.map((ex) => ({ name: ex.name, completed: false })),
+      const allExercises = (currentRoutine.sections ?? []).flatMap((s) =>
+        (s.exercises ?? []).map((ex) => ({ name: ex.name, completed: false })),
       );
       setExerciseStatuses(allExercises);
 
       // Crear mapa de sets objetivo por ejercicio
       const setsMap = new Map<string, number>();
-      currentRoutine.sections.forEach((section) => {
-        section.exercises.forEach((ex) => {
+      (currentRoutine.sections ?? []).forEach((section) => {
+        (section.exercises ?? []).forEach((ex) => {
           setsMap.set(ex.name, parseTargetSets(ex.sets));
         });
       });
@@ -205,8 +205,8 @@ export const DayRoutine: React.FC = () => {
         // Actualizar statuses — derivar targetSets de currentRoutine directamente
         // (exerciseTargetSets es state y puede estar stale en este closure)
         const freshTargetSets = new Map<string, number>();
-        currentRoutine.sections.forEach((section) => {
-          section.exercises.forEach((ex) => {
+        (currentRoutine.sections ?? []).forEach((section) => {
+          (section.exercises ?? []).forEach((ex) => {
             freshTargetSets.set(ex.name, parseTargetSets(ex.sets));
           });
         });
