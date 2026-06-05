@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Send, Loader2 } from 'lucide-react';
+import { ArrowLeft, Send, Loader2, Trash2 } from 'lucide-react';
 import {
   getMessages,
   sendMessage,
   markAsRead,
+  deleteMessage,
   subscribeToMessages,
   type Message,
 } from '../services/messages';
@@ -33,8 +34,13 @@ export const Chat: React.FC = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const removeMessage = useCallback((id: string) => {
+    setMessages((prev) => prev.filter((m) => m.id !== id));
+  }, []);
 
   const load = useCallback(async (p: number, prepend = false) => {
     if (!partnerId) return;
@@ -54,17 +60,20 @@ export const Chat: React.FC = () => {
 
     markAsRead(partnerId).catch(() => {});
 
-    const unsub = subscribeToMessages(user.id, (msg) => {
-      if (msg.sender_id === partnerId) {
-        setMessages((prev) => [...prev, msg]);
-        markAsRead(partnerId).catch(() => {});
-      }
-    });
+    const unsub = subscribeToMessages(
+      user.id,
+      (msg) => {
+        if (msg.sender_id === partnerId) {
+          setMessages((prev) => [...prev, msg]);
+          markAsRead(partnerId).catch(() => {});
+        }
+      },
+      (id) => removeMessage(id),
+    );
 
     return () => { unsub(); };
-  }, [partnerId, user?.id, load]);
+  }, [partnerId, user?.id, load, removeMessage]);
 
-  // Scroll to bottom on new messages
   useEffect(() => {
     if (!loading) {
       bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -80,10 +89,20 @@ export const Chat: React.FC = () => {
       const msg = await sendMessage(partnerId, content);
       setMessages((prev) => [...prev, msg]);
     } catch {
-      setText(content); // restore on error
+      setText(content);
     } finally {
       setSending(false);
       inputRef.current?.focus();
+    }
+  };
+
+  const handleDelete = async (msgId: string) => {
+    setDeletingId(msgId);
+    try {
+      await deleteMessage(msgId);
+      removeMessage(msgId);
+    } catch {} finally {
+      setDeletingId(null);
     }
   };
 
@@ -95,10 +114,9 @@ export const Chat: React.FC = () => {
   };
 
   const handleLoadMore = async () => {
-    const nextPage = page + 1;
     if (messages.length >= total) return;
     setLoadingMore(true);
-    await load(nextPage, true);
+    await load(page + 1, true);
     setLoadingMore(false);
   };
 
@@ -156,7 +174,21 @@ export const Chat: React.FC = () => {
                       {formatDateSeparator(msg.created_at)}
                     </div>
                   )}
-                  <div className={`flex mb-2 ${isMe ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`flex mb-2 group ${isMe ? 'justify-end' : 'justify-start'}`}>
+                    {/* Botón borrar — solo mensajes propios */}
+                    {isMe && (
+                      <button
+                        onClick={() => handleDelete(msg.id)}
+                        disabled={deletingId === msg.id}
+                        className="self-center mr-1.5 p-1 rounded-lg text-stone-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
+                        title="Borrar mensaje"
+                      >
+                        {deletingId === msg.id
+                          ? <Loader2 size={13} className="animate-spin" />
+                          : <Trash2 size={13} />
+                        }
+                      </button>
+                    )}
                     <div
                       className={`max-w-[75%] rounded-2xl px-4 py-2.5 ${
                         isMe

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Star, MessageSquare, Dumbbell } from 'lucide-react';
+import { ArrowLeft, Star, MessageSquare, Dumbbell, Pencil, Trash2, Loader2, X, Check } from 'lucide-react';
 import {
   getClientDetail,
   addComment,
   getClientComments,
+  updateComment,
+  deleteComment,
   getMyRoutines,
   assignRoutine,
   type CoachComment,
@@ -44,6 +46,17 @@ export const ClientDetail: React.FC = () => {
   const [isPrivate, setIsPrivate] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  // Edit state
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editText, setEditText] = useState('');
+  const [editType, setEditType] = useState<CommentType>('general');
+  const [editPrivate, setEditPrivate] = useState(false);
+  const [savingEdit, setSavingEdit] = useState(false);
+
+  // Delete state
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
   const [selectedRoutineId, setSelectedRoutineId] = useState('');
   const [startMode, setStartMode] = useState<'monday' | 'today'>('monday');
   const [showResetWarning, setShowResetWarning] = useState(false);
@@ -75,6 +88,44 @@ export const ClientDetail: React.FC = () => {
       setCommentType('general');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const startEdit = (c: CoachComment) => {
+    setEditingId(c.id);
+    setEditText(c.comment);
+    setEditType((c.comment_type as CommentType) ?? 'general');
+    setEditPrivate(c.is_private);
+    setConfirmDeleteId(null);
+  };
+
+  const cancelEdit = () => setEditingId(null);
+
+  const handleSaveEdit = async () => {
+    if (!userId || !editingId || !editText.trim()) return;
+    setSavingEdit(true);
+    try {
+      const updated = await updateComment(userId, editingId, {
+        comment: editText,
+        comment_type: editType,
+        is_private: editPrivate,
+      });
+      setComments((prev) => prev.map((c) => c.id === editingId ? updated : c));
+      setEditingId(null);
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    if (!userId) return;
+    setDeletingId(commentId);
+    try {
+      await deleteComment(userId, commentId);
+      setComments((prev) => prev.filter((c) => c.id !== commentId));
+      setConfirmDeleteId(null);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -164,17 +215,74 @@ export const ClientDetail: React.FC = () => {
         {comments.length > 0 && (
           <div className="space-y-2 mb-4">
             {comments.map((c) => (
-              <div key={c.id} className="bg-stone-900 border border-stone-800 rounded-xl p-3">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${TYPE_COLORS[c.comment_type as CommentType] ?? 'bg-stone-700 text-stone-200'}`}>
-                    {TYPE_LABELS[c.comment_type as CommentType] ?? c.comment_type}
-                  </span>
-                  {c.is_private && <span className="text-xs text-stone-500">privado</span>}
-                  <span className="text-stone-500 text-xs ml-auto">
-                    {new Date(c.created_at).toLocaleDateString('es-MX')}
-                  </span>
-                </div>
-                <p className="text-sm text-stone-200">{c.comment}</p>
+              <div key={c.id} className={`border rounded-xl p-3 ${c.is_private ? 'bg-stone-900/60 border-stone-700' : 'bg-stone-900 border-stone-800'}`}>
+                {editingId === c.id ? (
+                  /* ── Edit inline form ── */
+                  <div className="space-y-2">
+                    <textarea
+                      value={editText}
+                      onChange={(e) => setEditText(e.target.value)}
+                      rows={3}
+                      className="w-full bg-stone-800 border border-stone-700 rounded-lg p-2.5 text-sm text-white placeholder-stone-500 focus:outline-none focus:border-lime-400 resize-none"
+                    />
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <select
+                        value={editType}
+                        onChange={(e) => setEditType(e.target.value as CommentType)}
+                        className="bg-stone-800 border border-stone-700 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-lime-400"
+                      >
+                        {COMMENT_TYPES.map((t) => <option key={t} value={t}>{TYPE_LABELS[t]}</option>)}
+                      </select>
+                      <label className="flex items-center gap-1.5 text-xs text-stone-400 cursor-pointer">
+                        <input type="checkbox" checked={editPrivate} onChange={(e) => setEditPrivate(e.target.checked)} className="accent-lime-400" />
+                        Privado
+                      </label>
+                      <div className="ml-auto flex gap-1.5">
+                        <button onClick={cancelEdit} className="p-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-400 transition-colors">
+                          <X size={13} />
+                        </button>
+                        <button onClick={handleSaveEdit} disabled={savingEdit || !editText.trim()} className="p-1.5 rounded-lg bg-lime-400 text-stone-950 hover:bg-lime-300 disabled:opacity-50 transition-colors">
+                          {savingEdit ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* ── View mode ── */
+                  <>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${TYPE_COLORS[c.comment_type as CommentType] ?? 'bg-stone-700 text-stone-200'}`}>
+                        {TYPE_LABELS[c.comment_type as CommentType] ?? c.comment_type}
+                      </span>
+                      {c.is_private && <span className="text-xs text-stone-500">🔒 privado</span>}
+                      <span className="text-stone-500 text-xs ml-auto">
+                        {new Date(c.created_at).toLocaleDateString('es-MX')}
+                      </span>
+                      <button onClick={() => startEdit(c)} className="p-1 rounded text-stone-500 hover:text-lime-400 transition-colors" title="Editar">
+                        <Pencil size={12} />
+                      </button>
+                      <button onClick={() => setConfirmDeleteId(c.id)} className="p-1 rounded text-stone-500 hover:text-red-400 transition-colors" title="Borrar">
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
+                    <p className="text-sm text-stone-200">{c.comment}</p>
+                    {confirmDeleteId === c.id && (
+                      <div className="mt-2 flex items-center gap-2 text-xs">
+                        <span className="text-stone-400">¿Eliminar?</span>
+                        <button
+                          onClick={() => handleDeleteComment(c.id)}
+                          disabled={deletingId === c.id}
+                          className="px-2 py-0.5 bg-red-500 text-white rounded font-medium hover:bg-red-400 disabled:opacity-50"
+                        >
+                          {deletingId === c.id ? <Loader2 size={11} className="animate-spin" /> : 'Sí'}
+                        </button>
+                        <button onClick={() => setConfirmDeleteId(null)} className="px-2 py-0.5 bg-stone-700 text-stone-300 rounded hover:bg-stone-600">
+                          No
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
             ))}
           </div>

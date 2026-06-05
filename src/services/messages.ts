@@ -1,6 +1,6 @@
-import { authenticatedGet, authenticatedPost, authenticatedFetch } from '../utils/api';
+import { authenticatedGet, authenticatedPost, authenticatedFetch, authenticatedDelete } from '../utils/api';
 import { supabase } from '../config/supabase';
-import type { RealtimePostgresInsertPayload } from '@supabase/supabase-js';
+import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
 export interface Message {
   id: string;
@@ -49,9 +49,14 @@ export const getUnreadCount = async (): Promise<number> => {
   return res.unread ?? 0;
 };
 
+export const deleteMessage = async (messageId: string): Promise<void> => {
+  await authenticatedDelete(`/messages/message/${messageId}`);
+};
+
 export const subscribeToMessages = (
   myUserId: string,
   onNewMessage: (msg: Message) => void,
+  onDeleteMessage: (id: string) => void,
 ) => {
   const channel = supabase
     .channel('my-messages')
@@ -63,8 +68,21 @@ export const subscribeToMessages = (
         table: 'messages',
         filter: `receiver_id=eq.${myUserId}`,
       },
-      (payload: RealtimePostgresInsertPayload<Message>) => {
-        onNewMessage(payload.new as Message);
+      (payload: RealtimePostgresChangesPayload<Message>) => {
+        if (payload.eventType === 'INSERT') onNewMessage(payload.new as Message);
+      },
+    )
+    .on(
+      'postgres_changes',
+      {
+        event: 'DELETE',
+        schema: 'public',
+        table: 'messages',
+      },
+      (payload: RealtimePostgresChangesPayload<Message>) => {
+        if (payload.eventType === 'DELETE' && payload.old?.id) {
+          onDeleteMessage(payload.old.id);
+        }
       },
     )
     .subscribe();

@@ -1,4 +1,4 @@
-import { authenticatedGet, authenticatedPost, authenticatedPut } from '../utils/api';
+import { authenticatedGet, authenticatedPost, authenticatedPut, authenticatedDelete } from '../utils/api';
 
 export interface CoachProfile {
   id: string;
@@ -66,6 +66,19 @@ export const addComment = async (userId: string, data: { comment: string; commen
 export const getClientComments = async (userId: string): Promise<CoachComment[]> => {
   const res = await authenticatedGet<{ comments: CoachComment[] }>(`/coach/clients/${userId}/comments`);
   return res.comments ?? [];
+};
+
+export const updateComment = async (
+  userId: string,
+  commentId: string,
+  data: { comment?: string; comment_type?: string; is_private?: boolean },
+): Promise<CoachComment> => {
+  const res = await authenticatedPut<{ comment: CoachComment }>(`/coach/clients/${userId}/comments/${commentId}`, data);
+  return res.comment;
+};
+
+export const deleteComment = async (userId: string, commentId: string): Promise<void> => {
+  await authenticatedDelete(`/coach/clients/${userId}/comments/${commentId}`);
 };
 
 export const assignRoutine = (userId: string, routineId: string, startMode: 'today' | 'monday' = 'monday') =>
