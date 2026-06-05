@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { LogOut, Home, Dumbbell, History, User, Menu, X, ShieldCheck, Users2, UserCheck } from 'lucide-react';
+import { LogOut, Home, Dumbbell, History, User, Menu, X, ShieldCheck, Users2, UserCheck, MessageSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/useAuth';
 import { themeClasses, cn } from '../theme/constants';
 import { useColors } from '../theme';
 import { ConfirmDialog } from './ConfirmDialog';
+import { getUnreadCount } from '../services/messages';
 
 interface HeaderProps {
   handleBackToSelect?: () => void;
@@ -20,6 +21,16 @@ export const Header: React.FC<HeaderProps> = ({
   const colors = useColors();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [unread, setUnread] = useState(0);
+
+  useEffect(() => {
+    if (!authUser) return;
+    getUnreadCount().then(setUnread).catch(() => {});
+    const interval = setInterval(() => {
+      getUnreadCount().then(setUnread).catch(() => {});
+    }, 30_000);
+    return () => clearInterval(interval);
+  }, [authUser?.id]);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Cerrar menú al click fuera
@@ -55,6 +66,7 @@ export const Header: React.FC<HeaderProps> = ({
     ...(authUser?.role === 'coach' ? [{ icon: Users2, label: 'Mis clientes', action: () => navigate('/coach') }] : []),
     ...(authUser?.role === 'user' ? [{ icon: UserCheck, label: 'Mi Coach', action: () => navigate('/my-coach') }] : []),
     ...(authUser?.role === 'admin' ? [{ icon: ShieldCheck, label: 'Admin', action: () => navigate('/admin') }] : []),
+    { icon: MessageSquare, label: 'Mensajes', action: () => navigate('/messages'), badge: unread > 0 ? unread : undefined },
     { icon: LogOut, label: 'Cerrar sesión', action: () => setShowLogoutDialog(true), danger: true },
   ];
 
@@ -108,7 +120,7 @@ export const Header: React.FC<HeaderProps> = ({
               className="absolute right-0 top-12 z-50 w-48 rounded-xl shadow-2xl overflow-hidden"
               style={{ background: colors.background.tertiary, border: `1px solid ${colors.border.default}` }}
             >
-              {menuItems.map(({ icon: Icon, label, action, danger }) => (
+              {menuItems.map(({ icon: Icon, label, action, danger, badge }: any) => (
                 <button
                   key={label}
                   onClick={() => { action(); setMenuOpen(false); }}
@@ -116,7 +128,12 @@ export const Header: React.FC<HeaderProps> = ({
                   style={{ color: danger ? '#f87171' : colors.text.secondary }}
                 >
                   <Icon className="w-4 h-4 shrink-0" />
-                  {label}
+                  <span className="flex-1">{label}</span>
+                  {badge != null && (
+                    <span className="min-w-[18px] h-[18px] rounded-full bg-lime-400 text-stone-950 text-[10px] font-bold flex items-center justify-center px-1">
+                      {badge > 99 ? '99+' : badge}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>

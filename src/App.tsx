@@ -28,6 +28,8 @@ import { AdminCoaches } from './pages/admin/Coaches';
 import { AdminUsers } from './pages/admin/Users';
 import { AdminSystemHealth } from './pages/admin/SystemHealth';
 import { ApplyAsCoach } from './pages/ApplyAsCoach';
+import { Messages } from './pages/Messages';
+import { Chat } from './pages/Chat';
 
 const App = () => {
   const { isAuthenticated } = useAuth();
@@ -85,6 +87,8 @@ const App = () => {
           }
         />
         <Route path="/apply-as-coach" element={<ProtectedRoute><ApplyAsCoach /></ProtectedRoute>} />
+        <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+        <Route path="/messages/:partnerId" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
         <Route path="/coach" element={<CoachRoute><CoachDashboard /></CoachRoute>} />
         <Route path="/coach/clients/:userId" element={<CoachRoute><ClientDetail /></CoachRoute>} />
         <Route path="/coaches" element={<ProtectedRoute><BrowseCoaches /></ProtectedRoute>} />
