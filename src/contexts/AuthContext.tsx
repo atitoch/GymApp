@@ -13,6 +13,20 @@ const TOKEN_KEY = "auth_token";
 const REFRESH_TOKEN_KEY = "auth_refresh_token";
 const USER_KEY = "auth_user";
 
+const enrichUserWithRole = async (token: string, baseUser: User): Promise<User> => {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/users/profile`, {
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) return baseUser;
+    const data = await response.json();
+    const profile = data.data ?? data;
+    return { ...baseUser, role: profile.role ?? 'user', coachStatus: profile.coach_status ?? null };
+  } catch {
+    return baseUser;
+  }
+};
+
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
@@ -49,6 +63,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
               typeof parsed.email === 'string'
             ) {
               setUser(parsed);
+              // Refresh role in background
+              enrichUserWithRole(storedToken, parsed).then(enriched => {
+                setUser(enriched);
+                localStorage.setItem(USER_KEY, JSON.stringify(enriched));
+              });
             } else {
               clearSession();
               setIsLoading(false);
@@ -95,13 +114,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     try {
       const authData = await authService.login(credentials);
       saveSession(authData);
+      const enriched = await enrichUserWithRole(authData.token, authData.user);
+      setUser(enriched);
+      localStorage.setItem(USER_KEY, JSON.stringify(enriched));
 
       // Guardar "remember me" si está activado
       if (credentials.rememberMe) {
         // El token ya está guardado, podrías extender su expiración en el backend
       }
 
-      navigate("/dashboard");
+      navigate(enriched.role === 'admin' ? '/admin' : '/dashboard');
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -187,6 +209,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     token,
     isLoading,
     isAuthenticated: !!user && !!token,
+    isAdmin: !!user && user.role === 'admin',
     login,
     register,
     logout,
