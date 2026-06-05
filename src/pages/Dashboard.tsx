@@ -312,8 +312,8 @@ export const Dashboard: React.FC = () => {
           </div>
         )}
 
-        {/* Sección de Entrenamientos Personalizados - Próximamente */}
-        <div className="mt-12 mb-8">
+        {/* Sección de Entrenamientos Personalizados - solo si no tiene coach */}
+        {!myCoachData?.coach && <div className="mt-12 mb-8">
           <div
             className="relative rounded-2xl border p-4 sm:p-6 md:p-8 backdrop-blur-sm"
             style={{
@@ -376,7 +376,7 @@ export const Dashboard: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div>}
       </div>
     </div>
   );
