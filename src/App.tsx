@@ -13,8 +13,20 @@ import { AuthCallback } from './pages/auth/callback';
 import { AuthError } from './pages/auth/error';
 import { VerifyEmail } from './pages/auth/verify-email';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { AdminRoute } from './components/AdminRoute';
+import { CoachRoute } from './components/CoachRoute';
+import { CoachDashboard } from './pages/coach/index';
+import { ClientDetail } from './pages/coach/ClientDetail';
+import { BrowseCoaches } from './pages/coaches/Browse';
+import { CoachProfile } from './pages/coaches/CoachProfile';
 import { ScrollToTop } from './components/ScrollToTop';
 import { useAuth } from './contexts/useAuth';
+import { AdminDashboard } from './pages/admin/index';
+import { AdminApplications } from './pages/admin/Applications';
+import { AdminCoaches } from './pages/admin/Coaches';
+import { AdminUsers } from './pages/admin/Users';
+import { AdminSystemHealth } from './pages/admin/SystemHealth';
+import { ApplyAsCoach } from './pages/ApplyAsCoach';
 
 const App = () => {
   const { isAuthenticated } = useAuth();
@@ -71,6 +83,16 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="/apply-as-coach" element={<ProtectedRoute><ApplyAsCoach /></ProtectedRoute>} />
+        <Route path="/coach" element={<CoachRoute><CoachDashboard /></CoachRoute>} />
+        <Route path="/coach/clients/:userId" element={<CoachRoute><ClientDetail /></CoachRoute>} />
+        <Route path="/coaches" element={<ProtectedRoute><BrowseCoaches /></ProtectedRoute>} />
+        <Route path="/coaches/:id" element={<ProtectedRoute><CoachProfile /></ProtectedRoute>} />
+        <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+        <Route path="/admin/applications" element={<AdminRoute><AdminApplications /></AdminRoute>} />
+        <Route path="/admin/coaches" element={<AdminRoute><AdminCoaches /></AdminRoute>} />
+        <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
+        <Route path="/admin/system" element={<AdminRoute><AdminSystemHealth /></AdminRoute>} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
