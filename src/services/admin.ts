@@ -49,11 +49,18 @@ export const getAdminUsers = (params?: { role?: string; limit?: number; page?: n
   if (params?.page != null) qs.set('page', String(params.page));
   return authenticatedGet<{ users: AdminUser[]; pagination: Pagination }>(`/admin/users${qs.toString() ? '?' + qs : ''}`);
 };
-export const getAdminCoaches = () => authenticatedGet<AdminUser[]>('/admin/coaches');
-export const getCoachApplications = (status?: string) =>
-  authenticatedGet<CoachApplication[]>(`/admin/applications${status ? '?status=' + status : ''}`);
-export const getCoachApplicationById = (id: string) =>
-  authenticatedGet<CoachApplication>(`/admin/applications/${id}`);
+export const getAdminCoaches = async (): Promise<AdminUser[]> => {
+  const res = await authenticatedGet<{ coaches: AdminUser[] }>('/admin/coaches');
+  return res.coaches ?? [];
+};
+export const getCoachApplications = async (status?: string): Promise<CoachApplication[]> => {
+  const res = await authenticatedGet<{ applications: CoachApplication[] }>(`/admin/applications${status ? '?status=' + status : ''}`);
+  return res.applications ?? [];
+};
+export const getCoachApplicationById = async (id: string): Promise<CoachApplication> => {
+  const res = await authenticatedGet<{ application: CoachApplication }>(`/admin/applications/${id}`);
+  return res.application;
+};
 export const approveApplication = (id: string) =>
   authenticatedPost<CoachApplication>(`/admin/applications/${id}/approve`, {});
 export const rejectApplication = (id: string, reason: string) =>
