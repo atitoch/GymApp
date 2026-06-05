@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Star, MessageSquare, Dumbbell, Pencil, Trash2, Loader2, X, Check } from 'lucide-react';
+import { ArrowLeft, Star, MessageSquare, Dumbbell, Pencil, Trash2, Loader2, X, Check, Send } from 'lucide-react';
 import {
   getClientDetail,
   addComment,
@@ -171,9 +171,21 @@ export const ClientDetail: React.FC = () => {
       </button>
 
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold">{displayName}</h1>
-        <p className="text-stone-400">{user?.email}</p>
+      <div className="mb-8 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">{displayName}</h1>
+          <p className="text-stone-400">{user?.email}</p>
+        </div>
+        {userId && (
+          <button
+            onClick={() => navigate(`/messages/${userId}`, { state: { partnerName: displayName } })}
+            className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-bold text-stone-950 transition-all hover:brightness-110"
+            style={{ background: 'linear-gradient(135deg,#a3e635,#84cc16)' }}
+          >
+            <Send size={14} />
+            Mensaje
+          </button>
+        )}
       </div>
 
       {/* Recent workouts */}

@@ -104,6 +104,16 @@ export const MyCoach: React.FC = () => {
                     </p>
                   )}
                 </div>
+                {coach.users?.id && (
+                  <button
+                    onClick={() => navigate(`/messages/${coach.users!.id}`, { state: { partnerName: coachName } })}
+                    className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-bold text-stone-950 transition-all hover:brightness-110"
+                    style={{ background: 'linear-gradient(135deg,#a3e635,#84cc16)' }}
+                  >
+                    <MessageSquare size={15} />
+                    Mensaje
+                  </button>
+                )}
               </div>
 
               <div className="flex gap-4">

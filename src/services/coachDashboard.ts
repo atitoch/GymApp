@@ -7,7 +7,7 @@ export interface CoachProfile {
   certifications?: string[];
   years_experience?: number;
   hourly_rate?: number;
-  users?: { first_name?: string; last_name?: string; email: string };
+  users?: { id?: string; first_name?: string; last_name?: string; email: string };
 }
 
 export interface ClientRelationship {
