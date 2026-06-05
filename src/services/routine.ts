@@ -1327,16 +1327,80 @@ export interface UserRoutinesResult {
  * @param daysToShow Número de días a mostrar (default: 7)
  * @returns Objeto con las rutinas y el día actual
  */
+// ── Week routine via new /api/routine-cycle/week endpoint ──────────────────
+
+interface WeekDay {
+  date: string;
+  dayOfWeek: number;
+  dayOfWeekName: string;
+  isToday: boolean;
+  isRestDay: boolean;
+  patternName: string;
+  routine: DayRoutine | null;
+  dayInCycle: number;
+}
+
+interface WeekRoutineResponse {
+  weekStart: string;
+  weekEnd: string;
+  isCyclic: boolean;
+  days: WeekDay[];
+}
+
+const fetchWeekRoutine = async (weekOffset = 0): Promise<WeekRoutineResponse | null> => {
+  try {
+    return await authenticatedGet<WeekRoutineResponse>(
+      `/routine-cycle/week?week=${weekOffset}`,
+    );
+  } catch {
+    return null;
+  }
+};
+
 export const fetchUserRoutines = async (
   userId: string,
   daysToShow: number = 7,
 ): Promise<UserRoutinesResult> => {
+  // Try new week endpoint first (starts from Monday, has isToday)
+  const weekData = await fetchWeekRoutine(0);
+
+  if (weekData?.days && weekData.days.length > 0) {
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+
+    const routines: CalculatedDayRoutine[] = weekData.days.map((d, i) => {
+      const dayNumber = i + 1; // 1=Lunes … 7=Domingo
+      const routine = d.routine ?? {
+        day: dayNumber,
+        dayName: 'DESCANSO',
+        title: 'Descanso',
+        sections: [],
+      };
+      return {
+        ...routine,
+        day: dayNumber,
+        dayNumber,
+        cycleDay: d.dayInCycle ?? i,
+        patternType: d.patternName ?? routine.dayName,
+        date: d.date,
+      };
+    });
+
+    // Current day = index of today in the week (1-based), fallback to weekday
+    const todayIdx = weekData.days.findIndex(d => d.date === todayStr);
+    const currentDayNumber = todayIdx >= 0 ? todayIdx + 1 : (() => {
+      const dow = today.getDay();
+      return dow === 0 ? 7 : dow;
+    })();
+
+    return { routines, currentDayNumber };
+  }
+
+  // Fallback: legacy pattern endpoint
   const routinePattern = await fetchUserRoutinePattern(userId);
 
   if (!routinePattern) {
-    // Fallback: usar datos locales si no hay patrón en el backend
     const routines = getLocalRoutinesAsCalculated(userId, daysToShow);
-    // Calcular día actual basado en el día de la semana (Lunes=1, ..., Domingo=7)
     const today = new Date();
     const dayOfWeek = today.getDay();
     const currentDayNumber = dayOfWeek === 0 ? 7 : dayOfWeek;
