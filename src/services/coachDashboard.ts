@@ -46,6 +46,13 @@ export const addComment = (userId: string, data: { comment: string; comment_type
 export const getClientComments = (userId: string) => authenticatedGet<CoachComment[]>(`/coach/clients/${userId}/comments`);
 export const assignRoutine = (userId: string, routineId: string) => authenticatedPost(`/coach/clients/${userId}/assign-routine`, { routine_id: routineId });
 export const getMyRoutines = () => authenticatedGet<CoachRoutine[]>('/coach/routines');
+export interface MyCoachData {
+  coach: (CoachProfile & { relationship_id: string; connected_since?: string }) | null;
+  comments: { id: string; comment: string; comment_type: string; created_at: string }[];
+  assigned_routine: { id: string; name: string; total_days?: number; is_cyclic: boolean } | null;
+}
+
+export const getMyCoach = () => authenticatedGet<MyCoachData>('/coaches/my-coach');
 export const listCoaches = () => authenticatedGet<any[]>('/coaches');
 export const getCoachPublicProfile = (coachId: string) => authenticatedGet<{ coach: CoachProfile & { users?: { first_name?: string; last_name?: string } } }>(`/coaches/${coachId}`);
 export const requestConnection = (coachId: string) => authenticatedPost(`/coaches/${coachId}/connect`, {});

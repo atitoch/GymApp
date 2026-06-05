@@ -19,6 +19,7 @@ import { CoachDashboard } from './pages/coach/index';
 import { ClientDetail } from './pages/coach/ClientDetail';
 import { BrowseCoaches } from './pages/coaches/Browse';
 import { CoachProfile } from './pages/coaches/CoachProfile';
+import { MyCoach } from './pages/MyCoach';
 import { ScrollToTop } from './components/ScrollToTop';
 import { useAuth } from './contexts/useAuth';
 import { AdminDashboard } from './pages/admin/index';
@@ -88,6 +89,7 @@ const App = () => {
         <Route path="/coach/clients/:userId" element={<CoachRoute><ClientDetail /></CoachRoute>} />
         <Route path="/coaches" element={<ProtectedRoute><BrowseCoaches /></ProtectedRoute>} />
         <Route path="/coaches/:id" element={<ProtectedRoute><CoachProfile /></ProtectedRoute>} />
+        <Route path="/my-coach" element={<ProtectedRoute><MyCoach /></ProtectedRoute>} />
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
         <Route path="/admin/applications" element={<AdminRoute><AdminApplications /></AdminRoute>} />
         <Route path="/admin/coaches" element={<AdminRoute><AdminCoaches /></AdminRoute>} />

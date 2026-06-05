@@ -4,12 +4,13 @@ import { Header } from "../components/header";
 import { RoutineList } from "../components/routineList";
 import { fetchUserRoutines } from "../services/routine";
 import { getWeeklyStats } from "../services/workoutLog";
+import { getMyCoach, type MyCoachData } from "../services/coachDashboard";
 import { EmptyRoutine } from "../components/emptyRoutine";
 import { useAuth } from "../contexts/useAuth";
 import type { CalculatedDayRoutine } from "../types/routineType";
 import { themeClasses, cn } from "../theme/constants";
 import { useColors } from "../theme";
-import { Dumbbell, Calendar, TrendingUp, Sparkles } from "lucide-react";
+import { Dumbbell, Calendar, TrendingUp, Sparkles, ChevronRight } from "lucide-react";
 import { DashboardSkeleton } from "../components/DashboardSkeleton";
 
 export const Dashboard: React.FC = () => {
@@ -17,6 +18,7 @@ export const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const colors = useColors();
   const [routines, setRoutines] = useState<CalculatedDayRoutine[]>([]);
+  const [myCoachData, setMyCoachData] = useState<MyCoachData | null>(null);
   const [currentDayNumber, setCurrentDayNumber] = useState<number | undefined>(
     undefined
   );
@@ -32,10 +34,15 @@ export const Dashboard: React.FC = () => {
 
     setLoading(true);
     try {
-      const [result, stats] = await Promise.allSettled([
+      const [result, stats, coachResult] = await Promise.allSettled([
         fetchUserRoutines(user.id, 7),
         getWeeklyStats(),
+        getMyCoach(),
       ]);
+
+      if (coachResult.status === 'fulfilled') {
+        setMyCoachData(coachResult.value);
+      }
 
       if (result.status === 'fulfilled' && result.value?.routines?.length > 0) {
         setRoutines(result.value.routines);
@@ -228,6 +235,39 @@ export const Dashboard: React.FC = () => {
           handleDaySelect={handleDaySelect}
           currentDayNumber={currentDayNumber}
         />
+
+        {/* Widget: Mi entrenador */}
+        {myCoachData?.coach && (
+          <div className="mt-8 mb-2">
+            <button
+              onClick={() => navigate('/my-coach')}
+              className="w-full text-left rounded-2xl border p-4 flex items-center gap-4 hover:border-lime-400/40 transition-colors"
+              style={{
+                background: `linear-gradient(135deg, ${colors.primary[600]}15, ${colors.primary[500]}08)`,
+                borderColor: colors.primary[500] + '25',
+              }}
+            >
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+                style={{ backgroundColor: colors.primary[500] + '20' }}
+              >
+                <Dumbbell className="w-5 h-5" style={{ color: colors.primary[400] }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold uppercase tracking-widest text-stone-500 mb-0.5">Mi entrenador</p>
+                <p className="text-white font-bold truncate">
+                  {[myCoachData.coach.users?.first_name, myCoachData.coach.users?.last_name].filter(Boolean).join(' ') || 'Entrenador'}
+                </p>
+                {myCoachData.coach.specialization && (
+                  <p className="text-xs truncate" style={{ color: colors.primary[400] }}>
+                    {myCoachData.coach.specialization}
+                  </p>
+                )}
+              </div>
+              <ChevronRight size={16} className="text-stone-600 shrink-0" />
+            </button>
+          </div>
+        )}
 
         {/* Sección de Entrenamientos Personalizados - Próximamente */}
         <div className="mt-12 mb-8">
