@@ -256,7 +256,7 @@ export const ClientDetail: React.FC = () => {
                       onChange={() => setStartMode(mode)}
                       className="accent-lime-400"
                     />
-                    {mode === 'monday' ? '◉ Empezar el lunes (recomendado)' : '○ Empezar hoy'}
+                    {mode === 'monday' ? 'Empezar el lunes (recomendado)' : 'Empezar hoy'}
                   </label>
                 ))}
               </div>
