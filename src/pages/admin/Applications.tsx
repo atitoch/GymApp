@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ChevronDown, ChevronUp, FileText, Loader2, Check, X } from 'lucide-react';
+import {
+  ArrowLeft, Loader2, Check, X, FileText, ExternalLink, User, Calendar,
+} from 'lucide-react';
 import {
   getCoachApplications,
   approveApplication,
   rejectApplication,
   type CoachApplication,
 } from '../../services/admin';
+import { authenticatedGet } from '../../utils/api';
 
 type StatusFilter = 'pending' | 'approved' | 'rejected';
 
@@ -22,18 +25,187 @@ const statusBadgeClass: Record<string, string> = {
   rejected: 'bg-red-400/10 text-red-400 border border-red-400/30',
 };
 
+const DOC_LABELS: Record<string, string> = {
+  certification: 'Certificación',
+  id: 'Identificación',
+  diploma: 'Diploma',
+  other: 'Otro',
+};
+
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+
+const getSignedUrl = (path: string): Promise<string> =>
+  authenticatedGet<{ url: string }>(`/admin/storage/signed-url?path=${encodeURIComponent(path)}`)
+    .then(r => r.url);
+
+interface DocLinkProps { doc: { id: string; document_type: string; file_url: string; file_name?: string } }
+const DocLink: React.FC<DocLinkProps> = ({ doc }) => {
+  const [url, setUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleOpen = async () => {
+    if (url) { window.open(url, '_blank'); return; }
+    setLoading(true);
+    try {
+      const signed = await getSignedUrl(doc.file_url);
+      setUrl(signed);
+      window.open(signed, '_blank');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleOpen}
+      disabled={loading}
+      className="flex items-center gap-2 text-sm text-lime-400 hover:text-lime-300 transition-colors disabled:opacity-50"
+    >
+      {loading ? <Loader2 size={14} className="animate-spin" /> : <FileText size={14} />}
+      {DOC_LABELS[doc.document_type] ?? doc.document_type}
+      {doc.file_name && <span className="text-stone-500 text-xs">({doc.file_name})</span>}
+      <ExternalLink size={12} className="text-stone-500" />
+    </button>
+  );
+};
+
+interface ModalProps {
+  app: CoachApplication;
+  onClose: () => void;
+  onApprove: (id: string) => Promise<void>;
+  onReject: (id: string, reason: string) => Promise<void>;
+  loading: boolean;
+}
+
+const ApplicationModal: React.FC<ModalProps> = ({ app, onClose, onApprove, onReject, loading }) => {
+  const [rejectReason, setRejectReason] = useState('');
+  const [rejectOpen, setRejectOpen] = useState(false);
+  const userName = [app.users?.first_name, app.users?.last_name].filter(Boolean).join(' ') || app.users?.email || app.user_id;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div
+        className="relative w-full max-w-lg bg-stone-900 border border-stone-700 rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-stone-800">
+          <h2 className="text-lg font-black text-white">Solicitud de coach</h2>
+          <button onClick={onClose} className="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-all">
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-5">
+          {/* Applicant info */}
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-stone-800 flex items-center justify-center shrink-0">
+              <User size={20} className="text-stone-400" />
+            </div>
+            <div>
+              <p className="text-white font-bold text-lg">{userName}</p>
+              <p className="text-stone-400 text-sm">{app.users?.email}</p>
+            </div>
+          </div>
+
+          {/* Status + date */}
+          <div className="flex items-center gap-3">
+            <span className={`rounded-full px-3 py-1 text-xs font-bold ${statusBadgeClass[app.status] ?? 'bg-stone-700 text-stone-300'}`}>
+              {app.status === 'pending' ? 'Pendiente' : app.status === 'approved' ? 'Aprobada' : 'Rechazada'}
+            </span>
+            <span className="flex items-center gap-1 text-xs text-stone-500">
+              <Calendar size={11} />
+              Enviada el {formatDate(app.submitted_at)}
+            </span>
+          </div>
+
+          {/* Documents */}
+          <div className="bg-stone-800/60 rounded-xl p-4 space-y-3">
+            <p className="text-xs font-bold uppercase tracking-widest text-stone-400">Documentos</p>
+            {app.coach_documents && app.coach_documents.length > 0 ? (
+              <div className="space-y-2">
+                {app.coach_documents.map(doc => (
+                  <DocLink key={doc.id} doc={doc} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-stone-500">Sin documentos adjuntos.</p>
+            )}
+          </div>
+
+          {/* Rejection reason (if rejected) */}
+          {app.rejection_reason && (
+            <div className="bg-red-400/10 border border-red-400/20 rounded-xl p-3">
+              <p className="text-xs font-bold text-red-400 mb-1">Motivo de rechazo</p>
+              <p className="text-sm text-red-300">{app.rejection_reason}</p>
+            </div>
+          )}
+
+          {/* Actions */}
+          {app.status === 'pending' && (
+            <div className="space-y-3 pt-1">
+              {!rejectOpen ? (
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => onApprove(app.id)}
+                    disabled={loading}
+                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-lime-400 text-stone-950 font-bold rounded-xl hover:bg-lime-300 disabled:opacity-50 transition-colors"
+                  >
+                    {loading ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
+                    Aprobar
+                  </button>
+                  <button
+                    onClick={() => setRejectOpen(true)}
+                    disabled={loading}
+                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-red-400/10 text-red-400 border border-red-400/30 font-bold rounded-xl hover:bg-red-400/20 disabled:opacity-50 transition-colors"
+                  >
+                    <X size={16} />
+                    Rechazar
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <textarea
+                    value={rejectReason}
+                    onChange={e => setRejectReason(e.target.value)}
+                    placeholder="Motivo del rechazo (opcional)..."
+                    rows={3}
+                    className="w-full bg-stone-800 border border-stone-700 rounded-xl px-3 py-2 text-stone-100 text-sm placeholder-stone-500 resize-none focus:outline-none focus:border-stone-500"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setRejectOpen(false)}
+                      className="flex-1 py-2.5 bg-stone-800 text-stone-300 rounded-xl text-sm font-medium hover:bg-stone-700 transition-colors"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      onClick={() => onReject(app.id, rejectReason)}
+                      disabled={loading}
+                      className="flex-1 py-2.5 bg-red-500 text-white rounded-xl text-sm font-bold hover:bg-red-600 disabled:opacity-50 transition-colors"
+                    >
+                      {loading ? 'Rechazando...' : 'Confirmar rechazo'}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const AdminApplications: React.FC = () => {
   const navigate = useNavigate();
   const [filter, setFilter] = useState<StatusFilter>('pending');
   const [applications, setApplications] = useState<CoachApplication[]>([]);
   const [loading, setLoading] = useState(true);
-  const [expanded, setExpanded] = useState<string | null>(null);
-  const [rejectReason, setRejectReason] = useState<Record<string, string>>({});
-  const [rejectOpen, setRejectOpen] = useState<string | null>(null);
-  const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [selected, setSelected] = useState<CoachApplication | null>(null);
+  const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const load = () => {
@@ -48,27 +220,28 @@ export const AdminApplications: React.FC = () => {
   useEffect(() => { load(); }, [filter]);
 
   const handleApprove = async (id: string) => {
-    setActionLoading(id);
+    setActionLoading(true);
     try {
       await approveApplication(id);
+      setSelected(null);
       load();
     } catch {
-      setError('Error al aprobar');
+      setError('Error al aprobar la solicitud');
     } finally {
-      setActionLoading(null);
+      setActionLoading(false);
     }
   };
 
-  const handleReject = async (id: string) => {
-    setActionLoading(id);
+  const handleReject = async (id: string, reason: string) => {
+    setActionLoading(true);
     try {
-      await rejectApplication(id, rejectReason[id] ?? '');
-      setRejectOpen(null);
+      await rejectApplication(id, reason);
+      setSelected(null);
       load();
     } catch {
-      setError('Error al rechazar');
+      setError('Error al rechazar la solicitud');
     } finally {
-      setActionLoading(null);
+      setActionLoading(false);
     }
   };
 
@@ -76,8 +249,7 @@ export const AdminApplications: React.FC = () => {
     <div className="min-h-screen bg-stone-950 p-6">
       <div className="max-w-3xl mx-auto space-y-6">
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-stone-400 hover:text-stone-100 transition-colors text-sm">
-          <ArrowLeft className="w-4 h-4" />
-          Volver
+          <ArrowLeft className="w-4 h-4" /> Volver
         </button>
 
         <h1 className="text-2xl font-bold text-stone-100">Solicitudes de coaches</h1>
@@ -105,106 +277,40 @@ export const AdminApplications: React.FC = () => {
         ) : (
           <div className="space-y-3">
             {applications.map(app => {
-              const isExpanded = expanded === app.id;
               const userName = [app.users?.first_name, app.users?.last_name].filter(Boolean).join(' ') || app.users?.email || app.user_id;
+              const docCount = app.coach_documents?.length ?? 0;
               return (
-                <div key={app.id} className="bg-stone-900 rounded-2xl border border-stone-800 overflow-hidden">
-                  <button
-                    className="w-full flex items-center justify-between p-5 text-left"
-                    onClick={() => setExpanded(isExpanded ? null : app.id)}
-                  >
-                    <div className="space-y-1">
-                      <p className="text-stone-100 font-medium">{userName}</p>
-                      <p className="text-stone-400 text-sm">{app.users?.email}</p>
-                      <p className="text-stone-500 text-xs">Enviada: {formatDate(app.submitted_at)}</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeClass[app.status] ?? 'bg-stone-700 text-stone-300'}`}>
-                        {app.status}
-                      </span>
-                      {isExpanded ? <ChevronUp className="w-4 h-4 text-stone-400" /> : <ChevronDown className="w-4 h-4 text-stone-400" />}
-                    </div>
-                  </button>
-
-                  {isExpanded && (
-                    <div className="px-5 pb-5 border-t border-stone-800 pt-4 space-y-4">
-                      {/* Documents */}
-                      {app.coach_documents && app.coach_documents.length > 0 ? (
-                        <div>
-                          <p className="text-stone-400 text-xs font-medium mb-2">Documentos</p>
-                          <div className="space-y-2">
-                            {app.coach_documents.map(doc => (
-                              <a
-                                key={doc.id}
-                                href={doc.file_url}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="flex items-center gap-2 text-sm text-lime-400 hover:text-lime-300 transition-colors"
-                              >
-                                <FileText className="w-4 h-4 shrink-0" />
-                                {doc.file_name ?? doc.document_type}
-                              </a>
-                            ))}
-                          </div>
-                        </div>
-                      ) : (
-                        <p className="text-stone-500 text-sm">Sin documentos adjuntos.</p>
-                      )}
-
-                      {app.rejection_reason && (
-                        <p className="text-sm text-red-400">Razón de rechazo: {app.rejection_reason}</p>
-                      )}
-
-                      {/* Actions — only for pending */}
-                      {app.status === 'pending' && (
-                        <div className="space-y-3">
-                          <div className="flex gap-3">
-                            <button
-                              onClick={() => handleApprove(app.id)}
-                              disabled={actionLoading === app.id}
-                              className="flex items-center gap-2 px-4 py-2 bg-lime-400/10 text-lime-400 border border-lime-400/30 rounded-xl text-sm font-medium hover:bg-lime-400/20 transition-colors disabled:opacity-50"
-                            >
-                              {actionLoading === app.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-                              Aprobar
-                            </button>
-                            <button
-                              onClick={() => setRejectOpen(rejectOpen === app.id ? null : app.id)}
-                              disabled={actionLoading === app.id}
-                              className="flex items-center gap-2 px-4 py-2 bg-red-400/10 text-red-400 border border-red-400/30 rounded-xl text-sm font-medium hover:bg-red-400/20 transition-colors disabled:opacity-50"
-                            >
-                              <X className="w-4 h-4" />
-                              Rechazar
-                            </button>
-                          </div>
-
-                          {rejectOpen === app.id && (
-                            <div className="space-y-2">
-                              <textarea
-                                value={rejectReason[app.id] ?? ''}
-                                onChange={e => setRejectReason(prev => ({ ...prev, [app.id]: e.target.value }))}
-                                placeholder="Motivo del rechazo..."
-                                rows={3}
-                                className="w-full bg-stone-800 border border-stone-700 rounded-xl px-3 py-2 text-stone-100 text-sm placeholder-stone-500 resize-none focus:outline-none focus:border-stone-600"
-                              />
-                              <button
-                                onClick={() => handleReject(app.id)}
-                                disabled={actionLoading === app.id || !rejectReason[app.id]?.trim()}
-                                className="px-4 py-2 bg-red-500 text-white rounded-xl text-sm font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
-                              >
-                                {actionLoading === app.id ? 'Rechazando...' : 'Confirmar rechazo'}
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
+                <button
+                  key={app.id}
+                  onClick={() => setSelected(app)}
+                  className="w-full text-left bg-stone-900 border border-stone-800 hover:border-stone-600 rounded-2xl p-5 transition-colors flex items-center justify-between gap-4"
+                >
+                  <div className="space-y-1">
+                    <p className="text-stone-100 font-bold">{userName}</p>
+                    <p className="text-stone-400 text-sm">{app.users?.email}</p>
+                    <p className="text-stone-500 text-xs">
+                      {formatDate(app.submitted_at)} · {docCount} documento{docCount !== 1 ? 's' : ''}
+                    </p>
+                  </div>
+                  <span className={`rounded-full px-3 py-1 text-xs font-bold shrink-0 ${statusBadgeClass[app.status] ?? 'bg-stone-700 text-stone-300'}`}>
+                    {app.status === 'pending' ? 'Pendiente' : app.status === 'approved' ? 'Aprobada' : 'Rechazada'}
+                  </span>
+                </button>
               );
             })}
           </div>
         )}
       </div>
+
+      {selected && (
+        <ApplicationModal
+          app={selected}
+          onClose={() => setSelected(null)}
+          onApprove={handleApprove}
+          onReject={handleReject}
+          loading={actionLoading}
+        />
+      )}
     </div>
   );
 };
