@@ -58,8 +58,10 @@ export const acceptRequest = (id: string) => authenticatedPost(`/coach/connectio
 export const rejectRequest = (id: string) => authenticatedPost(`/coach/connections/${id}/reject`, {});
 export const getClientDetail = (userId: string) => authenticatedGet<any>(`/coach/clients/${userId}`);
 
-export const addComment = (userId: string, data: { comment: string; comment_type: string; is_private?: boolean }) =>
-  authenticatedPost<CoachComment>(`/coach/clients/${userId}/comments`, data);
+export const addComment = async (userId: string, data: { comment: string; comment_type: string; is_private?: boolean }): Promise<CoachComment> => {
+  const res = await authenticatedPost<{ comment: CoachComment }>(`/coach/clients/${userId}/comments`, data);
+  return res.comment;
+};
 
 export const getClientComments = async (userId: string): Promise<CoachComment[]> => {
   const res = await authenticatedGet<{ comments: CoachComment[] }>(`/coach/clients/${userId}/comments`);
