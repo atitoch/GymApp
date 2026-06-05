@@ -1,5 +1,6 @@
 import { authenticatedGet, authenticatedPost, authenticatedFetch } from '../utils/api';
 import { supabase } from '../config/supabase';
+import type { RealtimePostgresInsertPayload } from '@supabase/supabase-js';
 
 export interface Message {
   id: string;
@@ -63,7 +64,7 @@ export const subscribeToMessages = (
         table: 'messages',
         filter: `receiver_id=eq.${myUserId}`,
       },
-      (payload) => {
+      (payload: RealtimePostgresInsertPayload<Message>) => {
         onNewMessage(payload.new as Message);
       },
     )
