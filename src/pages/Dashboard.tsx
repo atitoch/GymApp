@@ -34,20 +34,15 @@ export const Dashboard: React.FC = () => {
 
     setLoading(true);
     try {
-      const [result, stats, coachResult] = await Promise.allSettled([
+      // Only load routines + stats (fast path — no coach endpoint here)
+      const [result, stats] = await Promise.allSettled([
         fetchUserRoutines(user.id, 7, weekOffset),
         getWeeklyStats(),
-        getMyCoach(),
       ]);
-
-      if (coachResult.status === 'fulfilled') {
-        setMyCoachData(coachResult.value);
-      }
 
       if (result.status === 'fulfilled' && result.value?.routines?.length > 0) {
         setRoutines(result.value.routines);
         setCurrentDayNumber(result.value.currentDayNumber);
-        // Build week label from first and last day dates
         const days = result.value.routines;
         if (days.length >= 7 && days[0].date && days[6].date) {
           const fmt = (d: string) => new Date(`${d}T12:00:00`).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
@@ -68,6 +63,14 @@ export const Dashboard: React.FC = () => {
       setLoading(false);
     }
   }, [user?.id, weekOffset]);
+
+  // Coach widget loads independently — doesn't block the dashboard skeleton
+  useEffect(() => {
+    if (!user?.id) return;
+    getMyCoach()
+      .then(setMyCoachData)
+      .catch(() => {}); // silent — widget stays hidden if it fails
+  }, [user?.id]);
 
   useEffect(() => {
     loadRoutines();
