@@ -109,7 +109,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
               <div>
                 <p className="text-stone-400 text-xs mb-1">Memoria usada</p>
-                <p className="text-stone-100 font-medium">{formatMemoryMB(health.memory.heapUsed)}</p>
+                <p className="text-stone-100 font-medium">{formatMemoryMB(health.memoryUsage.heapUsed)}</p>
               </div>
               <div>
                 <p className="text-stone-400 text-xs mb-1">Node</p>
