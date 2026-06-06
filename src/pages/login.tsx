@@ -414,7 +414,7 @@ export const Login: React.FC = () => {
       </header>
 
       {/* Panel izquierdo - Showcase atlético */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-y-auto bg-stone-950 p-8 xl:p-12 flex-col justify-between">
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-stone-950 p-8 xl:p-12 flex-col justify-between">
         {/* Capas de fondo: rejilla blueprint + glows + halo lima */}
         <div className="absolute inset-0 gt-grid opacity-70" />
         <div className="absolute inset-0 bg-gradient-to-br from-lime-500/[0.12] via-transparent to-transparent" />
@@ -519,51 +519,14 @@ export const Login: React.FC = () => {
           </div>
         </div>
 
-        {/* Footer: racha semanal + trust */}
-        <div
-          className="relative z-10 mt-4 gt-rise"
-          style={{ animationDelay: "0.3s" }}
-        >
-          <div className="flex items-end justify-between rounded-2xl border border-stone-800 bg-stone-900/40 backdrop-blur-sm px-5 py-4">
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <Flame className="w-4 h-4 text-lime-400" />
-                <span className="text-xs font-semibold text-stone-300 uppercase tracking-wide">
-                  Racha de la semana
-                </span>
-              </div>
-              <div className="flex items-end gap-1.5 h-12">
-                {[0.45, 0.7, 0.55, 0.9, 0.65, 1, 0.8].map((h, i) => (
-                  <div
-                    key={i}
-                    className="gt-bar w-3 rounded-full bg-gradient-to-t from-lime-600 to-lime-400"
-                    style={
-                      {
-                        height: `${h * 100}%`,
-                        "--gt-bar": h,
-                        animationDelay: `${0.35 + i * 0.08}s`,
-                      } as React.CSSProperties
-                    }
-                  />
-                ))}
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-3xl font-extrabold text-white leading-none">
-                6<span className="text-lime-400">/7</span>
-              </div>
-              <div className="text-[11px] text-stone-500 mt-1">días esta semana</div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 text-stone-500 text-xs mt-4">
-            <CheckCircle2 className="w-4 h-4 text-lime-400" />
-            <span>100% Gratis</span>
-            <span className="mx-1.5 text-stone-700">•</span>
-            <span>Sin tarjetas de crédito</span>
-            <span className="mx-1.5 text-stone-700">•</span>
-            <span>Cancela cuando quieras</span>
-          </div>
+        {/* Trust bar */}
+        <div className="relative z-10 mt-6 flex items-center gap-2 text-stone-600 text-xs gt-rise" style={{ animationDelay: "0.3s" }}>
+          <CheckCircle2 className="w-3.5 h-3.5 text-lime-500" />
+          <span>100% Gratis</span>
+          <span className="mx-1.5 text-stone-800">•</span>
+          <span>Sin tarjetas de crédito</span>
+          <span className="mx-1.5 text-stone-800">•</span>
+          <span>Cancela cuando quieras</span>
         </div>
       </div>
 
