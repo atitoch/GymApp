@@ -54,7 +54,7 @@ export const CoachRoutines: React.FC = () => {
         {loading ? (
           <div className="flex justify-center py-16"><Loader2 size={28} className="text-lime-400 animate-spin" /></div>
         ) : routines.length === 0 ? (
-          <div className="bg-stone-900 border border-stone-800 rounded-2xl p-10 text-center space-y-4">
+          <div className="bg-stone-900 border border-stone-800 rounded-2xl p-6 md:p-10 text-center space-y-4">
             <Dumbbell size={32} className="text-stone-600 mx-auto" />
             <p className="text-white font-bold">Sin rutinas todavía</p>
             <p className="text-sm text-stone-400">Crea tu primera plantilla de rutina para asignarla a tus clientes.</p>

@@ -176,7 +176,7 @@ export const ClientDetail: React.FC = () => {
   const displayName = [user?.first_name, user?.last_name].filter(Boolean).join(' ') || user?.email || userId;
 
   return (
-    <div className="min-h-screen bg-stone-950 text-white p-6 max-w-3xl mx-auto">
+    <div className="min-h-screen bg-stone-950 text-white p-4 md:p-6 max-w-3xl mx-auto">
       {/* Back */}
       <button
         onClick={() => navigate('/coach')}

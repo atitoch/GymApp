@@ -61,20 +61,20 @@ export const CoachDashboard: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-stone-950 text-white p-6 max-w-4xl mx-auto">
+    <div className="min-h-screen bg-stone-950 text-white p-4 md:p-6 max-w-4xl mx-auto">
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
         <button
           onClick={() => navigate('/dashboard')}
-          className="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-all"
+          className="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-all shrink-0"
         >
           <ArrowLeft size={20} />
         </button>
-        <Dumbbell className="w-8 h-8 text-lime-400" />
-        <h1 className="text-3xl font-bold flex-1">Panel de Entrenador</h1>
+        <Dumbbell className="w-6 h-6 md:w-8 md:h-8 text-[--color-accent-400] shrink-0" />
+        <h1 className="text-xl md:text-3xl font-bold flex-1 min-w-0 truncate">Panel de Entrenador</h1>
         <button
           onClick={() => navigate('/coach/edit-profile')}
-          className="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-all"
+          className="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-all shrink-0"
           title="Editar perfil"
         >
           <Settings size={20} />
@@ -88,24 +88,30 @@ export const CoachDashboard: React.FC = () => {
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
-        <div className="bg-stone-900 border border-stone-800 rounded-xl p-4 text-center">
-          <Users className="w-6 h-6 text-lime-400 mx-auto mb-2" />
-          <p className="text-2xl font-bold">{clients.length}</p>
-          <p className="text-stone-400 text-sm">Clientes activos</p>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div className="bg-stone-900 border border-stone-800 rounded-xl p-4 flex sm:flex-col items-center sm:text-center gap-3 sm:gap-0">
+          <Users className="w-6 h-6 text-[--color-accent-400] shrink-0 sm:mx-auto sm:mb-2" />
+          <div className="flex sm:flex-col items-baseline gap-2 sm:gap-0">
+            <p className="text-2xl font-bold">{clients.length}</p>
+            <p className="text-stone-400 text-sm">Clientes activos</p>
+          </div>
         </div>
-        <div className="bg-stone-900 border border-stone-800 rounded-xl p-4 text-center">
-          <Clock className="w-6 h-6 text-yellow-400 mx-auto mb-2" />
-          <p className="text-2xl font-bold">{pendingRequests.length}</p>
-          <p className="text-stone-400 text-sm">Solicitudes pendientes</p>
+        <div className="bg-stone-900 border border-stone-800 rounded-xl p-4 flex sm:flex-col items-center sm:text-center gap-3 sm:gap-0">
+          <Clock className="w-6 h-6 text-yellow-400 shrink-0 sm:mx-auto sm:mb-2" />
+          <div className="flex sm:flex-col items-baseline gap-2 sm:gap-0">
+            <p className="text-2xl font-bold">{pendingRequests.length}</p>
+            <p className="text-stone-400 text-sm">Solicitudes pendientes</p>
+          </div>
         </div>
         <button
           onClick={() => navigate('/coach/routines')}
-          className="bg-stone-900 border border-stone-800 rounded-xl p-4 text-center hover:border-lime-400/40 transition-colors"
+          className="bg-stone-900 border border-stone-800 rounded-xl p-4 flex sm:flex-col items-center sm:text-center gap-3 sm:gap-0 hover:border-[--color-accent-400]/40 transition-colors w-full text-left sm:text-center"
         >
-          <Dumbbell className="w-6 h-6 text-lime-400 mx-auto mb-2" />
-          <p className="text-2xl font-bold">{routines.length}</p>
-          <p className="text-stone-400 text-sm">Mis rutinas</p>
+          <Dumbbell className="w-6 h-6 text-[--color-accent-400] shrink-0 sm:mx-auto sm:mb-2" />
+          <div className="flex sm:flex-col items-baseline gap-2 sm:gap-0">
+            <p className="text-2xl font-bold">{routines.length}</p>
+            <p className="text-stone-400 text-sm">Mis rutinas</p>
+          </div>
         </button>
       </div>
 
