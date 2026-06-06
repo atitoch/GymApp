@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import * as authService from "../services/auth";
+import { supabase } from "../config/supabase";
 import type {
   AuthResponse,
   LoginCredentials,
@@ -144,6 +145,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         const refreshTokenValue = localStorage.getItem(REFRESH_TOKEN_KEY);
         await authService.logout(token, refreshTokenValue || undefined);
       }
+      // Cierra también cualquier sesión OAuth de Supabase (Google/GitHub).
+      await supabase.auth.signOut();
     } catch {
       // Error silencioso al cerrar sesión
     } finally {
@@ -194,6 +197,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   const setAuthData = (authData: AuthResponse) => {
     saveSession(authData);
+    // Enriquecer el rol en segundo plano (p. ej. tras login OAuth), sin bloquear
+    // la navegación. Si el backend no reconoce el token, se conserva el usuario base.
+    enrichUserWithRole(authData.token, authData.user).then((enriched) => {
+      setUser(enriched);
+      localStorage.setItem(USER_KEY, JSON.stringify(enriched));
+    });
   };
 
   const value: AuthContextType = {

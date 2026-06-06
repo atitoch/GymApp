@@ -4,6 +4,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL;
 import type { ApiResponse } from '../types/api';
 import { ApiError } from '../types/api';
 import { parseApiError, handleFetchError } from '../utils/errorHandler';
+import { supabase } from '../config/supabase';
 
 export interface LoginCredentials {
   email: string;
@@ -113,57 +114,80 @@ export const register = async (data: RegisterData): Promise<AuthResponse> => {
   }
 };
 
+// URL a la que el proveedor OAuth redirige tras autenticar.
+// Debe estar registrada en Supabase (Authentication → URL Configuration → Redirect URLs).
+const OAUTH_REDIRECT_URL = `${window.location.origin}/auth/callback`;
+
 /**
- * Inicia sesión con Google (OAuth)
+ * Inicia sesión con un proveedor OAuth mediante Supabase Auth.
+ * Redirige el navegador al proveedor; la sesión se completa en /auth/callback.
  */
-export const loginWithGoogle = async (): Promise<void> => {
-  try {
-    // El backend debe manejar la redirección a Google
-    // Esto puede variar según cómo implementes OAuth en el backend
-    const response = await fetch(`${API_BASE_URL}/auth/google`, {
-      method: 'GET',
-    });
+const loginWithProvider = async (
+  provider: 'google' | 'github',
+): Promise<void> => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: OAUTH_REDIRECT_URL,
+    },
+  });
 
-    if (!response.ok) {
-      throw new Error('Error al iniciar sesión con Google');
-    }
-
-    // Si el backend devuelve una URL de redirección
-    const data = await response.json();
-    if (data.redirectUrl) {
-      window.location.href = data.redirectUrl;
-    }
-  } catch (error) {
-    if (error instanceof Error) {
-      throw error;
-    }
-    throw new Error('Error desconocido al iniciar sesión con Google');
+  if (error) {
+    throw new Error(error.message);
   }
+  // En éxito, Supabase redirige el navegador al proveedor (no retorna).
 };
 
 /**
- * Inicia sesión con GitHub (OAuth)
+ * Inicia sesión con Google (OAuth vía Supabase)
  */
-export const loginWithGitHub = async (): Promise<void> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/auth/github`, {
-      method: 'GET',
-    });
+export const loginWithGoogle = (): Promise<void> => loginWithProvider('google');
 
-    if (!response.ok) {
-      throw new Error('Error al iniciar sesión con GitHub');
-    }
+/**
+ * Inicia sesión con GitHub (OAuth vía Supabase)
+ */
+export const loginWithGitHub = (): Promise<void> => loginWithProvider('github');
 
-    const data = await response.json();
-    if (data.redirectUrl) {
-      window.location.href = data.redirectUrl;
-    }
-  } catch (error) {
-    if (error instanceof Error) {
-      throw error;
-    }
-    throw new Error('Error desconocido al iniciar sesión con GitHub');
+/**
+ * Completa el flujo OAuth: intercambia el código de la URL por una sesión
+ * de Supabase y la traduce al formato AuthResponse usado por la app.
+ */
+export const completeOAuthLogin = async (
+  currentUrl: string,
+): Promise<AuthResponse> => {
+  const url = new URL(currentUrl);
+  const code = url.searchParams.get('code');
+  const errorDescription =
+    url.searchParams.get('error_description') ?? url.searchParams.get('error');
+
+  if (errorDescription) {
+    throw new Error(errorDescription);
   }
+  if (!code) {
+    throw new Error('No se recibió el código de autorización del proveedor');
+  }
+
+  const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+  if (error || !data.session) {
+    throw new Error(error?.message ?? 'No se pudo completar la autenticación');
+  }
+
+  const { session } = data;
+  const metadata = (session.user.user_metadata ?? {}) as Record<string, unknown>;
+  const name =
+    (metadata.full_name as string | undefined) ??
+    (metadata.name as string | undefined) ??
+    (metadata.user_name as string | undefined);
+
+  return {
+    user: {
+      id: session.user.id,
+      email: session.user.email ?? '',
+      name,
+    },
+    token: session.access_token,
+    refreshToken: session.refresh_token,
+  };
 };
 
 /**
