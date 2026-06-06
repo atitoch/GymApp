@@ -340,11 +340,14 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-stone-950 flex flex-col lg:flex-row">
+    <div
+      className="bg-stone-950 flex flex-col lg:flex-row overflow-hidden"
+      style={{ height: '100dvh', minHeight: '100vh' }}
+    >
       {/* Header móvil con menú hamburguesa */}
       <header
         ref={menuRef}
-        className="lg:hidden sticky top-0 z-50 bg-stone-950/80 backdrop-blur-md border-b border-stone-800/80"
+        className="lg:hidden shrink-0 z-50 bg-stone-950/80 backdrop-blur-md border-b border-stone-800/80"
       >
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2.5">
@@ -411,7 +414,7 @@ export const Login: React.FC = () => {
       </header>
 
       {/* Panel izquierdo - Showcase atlético */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-stone-950 p-12 xl:p-16 flex-col justify-between">
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-stone-950 p-12 xl:p-16 flex-col justify-between shrink-0">
         {/* Capas de fondo: rejilla blueprint + glows + halo lima */}
         <div className="absolute inset-0 gt-grid opacity-70" />
         <div className="absolute inset-0 bg-gradient-to-br from-lime-500/[0.12] via-transparent to-transparent" />
@@ -565,7 +568,7 @@ export const Login: React.FC = () => {
       </div>
 
       {/* Panel derecho - Formulario */}
-      <div className="relative w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 lg:p-8 xl:p-12 overflow-hidden">
+      <div className="relative w-full lg:w-1/2 flex-1 overflow-y-auto flex items-start lg:items-center justify-center p-4 sm:p-6 lg:p-8 xl:p-12">
         {/* Textura sutil + glow para unificar con el panel izquierdo */}
         <div className="absolute inset-0 gt-grid opacity-[0.25] pointer-events-none" />
         <div className="absolute -bottom-32 -right-24 w-[24rem] h-[24rem] bg-lime-500/[0.07] rounded-full blur-[120px] pointer-events-none" />
