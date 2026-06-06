@@ -70,7 +70,7 @@ export const CoachDashboard: React.FC = () => {
         >
           <ArrowLeft size={20} />
         </button>
-        <Dumbbell className="w-6 h-6 md:w-8 md:h-8 text-[--color-accent-400] shrink-0" />
+        <Dumbbell className="w-6 h-6 md:w-8 md:h-8 text-(--color-accent-400) shrink-0" />
         <h1 className="text-xl md:text-3xl font-bold flex-1 min-w-0 truncate">Panel de Entrenador</h1>
         <button
           onClick={() => navigate('/coach/edit-profile')}
@@ -90,7 +90,7 @@ export const CoachDashboard: React.FC = () => {
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <div className="bg-stone-900 border border-stone-800 rounded-xl p-4 flex sm:flex-col items-center sm:text-center gap-3 sm:gap-0">
-          <Users className="w-6 h-6 text-[--color-accent-400] shrink-0 sm:mx-auto sm:mb-2" />
+          <Users className="w-6 h-6 text-(--color-accent-400) shrink-0 sm:mx-auto sm:mb-2" />
           <div className="flex sm:flex-col items-baseline gap-2 sm:gap-0">
             <p className="text-2xl font-bold">{clients.length}</p>
             <p className="text-stone-400 text-sm">Clientes activos</p>
@@ -105,9 +105,9 @@ export const CoachDashboard: React.FC = () => {
         </div>
         <button
           onClick={() => navigate('/coach/routines')}
-          className="bg-stone-900 border border-stone-800 rounded-xl p-4 flex sm:flex-col items-center sm:text-center gap-3 sm:gap-0 hover:border-[--color-accent-400]/40 transition-colors w-full text-left sm:text-center"
+          className="bg-stone-900 border border-stone-800 rounded-xl p-4 flex sm:flex-col items-center sm:text-center gap-3 sm:gap-0 hover:border-(--color-accent-400)/40 transition-colors w-full text-left sm:text-center"
         >
-          <Dumbbell className="w-6 h-6 text-[--color-accent-400] shrink-0 sm:mx-auto sm:mb-2" />
+          <Dumbbell className="w-6 h-6 text-(--color-accent-400) shrink-0 sm:mx-auto sm:mb-2" />
           <div className="flex sm:flex-col items-baseline gap-2 sm:gap-0">
             <p className="text-2xl font-bold">{routines.length}</p>
             <p className="text-stone-400 text-sm">Mis rutinas</p>

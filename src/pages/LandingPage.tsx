@@ -258,7 +258,7 @@ export const LandingPage: React.FC = () => {
                 Iniciar Sesión
               </button>
               <button
-                onClick={() => navigate("/login")}
+                onClick={() => navigate("/login", { state: { register: true } })}
                 className={cn(
                   themeClasses.buttons.primary,
                   "px-3 sm:px-6 text-sm sm:text-base"
@@ -319,7 +319,7 @@ export const LandingPage: React.FC = () => {
               </button>
               <button
                 onClick={() => {
-                  navigate("/login");
+                  navigate("/login", { state: { register: true } });
                   setIsMenuOpen(false);
                 }}
                 className={cn(
@@ -439,7 +439,7 @@ export const LandingPage: React.FC = () => {
               )}
             >
               <button
-                onClick={() => navigate("/login")}
+                onClick={() => navigate("/login", { state: { register: true } })}
                 className={cn(
                   themeClasses.buttons.primary,
                   "px-8 py-3.5 text-base sm:text-lg flex items-center gap-2 font-semibold"
@@ -855,7 +855,7 @@ export const LandingPage: React.FC = () => {
               "Lo que no se mide, no se puede mejorar"
             </p>
             <button
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/login", { state: { register: true } })}
               className={cn(
                 themeClasses.buttons.primary,
                 "px-6 sm:px-10 py-3 sm:py-4 text-base sm:text-lg flex items-center gap-2 mx-auto"

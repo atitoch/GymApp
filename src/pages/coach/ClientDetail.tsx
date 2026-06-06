@@ -158,7 +158,7 @@ export const ClientDetail: React.FC = () => {
 
   if (loading) return (
     <div className="min-h-screen bg-stone-950 flex items-center justify-center">
-      <Dumbbell className="w-8 h-8 text-[--color-accent-400] animate-bounce" />
+      <Dumbbell className="w-8 h-8 text-(--color-accent-400) animate-bounce" />
     </div>
   );
 
@@ -189,7 +189,7 @@ export const ClientDetail: React.FC = () => {
           <button onClick={() => navigate('/coach')} className="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-all shrink-0">
             <ArrowLeft size={18} />
           </button>
-          <div className="w-9 h-9 rounded-full bg-[--color-accent-400]/20 flex items-center justify-center text-[--color-accent-400] font-bold text-sm shrink-0">
+          <div className="w-9 h-9 rounded-full bg-(--color-accent-400)/20 flex items-center justify-center text-(--color-accent-400) font-bold text-sm shrink-0">
             {displayName[0]?.toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
@@ -211,7 +211,7 @@ export const ClientDetail: React.FC = () => {
         {/* Stats strip */}
         <div className="max-w-2xl mx-auto px-4 pb-3 flex items-center gap-4 text-xs">
           <div className="flex items-center gap-1.5 text-stone-400">
-            <TrendingUp size={12} className="text-[--color-accent-400]" />
+            <TrendingUp size={12} className="text-(--color-accent-400)" />
             <span><strong className="text-white">{workouts.length}</strong> entrenos</span>
           </div>
           {avgRating && (
@@ -228,7 +228,7 @@ export const ClientDetail: React.FC = () => {
           )}
           {currentRoutineName && (
             <div className="flex items-center gap-1.5 text-stone-400 ml-auto">
-              <Dumbbell size={12} className="text-[--color-accent-400]" />
+              <Dumbbell size={12} className="text-(--color-accent-400)" />
               <span className="truncate max-w-[120px]">{currentRoutineName}</span>
             </div>
           )}
@@ -242,7 +242,7 @@ export const ClientDetail: React.FC = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium transition-all border-b-2 ${
                 activeTab === tab.id
-                  ? 'text-[--color-accent-400] border-[--color-accent-400]'
+                  ? 'text-(--color-accent-400) border-(--color-accent-400)'
                   : 'text-stone-400 border-transparent hover:text-stone-200'
               }`}
             >
@@ -250,7 +250,7 @@ export const ClientDetail: React.FC = () => {
               {tab.label}
               {tab.count != null && tab.count > 0 && (
                 <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
-                  activeTab === tab.id ? 'bg-[--color-accent-400]/20 text-[--color-accent-400]' : 'bg-stone-800 text-stone-500'
+                  activeTab === tab.id ? 'bg-(--color-accent-400)/20 text-(--color-accent-400)' : 'bg-stone-800 text-stone-500'
                 }`}>
                   {tab.count}
                 </span>
@@ -275,7 +275,7 @@ export const ClientDetail: React.FC = () => {
             ) : workouts.map((w: any) => (
               <div key={w.id} className="bg-stone-900 border border-stone-800 rounded-2xl p-4 flex items-start gap-3">
                 <div className="p-2 bg-stone-800 rounded-xl shrink-0 mt-0.5">
-                  <Calendar size={15} className="text-[--color-accent-400]" />
+                  <Calendar size={15} className="text-(--color-accent-400)" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
@@ -301,7 +301,7 @@ export const ClientDetail: React.FC = () => {
             {!showAddForm ? (
               <button
                 onClick={() => setShowAddForm(true)}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border-2 border-dashed border-stone-700 text-stone-400 hover:border-[--color-accent-400]/50 hover:text-[--color-accent-400] transition-all mb-5 text-sm font-medium"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border-2 border-dashed border-stone-700 text-stone-400 hover:border-(--color-accent-400)/50 hover:text-(--color-accent-400) transition-all mb-5 text-sm font-medium"
               >
                 <Plus size={16} />
                 Agregar nota
@@ -337,12 +337,12 @@ export const ClientDetail: React.FC = () => {
                   onChange={e => setCommentText(e.target.value)}
                   placeholder="Escribe tu nota..."
                   rows={3}
-                  className="w-full bg-stone-800 border border-stone-700 rounded-xl p-3 text-sm text-white placeholder-stone-500 focus:outline-none focus:border-[--color-accent-400] resize-none transition-colors"
+                  className="w-full bg-stone-800 border border-stone-700 rounded-xl p-3 text-sm text-white placeholder-stone-500 focus:outline-none focus:border-(--color-accent-400) resize-none transition-colors"
                 />
 
                 <div className="flex items-center justify-between">
                   <label className="flex items-center gap-2 text-sm text-stone-400 cursor-pointer select-none">
-                    <input type="checkbox" checked={isPrivate} onChange={e => setIsPrivate(e.target.checked)} className="accent-[--color-accent-400]" />
+                    <input type="checkbox" checked={isPrivate} onChange={e => setIsPrivate(e.target.checked)} className="accent-(--color-accent-400)" />
                     <Lock size={12} />
                     Solo visible para mí
                   </label>
@@ -386,11 +386,11 @@ export const ClientDetail: React.FC = () => {
                           </div>
                           <textarea
                             value={editText} onChange={e => setEditText(e.target.value)} rows={3}
-                            className="w-full bg-stone-800 border border-stone-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-[--color-accent-400] resize-none transition-colors"
+                            className="w-full bg-stone-800 border border-stone-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-(--color-accent-400) resize-none transition-colors"
                           />
                           <div className="flex items-center justify-between">
                             <label className="flex items-center gap-2 text-sm text-stone-400 cursor-pointer select-none">
-                              <input type="checkbox" checked={editPrivate} onChange={e => setEditPrivate(e.target.checked)} className="accent-[--color-accent-400]" />
+                              <input type="checkbox" checked={editPrivate} onChange={e => setEditPrivate(e.target.checked)} className="accent-(--color-accent-400)" />
                               <Lock size={12} /> Privado
                             </label>
                             <div className="flex gap-2">
@@ -398,7 +398,7 @@ export const ClientDetail: React.FC = () => {
                                 <X size={13} />
                               </button>
                               <button onClick={handleSaveEdit} disabled={savingEdit || !editText.trim()}
-                                className="p-2 rounded-xl bg-[--color-accent-400] text-stone-950 hover:brightness-110 disabled:opacity-50 transition-all">
+                                className="p-2 rounded-xl bg-(--color-accent-400) text-stone-950 hover:brightness-110 disabled:opacity-50 transition-all">
                                 {savingEdit ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
                               </button>
                             </div>
@@ -416,7 +416,7 @@ export const ClientDetail: React.FC = () => {
                               </span>
                             )}
                             <span className="text-xs text-stone-600 ml-auto">{fmtDate(c.created_at)}</span>
-                            <button onClick={() => startEdit(c)} className="p-1 rounded-lg text-stone-600 hover:text-[--color-accent-400] transition-colors" title="Editar">
+                            <button onClick={() => startEdit(c)} className="p-1 rounded-lg text-stone-600 hover:text-(--color-accent-400) transition-colors" title="Editar">
                               <Pencil size={12} />
                             </button>
                             <button onClick={() => setConfirmDeleteId(c.id)} className="p-1 rounded-lg text-stone-600 hover:text-red-400 transition-colors" title="Borrar">
@@ -453,8 +453,8 @@ export const ClientDetail: React.FC = () => {
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-stone-500 mb-3">Rutina asignada</p>
               <div className={`rounded-2xl border p-4 flex items-center gap-3 ${currentRoutineName ? 'bg-stone-900 border-stone-800' : 'bg-stone-900/50 border-stone-800/50'}`}>
-                <div className={`p-2.5 rounded-xl ${currentRoutineName ? 'bg-[--color-accent-400]/15' : 'bg-stone-800'}`}>
-                  <Dumbbell size={18} className={currentRoutineName ? 'text-[--color-accent-400]' : 'text-stone-600'} />
+                <div className={`p-2.5 rounded-xl ${currentRoutineName ? 'bg-(--color-accent-400)/15' : 'bg-stone-800'}`}>
+                  <Dumbbell size={18} className={currentRoutineName ? 'text-(--color-accent-400)' : 'text-stone-600'} />
                 </div>
                 <div>
                   <p className="font-semibold text-sm">{currentRoutineName ?? 'Sin rutina asignada'}</p>
@@ -471,7 +471,7 @@ export const ClientDetail: React.FC = () => {
                   <select
                     value={selectedRoutineId}
                     onChange={e => { setSelectedRoutineId(e.target.value); setShowResetWarning(false); }}
-                    className="w-full bg-stone-800 border border-stone-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[--color-accent-400] transition-colors"
+                    className="w-full bg-stone-800 border border-stone-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-(--color-accent-400) transition-colors"
                   >
                     <option value="">Selecciona una rutina...</option>
                     {routines.map(r => (
@@ -491,7 +491,7 @@ export const ClientDetail: React.FC = () => {
                           onClick={() => setStartMode(mode)}
                           className={`flex-1 py-2 rounded-xl text-sm font-medium transition-all ${
                             startMode === mode
-                              ? 'bg-[--color-accent-400]/15 text-[--color-accent-400] border border-[--color-accent-400]/30'
+                              ? 'bg-(--color-accent-400)/15 text-(--color-accent-400) border border-(--color-accent-400)/30'
                               : 'bg-stone-800 text-stone-400 border border-transparent hover:bg-stone-700'
                           }`}
                         >
@@ -516,7 +516,7 @@ export const ClientDetail: React.FC = () => {
                   )}
 
                   {assignMsg && (
-                    <p className={`text-sm flex items-center gap-1.5 ${assignMsg.type === 'success' ? 'text-[--color-accent-400]' : 'text-red-400'}`}>
+                    <p className={`text-sm flex items-center gap-1.5 ${assignMsg.type === 'success' ? 'text-(--color-accent-400)' : 'text-red-400'}`}>
                       {assignMsg.type === 'success' ? <Check size={14} /> : <X size={14} />}
                       {assignMsg.text}
                     </p>

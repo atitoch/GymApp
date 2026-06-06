@@ -2,17 +2,19 @@ import {
   Dumbbell,
   Loader2,
   Calendar,
-  Target,
-  TrendingUp,
   CheckCircle2,
   AlertCircle,
   Eye,
   EyeOff,
   Menu,
   X,
+  Flame,
+  Zap,
+  Activity,
+  ArrowRight,
 } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/useAuth";
 import { ApiError } from "../types/api";
 import { normalizeFieldErrors } from "../utils/errorHandler";
@@ -26,8 +28,13 @@ interface FieldErrors {
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, register, loginWithGoogle, loginWithGitHub } = useAuth();
-  const [isRegistering, setIsRegistering] = useState(false);
+  // Permite abrir directamente en modo registro desde la landing
+  // (navigate("/login", { state: { register: true } }))
+  const [isRegistering, setIsRegistering] = useState(
+    Boolean((location.state as { register?: boolean } | null)?.register)
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -337,14 +344,22 @@ export const Login: React.FC = () => {
       {/* Header móvil con menú hamburguesa */}
       <header
         ref={menuRef}
-        className="lg:hidden sticky top-0 z-50 bg-stone-900/80 backdrop-blur-md border-b border-stone-800"
+        className="lg:hidden sticky top-0 z-50 bg-stone-950/80 backdrop-blur-md border-b border-stone-800/80"
       >
         <div className="flex items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-lime-400 to-lime-500 rounded-xl flex items-center justify-center">
-              <Dumbbell className="w-5 h-5 text-white" />
+          <div className="flex items-center gap-2.5">
+            <div className="relative w-10 h-10 bg-gradient-to-br from-lime-400 to-lime-500 rounded-xl flex items-center justify-center shadow-lg shadow-lime-500/30">
+              <div className="absolute inset-0 rounded-xl bg-lime-400 blur-md opacity-40 gt-glow" />
+              <Dumbbell className="relative w-5 h-5 text-stone-950" />
             </div>
-            <span className="text-white font-semibold text-lg">GymTrack</span>
+            <div className="flex flex-col leading-none">
+              <span className="text-white font-bold text-lg tracking-tight">
+                Gym<span className="text-lime-400">Track</span>
+              </span>
+              <span className="text-[9px] font-semibold tracking-[0.22em] text-stone-500 uppercase">
+                Training OS
+              </span>
+            </div>
           </div>
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -395,101 +410,199 @@ export const Login: React.FC = () => {
         )}
       </header>
 
-      {/* Panel izquierdo - Información de la app */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-lime-500 via-lime-600 to-lime-800 p-12 flex-col justify-between relative overflow-hidden">
-        {/* Efectos de fondo */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-lime-500/10 rounded-full blur-3xl" />
-        </div>
+      {/* Panel izquierdo - Showcase atlético */}
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-stone-950 p-12 xl:p-16 flex-col justify-between">
+        {/* Capas de fondo: rejilla blueprint + glows + halo lima */}
+        <div className="absolute inset-0 gt-grid opacity-70" />
+        <div className="absolute inset-0 bg-gradient-to-br from-lime-500/[0.12] via-transparent to-transparent" />
+        <div className="absolute -top-24 -right-24 w-[28rem] h-[28rem] bg-lime-400/20 rounded-full blur-[120px] gt-float" />
+        <div className="absolute -bottom-32 -left-20 w-[26rem] h-[26rem] bg-lime-600/15 rounded-full blur-[120px] gt-float-slow" />
+        {/* Trazo diagonal de energía */}
+        <div className="absolute -right-10 top-1/4 h-[140%] w-px bg-gradient-to-b from-transparent via-lime-400/40 to-transparent rotate-12" />
+        {/* Borde derecho luminoso (división con el formulario) */}
+        <div className="absolute inset-y-0 right-0 w-px bg-gradient-to-b from-transparent via-lime-400/50 to-transparent" />
 
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-              <Dumbbell className="w-7 h-7 text-white" />
+          {/* Marca */}
+          <div className="flex items-center gap-3 mb-14 gt-rise">
+            <div className="relative w-12 h-12 bg-gradient-to-br from-lime-400 to-lime-500 rounded-2xl flex items-center justify-center shadow-lg shadow-lime-500/40">
+              <div className="absolute inset-0 rounded-2xl bg-lime-400 blur-lg opacity-50 gt-glow" />
+              <Dumbbell className="relative w-7 h-7 text-stone-950" />
             </div>
-            <h2 className="text-2xl font-bold text-white">GymTrack</h2>
+            <div className="flex flex-col leading-none">
+              <h2 className="text-2xl font-extrabold text-white tracking-tight">
+                Gym<span className="text-lime-400">Track</span>
+              </h2>
+              <span className="text-[10px] font-semibold tracking-[0.28em] text-stone-500 uppercase mt-1">
+                Training OS · Est. 2026
+              </span>
+            </div>
           </div>
 
-          <h1 className="text-5xl font-bold text-white mb-6 leading-tight">
-            Organiza tu entrenamiento
+          {/* Eyebrow */}
+          <div
+            className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 rounded-full border border-lime-400/30 bg-lime-400/10 gt-rise"
+            style={{ animationDelay: "0.05s" }}
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-lime-400 opacity-75 animate-ping" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-lime-400" />
+            </span>
+            <span className="text-xs font-semibold tracking-wide text-lime-300 uppercase">
+              Tu gimnasio, en datos
+            </span>
+          </div>
+
+          {/* Titular kinético */}
+          <h1
+            className="text-5xl xl:text-6xl font-extrabold text-white mb-6 leading-[0.95] tracking-tight gt-rise"
+            style={{ animationDelay: "0.1s" }}
+          >
+            ENTRENA.
             <br />
-            <span className="text-lime-200">de forma inteligente</span>
+            REGISTRA.
+            <br />
+            <span className="relative inline-block text-lime-400">
+              PROGRESA.
+              <span className="absolute -bottom-2 left-0 h-1.5 w-full bg-gradient-to-r from-lime-400 to-transparent rounded-full" />
+            </span>
           </h1>
 
-          <p className="text-lime-100 text-lg mb-12 max-w-md">
-            Planifica tus rutinas, sigue tu progreso y alcanza tus objetivos de
-            fitness con nuestra plataforma.
+          <p
+            className="text-stone-400 text-lg mb-10 max-w-md leading-relaxed gt-rise"
+            style={{ animationDelay: "0.15s" }}
+          >
+            No es solo otra app de fitness. Es el sistema que convierte cada
+            serie, cada repetición y cada racha en{" "}
+            <span className="text-stone-200 font-medium">progreso medible</span>.
           </p>
 
-          {/* Features */}
-          <div className="space-y-6">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center flex-shrink-0">
-                <Calendar className="w-6 h-6 text-white" />
+          {/* Métricas estilo tracker */}
+          <div
+            className="grid grid-cols-3 gap-4 mb-10 max-w-md gt-rise"
+            style={{ animationDelay: "0.2s" }}
+          >
+            {[
+              { value: "12K+", label: "Atletas activos" },
+              { value: "850K", label: "Series registradas" },
+              { value: "98%", label: "Vuelven al día siguiente" },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className="rounded-2xl border border-stone-800 bg-stone-900/40 backdrop-blur-sm p-4 hover:border-lime-400/40 transition-colors"
+              >
+                <div className="text-2xl font-extrabold text-lime-400 tracking-tight">
+                  {stat.value}
+                </div>
+                <div className="text-[11px] text-stone-500 leading-tight mt-1">
+                  {stat.label}
+                </div>
               </div>
-              <div>
-                <h3 className="text-white font-semibold mb-1">
-                  Rutinas Personalizadas
-                </h3>
-                <p className="text-lime-100 text-sm">
-                  Crea y gestiona rutinas adaptadas a tus objetivos y
-                  disponibilidad.
-                </p>
-              </div>
-            </div>
+            ))}
+          </div>
 
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center flex-shrink-0">
-                <Target className="w-6 h-6 text-white" />
+          {/* Features compactos */}
+          <div
+            className="space-y-3 max-w-md gt-rise"
+            style={{ animationDelay: "0.25s" }}
+          >
+            {[
+              {
+                icon: Calendar,
+                title: "Rutinas que se adaptan a ti",
+                desc: "Planes flexibles según tus días y objetivos.",
+              },
+              {
+                icon: Activity,
+                title: "Cada rep cuenta",
+                desc: "Registra series, pesos y siente la evolución.",
+              },
+              {
+                icon: Zap,
+                title: "Patrones inteligentes",
+                desc: "El sistema aprende tu ritmo de entrenamiento.",
+              },
+            ].map(({ icon: Icon, title, desc }) => (
+              <div
+                key={title}
+                className="group flex items-center gap-4 rounded-2xl border border-stone-800/80 bg-stone-900/30 p-3.5 hover:bg-stone-900/60 hover:border-lime-400/30 transition-all"
+              >
+                <div className="relative w-11 h-11 shrink-0 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center group-hover:bg-lime-400/20 transition-colors">
+                  <Icon className="w-5 h-5 text-lime-400" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-white font-semibold text-sm">{title}</h3>
+                  <p className="text-stone-500 text-xs">{desc}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-white font-semibold mb-1">
-                  Seguimiento de Progreso
-                </h3>
-                <p className="text-lime-100 text-sm">
-                  Monitorea tu evolución y mantén la motivación día a día.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center flex-shrink-0">
-                <TrendingUp className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-white font-semibold mb-1">
-                  Patrones Inteligentes
-                </h3>
-                <p className="text-lime-100 text-sm">
-                  Sistema de días consecutivos que se adapta a tu ritmo de
-                  entrenamiento.
-                </p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
-        {/* Footer del panel izquierdo */}
-        <div className="relative z-10">
-          <div className="flex items-center gap-2 text-lime-200 text-sm">
-            <CheckCircle2 className="w-4 h-4" />
+        {/* Footer: racha semanal + trust */}
+        <div
+          className="relative z-10 mt-10 gt-rise"
+          style={{ animationDelay: "0.3s" }}
+        >
+          <div className="flex items-end justify-between rounded-2xl border border-stone-800 bg-stone-900/40 backdrop-blur-sm px-5 py-4">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <Flame className="w-4 h-4 text-lime-400" />
+                <span className="text-xs font-semibold text-stone-300 uppercase tracking-wide">
+                  Racha de la semana
+                </span>
+              </div>
+              <div className="flex items-end gap-1.5 h-12">
+                {[0.45, 0.7, 0.55, 0.9, 0.65, 1, 0.8].map((h, i) => (
+                  <div
+                    key={i}
+                    className="gt-bar w-3 rounded-full bg-gradient-to-t from-lime-600 to-lime-400"
+                    style={
+                      {
+                        height: `${h * 100}%`,
+                        "--gt-bar": h,
+                        animationDelay: `${0.35 + i * 0.08}s`,
+                      } as React.CSSProperties
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-3xl font-extrabold text-white leading-none">
+                6<span className="text-lime-400">/7</span>
+              </div>
+              <div className="text-[11px] text-stone-500 mt-1">días esta semana</div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 text-stone-500 text-xs mt-4">
+            <CheckCircle2 className="w-4 h-4 text-lime-400" />
             <span>100% Gratis</span>
-            <span className="mx-2">•</span>
+            <span className="mx-1.5 text-stone-700">•</span>
             <span>Sin tarjetas de crédito</span>
+            <span className="mx-1.5 text-stone-700">•</span>
+            <span>Cancela cuando quieras</span>
           </div>
         </div>
       </div>
 
       {/* Panel derecho - Formulario */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 lg:p-8 xl:p-12">
-        <div className="w-full max-w-md">
+      <div className="relative w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 lg:p-8 xl:p-12 overflow-hidden">
+        {/* Textura sutil + glow para unificar con el panel izquierdo */}
+        <div className="absolute inset-0 gt-grid opacity-[0.25] pointer-events-none" />
+        <div className="absolute -bottom-32 -right-24 w-[24rem] h-[24rem] bg-lime-500/[0.07] rounded-full blur-[120px] pointer-events-none" />
+
+        <div className="relative w-full max-w-md">
           {/* Logo móvil */}
           <div className="lg:hidden text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-lime-400 to-lime-500 rounded-2xl mb-4 shadow-lg shadow-lime-400/30">
-              <Dumbbell className="w-8 h-8 text-white" />
+            <div className="relative inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-lime-400 to-lime-500 rounded-2xl mb-4 shadow-lg shadow-lime-400/30">
+              <div className="absolute inset-0 rounded-2xl bg-lime-400 blur-lg opacity-40 gt-glow" />
+              <Dumbbell className="relative w-8 h-8 text-stone-950" />
             </div>
-            <h1 className="text-3xl font-bold text-stone-50 mb-2">GymTrack</h1>
+            <h1 className="text-3xl font-extrabold text-stone-50 mb-2 tracking-tight">
+              Gym<span className="text-lime-400">Track</span>
+            </h1>
             <p className="text-stone-400">
               {isRegistering
                 ? "Crea tu cuenta para comenzar"
@@ -499,7 +612,13 @@ export const Login: React.FC = () => {
 
           {/* Título desktop */}
           <div className="hidden lg:block mb-8">
-            <h2 className="text-3xl font-bold text-stone-50 mb-2">
+            <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 rounded-full border border-stone-800 bg-stone-900/60">
+              <span className="h-1.5 w-1.5 rounded-full bg-lime-400" />
+              <span className="text-[11px] font-semibold tracking-wide text-stone-400 uppercase">
+                {isRegistering ? "Crea tu perfil" : "Acceso de atleta"}
+              </span>
+            </div>
+            <h2 className="text-4xl font-extrabold text-stone-50 mb-2 tracking-tight">
               {isRegistering ? "Crear cuenta" : "Bienvenido de vuelta"}
             </h2>
             <p className="text-stone-400">
@@ -699,10 +818,17 @@ export const Login: React.FC = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-500 hover:to-lime-600 text-stone-900 font-semibold py-3 rounded-lg transition-all duration-300 shadow-lg shadow-lime-400/20 hover:shadow-lime-400/30 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+                className="group relative w-full overflow-hidden bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-300 hover:to-lime-400 text-stone-950 font-bold py-3.5 rounded-xl transition-all duration-300 shadow-lg shadow-lime-400/25 hover:shadow-lime-400/40 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
               >
+                {/* Destello al pasar */}
+                <span className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 -skew-x-12 bg-white/30 blur-md opacity-0 group-hover:opacity-100 group-hover:animate-[gt-sheen_0.9s_ease-out]" />
                 {isLoading && <Loader2 className="w-5 h-5 animate-spin" />}
-                {isRegistering ? "Crear cuenta" : "Iniciar sesión"}
+                <span className="relative">
+                  {isRegistering ? "Crear cuenta" : "Iniciar sesión"}
+                </span>
+                {!isLoading && (
+                  <ArrowRight className="relative w-5 h-5 transition-transform group-hover:translate-x-1" />
+                )}
               </button>
             </form>
 
