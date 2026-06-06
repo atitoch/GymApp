@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Dumbbell, Users, Clock, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
+import { Dumbbell, Users, Clock, CheckCircle, XCircle, ArrowLeft, Settings } from 'lucide-react';
 import {
   getMyClients,
   getPendingRequests,
@@ -71,7 +71,14 @@ export const CoachDashboard: React.FC = () => {
           <ArrowLeft size={20} />
         </button>
         <Dumbbell className="w-8 h-8 text-lime-400" />
-        <h1 className="text-3xl font-bold">Panel de Entrenador</h1>
+        <h1 className="text-3xl font-bold flex-1">Panel de Entrenador</h1>
+        <button
+          onClick={() => navigate('/coach/edit-profile')}
+          className="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-all"
+          title="Editar perfil"
+        >
+          <Settings size={20} />
+        </button>
       </div>
 
       {error && (

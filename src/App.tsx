@@ -19,6 +19,7 @@ import { CoachDashboard } from './pages/coach/index';
 import { ClientDetail } from './pages/coach/ClientDetail';
 import { CoachRoutines } from './pages/coach/Routines';
 import { RoutineEditor } from './pages/coach/RoutineEditor';
+import { CoachProfileEditor } from './pages/coach/ProfileEditor';
 import { BrowseCoaches } from './pages/coaches/Browse';
 import { CoachProfile } from './pages/coaches/CoachProfile';
 import { MyCoach } from './pages/MyCoach';
@@ -93,6 +94,7 @@ const App = () => {
         <Route path="/messages/:partnerId" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
         <Route path="/coach" element={<CoachRoute><CoachDashboard /></CoachRoute>} />
         <Route path="/coach/clients/:userId" element={<CoachRoute><ClientDetail /></CoachRoute>} />
+        <Route path="/coach/edit-profile" element={<CoachRoute><CoachProfileEditor /></CoachRoute>} />
         <Route path="/coach/routines" element={<CoachRoute><CoachRoutines /></CoachRoute>} />
         <Route path="/coach/routines/new" element={<CoachRoute><RoutineEditor /></CoachRoute>} />
         <Route path="/coach/routines/:routineId/edit" element={<CoachRoute><RoutineEditor /></CoachRoute>} />

@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/useAuth';
 import { themeClasses, cn } from '../theme/constants';
 import { useColors } from '../theme';
 import { ConfirmDialog } from './ConfirmDialog';
-import { getUnreadCount } from '../services/messages';
+import { getUnreadCount, subscribeToMessages } from '../services/messages';
 
 interface HeaderProps {
   handleBackToSelect?: () => void;
@@ -24,12 +24,18 @@ export const Header: React.FC<HeaderProps> = ({
   const [unread, setUnread] = useState(0);
 
   useEffect(() => {
-    if (!authUser) return;
+    if (!authUser?.id) return;
     getUnreadCount().then(setUnread).catch(() => {});
     const interval = setInterval(() => {
       getUnreadCount().then(setUnread).catch(() => {});
     }, 30_000);
-    return () => clearInterval(interval);
+    // Increment badge immediately on new incoming message
+    const unsub = subscribeToMessages(
+      authUser.id,
+      () => setUnread((n) => n + 1),
+      () => {},
+    );
+    return () => { clearInterval(interval); unsub(); };
   }, [authUser?.id]);
   const menuRef = useRef<HTMLDivElement>(null);
 

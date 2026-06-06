@@ -114,6 +114,49 @@ function SectionBlock({
   );
 }
 
+function StringListEditor({
+  label,
+  items,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  items: string[];
+  onChange: (items: string[]) => void;
+  placeholder?: string;
+}) {
+  const update = (i: number, val: string) => onChange(items.map((v, idx) => idx === i ? val : v));
+  const remove = (i: number) => onChange(items.filter((_, idx) => idx !== i));
+  const add = () => onChange([...items, '']);
+
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between">
+        <p className="text-[11px] font-bold uppercase tracking-widest text-stone-500">{label}</p>
+        <button onClick={add} className="flex items-center gap-1 text-[11px] text-stone-600 hover:text-lime-400 transition-colors">
+          <Plus size={11} /> Agregar
+        </button>
+      </div>
+      {items.length === 0 && (
+        <p className="text-xs text-stone-700 italic">Sin {label.toLowerCase()} — opcional</p>
+      )}
+      {items.map((item, i) => (
+        <div key={i} className="flex items-center gap-2">
+          <input
+            value={item}
+            onChange={(e) => update(i, e.target.value)}
+            placeholder={placeholder}
+            className="flex-1 bg-stone-800 border border-stone-700 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-stone-600 focus:outline-none focus:border-lime-400"
+          />
+          <button onClick={() => remove(i)} className="text-stone-600 hover:text-red-400 transition-colors shrink-0">
+            <Trash2 size={12} />
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function DayEditor({
   day,
   index,
@@ -170,6 +213,14 @@ function DayEditor({
 
       {open && (
         <div className="p-4 space-y-4 bg-stone-950/50">
+          {/* Calentamiento */}
+          <StringListEditor
+            label="Calentamiento"
+            items={day.warmup ?? []}
+            onChange={(warmup) => onChange({ ...day, warmup })}
+            placeholder="Ej. 5 min bicicleta estática"
+          />
+
           {/* Secciones */}
           {day.sections.map((s, i) => (
             <SectionBlock key={i} section={s} onChange={(upd) => updateSection(i, upd)} onRemove={() => removeSection(i)} />
@@ -180,6 +231,14 @@ function DayEditor({
           >
             <Plus size={12} /> Agregar sección
           </button>
+
+          {/* Enfriamiento */}
+          <StringListEditor
+            label="Enfriamiento"
+            items={day.cooldown ?? []}
+            onChange={(cooldown) => onChange({ ...day, cooldown })}
+            placeholder="Ej. Estiramiento de cuádriceps 30s"
+          />
         </div>
       )}
     </div>
