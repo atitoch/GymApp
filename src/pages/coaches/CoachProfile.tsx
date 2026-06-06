@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
-  ArrowLeft,
   Dumbbell,
   Clock,
   DollarSign,
@@ -13,6 +12,7 @@ import {
   BadgeCheck,
 } from 'lucide-react';
 import { getCoachPublicProfile, requestConnection, getMyConnections } from '../../services/coachDashboard';
+import { PageHeader } from '../../components/PageHeader';
 
 type ConnectionStatus = 'none' | 'pending' | 'active' | 'rejected';
 
@@ -37,7 +37,6 @@ const STATUS_CONFIG: Record<ConnectionStatus, { label: string; className: string
 
 export const CoachProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
 
   const [coach, setCoach] = useState<any | null>(null);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('none');
@@ -78,27 +77,9 @@ export const CoachProfile: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-stone-950 pb-20">
-      {/* Header */}
-      <div
-        className="sticky top-0 z-20"
-        style={{
-          background: 'rgba(12,10,9,0.90)',
-          backdropFilter: 'blur(12px)',
-          borderBottom: '1px solid rgba(255,255,255,0.05)',
-        }}
-      >
-        <div className="max-w-lg mx-auto px-4 py-4 flex items-center gap-3">
-          <button
-            onClick={() => navigate(-1)}
-            className="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-all"
-          >
-            <ArrowLeft size={20} />
-          </button>
-          <h1 className="text-lg font-black text-white truncate">{coachName || 'Perfil de coach'}</h1>
-        </div>
-      </div>
+      <PageHeader title={coachName || 'Perfil de coach'} />
 
-      <div className="max-w-lg mx-auto px-4 py-6 space-y-4">
+      <div className="max-w-4xl mx-auto px-4 py-6 space-y-4">
         {loading && (
           <div className="flex items-center justify-center py-20">
             <Loader2 size={32} className="text-lime-400 animate-spin" />
