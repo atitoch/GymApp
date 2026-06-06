@@ -123,7 +123,11 @@ export const Dashboard: React.FC = () => {
             showBackButton={false}
           />
           <div className="flex-1 flex items-center justify-center">
-            <EmptyRoutine handleBackToSelect={handleBackToDashboard} />
+            <EmptyRoutine
+              handleBackToSelect={handleBackToDashboard}
+              hasCoach={!!myCoachData?.coach}
+              coachId={myCoachData?.coach?.users?.id}
+            />
           </div>
         </div>
       </div>
