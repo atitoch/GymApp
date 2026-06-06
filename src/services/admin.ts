@@ -1,4 +1,4 @@
-import { authenticatedGet, authenticatedPost } from '../utils/api';
+import { authenticatedGet, authenticatedPost, authenticatedPatch } from '../utils/api';
 
 export interface AdminStats {
   users: { total: number; byRole: Record<string, number> };
@@ -9,6 +9,7 @@ export interface AdminStats {
 export interface AdminUser {
   id: string; email: string; first_name?: string; last_name?: string;
   role: string; coach_status?: string; created_at: string;
+  coaches?: { bio?: string; specialization?: string; is_active?: boolean } | null;
 }
 
 export interface CoachApplication {
@@ -53,6 +54,9 @@ export const getAdminCoaches = async (): Promise<AdminUser[]> => {
   const res = await authenticatedGet<{ coaches: AdminUser[] }>('/admin/coaches');
   return res.coaches ?? [];
 };
+export const updateCoachStatus = (id: string, status: 'approved' | 'suspended') =>
+  authenticatedPatch<null>(`/admin/coaches/${id}/status`, { status });
+
 export const getCoachApplications = async (status?: string): Promise<CoachApplication[]> => {
   const res = await authenticatedGet<{ applications: CoachApplication[] }>(`/admin/applications${status ? '?status=' + status : ''}`);
   return res.applications ?? [];

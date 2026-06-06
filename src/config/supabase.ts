@@ -5,4 +5,8 @@ const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
 
 export const supabase = createClient(url, anonKey, {
   auth: { persistSession: false },
+  realtime: {
+    params: { eventsPerSecond: 10 },
+    timeout: 10000,
+  },
 });

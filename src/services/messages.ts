@@ -58,34 +58,44 @@ export const subscribeToMessages = (
   onNewMessage: (msg: Message) => void,
   onDeleteMessage: (id: string) => void,
 ) => {
-  const channel = supabase
-    .channel('my-messages')
-    .on(
-      'postgres_changes',
-      {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'messages',
-        filter: `receiver_id=eq.${myUserId}`,
-      },
-      (payload: RealtimePostgresChangesPayload<Message>) => {
-        if (payload.eventType === 'INSERT') onNewMessage(payload.new as Message);
-      },
-    )
-    .on(
-      'postgres_changes',
-      {
-        event: 'DELETE',
-        schema: 'public',
-        table: 'messages',
-      },
-      (payload: RealtimePostgresChangesPayload<Message>) => {
-        if (payload.eventType === 'DELETE' && payload.old?.id) {
-          onDeleteMessage(payload.old.id);
-        }
-      },
-    )
-    .subscribe();
+  let channel: ReturnType<typeof supabase.channel> | null = null;
 
-  return () => supabase.removeChannel(channel);
+  try {
+    channel = supabase
+      .channel('my-messages')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `receiver_id=eq.${myUserId}`,
+        },
+        (payload: RealtimePostgresChangesPayload<Message>) => {
+          if (payload.eventType === 'INSERT') onNewMessage(payload.new as Message);
+        },
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'messages',
+        },
+        (payload: RealtimePostgresChangesPayload<Message>) => {
+          if (payload.eventType === 'DELETE' && payload.old?.id) {
+            onDeleteMessage(payload.old.id);
+          }
+        },
+      )
+      .subscribe((_status, err) => {
+        if (err) console.warn('[Realtime] subscription error:', err);
+      });
+  } catch (e) {
+    console.warn('[Realtime] WebSocket not available, realtime disabled:', e);
+  }
+
+  return () => {
+    if (channel) supabase.removeChannel(channel).catch(() => {});
+  };
 };

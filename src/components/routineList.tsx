@@ -74,7 +74,7 @@ export const RoutineList: React.FC<RoutineListProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="gt-stagger grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {routines.map((routine, index) => {
         const isToday = isCurrentDay(routine, index);
         const isRest = routine.dayName === "DESCANSO";
@@ -92,9 +92,8 @@ export const RoutineList: React.FC<RoutineListProps> = ({
             className={cn(
               themeClasses.cards.base,
               themeClasses.cards.hover,
-              themeClasses.cards.withShadow,
-              "relative p-6 text-left transition-all duration-300 hover:scale-105",
-              isToday && "ring-2"
+              "relative p-6 text-left border transition-[transform,border-color,background-color] duration-200 hover:scale-[1.02] active:scale-[0.98] min-h-[160px]",
+              isToday ? "ring-2" : "hover:border-(--color-accent-400)/25"
             )}
             style={{
               borderColor: isToday ? colors.primary[500] : colors.border.default,
