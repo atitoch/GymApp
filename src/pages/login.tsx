@@ -568,26 +568,26 @@ export const Login: React.FC = () => {
       </div>
 
       {/* Panel derecho - Formulario */}
-      <div className="relative w-full lg:w-1/2 flex-1 overflow-y-auto flex items-start lg:items-center justify-center p-4 sm:p-6 lg:p-8 xl:p-12">
+      <div className="relative w-full lg:w-1/2 flex-1 flex items-center justify-center p-4 lg:p-8 xl:p-12 overflow-hidden">
         {/* Textura sutil + glow para unificar con el panel izquierdo */}
         <div className="absolute inset-0 gt-grid opacity-[0.25] pointer-events-none" />
         <div className="absolute -bottom-32 -right-24 w-[24rem] h-[24rem] bg-lime-500/[0.07] rounded-full blur-[120px] pointer-events-none" />
 
         <div className="relative w-full max-w-md">
           {/* Logo móvil */}
-          <div className="lg:hidden text-center mb-8">
-            <div className="relative inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-lime-400 to-lime-500 rounded-2xl mb-4 shadow-lg shadow-lime-400/30">
-              <div className="absolute inset-0 rounded-2xl bg-lime-400 blur-lg opacity-40 gt-glow" />
-              <Dumbbell className="relative w-8 h-8 text-stone-950" />
+          <div className="lg:hidden flex items-center gap-3 mb-5">
+            <div className="relative inline-flex items-center justify-center w-10 h-10 bg-gradient-to-br from-lime-400 to-lime-500 rounded-xl shadow-lg shadow-lime-400/30 shrink-0">
+              <div className="absolute inset-0 rounded-xl bg-lime-400 blur-lg opacity-40 gt-glow" />
+              <Dumbbell className="relative w-5 h-5 text-stone-950" />
             </div>
-            <h1 className="text-3xl font-extrabold text-stone-50 mb-2 tracking-tight">
-              Gym<span className="text-lime-400">Track</span>
-            </h1>
-            <p className="text-stone-400">
-              {isRegistering
-                ? "Crea tu cuenta para comenzar"
-                : "Inicia sesión para continuar"}
-            </p>
+            <div>
+              <h1 className="text-xl font-extrabold text-stone-50 tracking-tight leading-tight">
+                Gym<span className="text-lime-400">Track</span>
+              </h1>
+              <p className="text-xs text-stone-500">
+                {isRegistering ? "Crea tu cuenta" : "Inicia sesión para continuar"}
+              </p>
+            </div>
           </div>
 
           {/* Título desktop */}
@@ -609,17 +609,17 @@ export const Login: React.FC = () => {
           </div>
 
           {/* Formulario sin bordes - diseño minimalista */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             {error && (
-              <div className="p-3 bg-red-500/10 rounded-lg text-red-400 text-sm">
+              <div className="p-2.5 bg-red-500/10 rounded-lg text-red-400 text-sm">
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} noValidate className="space-y-5">
+            <form onSubmit={handleSubmit} noValidate className="space-y-3">
               {isRegistering && (
                 <div>
-                  <label className="block text-sm font-medium text-stone-400 mb-2">
+                  <label className="block text-xs font-medium text-stone-400 mb-1.5">
                     Nombre completo
                   </label>
                   <input
@@ -630,7 +630,7 @@ export const Login: React.FC = () => {
                     onBlur={handleBlur}
                     placeholder="John Doe"
                     disabled={isLoading}
-                    className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-3 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                    className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-2.5 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                       fieldErrors.fullName && touchedFields.has("fullName")
                         ? "focus:ring-red-500/50 ring-2 ring-red-500/50 border-red-500/50"
                         : "focus:ring-lime-400/50"
@@ -658,7 +658,7 @@ export const Login: React.FC = () => {
                   placeholder="tu@email.com"
                   disabled={isLoading}
                   autoComplete="email"
-                  className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-3 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                  className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-2.5 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                     fieldErrors.email && touchedFields.has("email")
                       ? "focus:ring-red-500/50 ring-2 ring-red-500/50 border-red-500/50"
                       : "focus:ring-lime-400/50"
@@ -688,7 +688,7 @@ export const Login: React.FC = () => {
                     autoComplete={
                       isRegistering ? "new-password" : "current-password"
                     }
-                    className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-3 pr-11 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                    className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-2.5 pr-11 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                       fieldErrors.password && touchedFields.has("password")
                         ? "focus:ring-red-500/50 ring-2 ring-red-500/50 border-red-500/50"
                         : "focus:ring-lime-400/50"
@@ -720,7 +720,7 @@ export const Login: React.FC = () => {
 
               {isRegistering && (
                 <div>
-                  <label className="block text-sm font-medium text-stone-400 mb-2">
+                  <label className="block text-xs font-medium text-stone-400 mb-1.5">
                     Confirmar contraseña
                   </label>
                   <div className="relative">
@@ -733,7 +733,7 @@ export const Login: React.FC = () => {
                       placeholder="••••••••"
                       disabled={isLoading}
                       autoComplete="new-password"
-                      className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-3 pr-11 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                      className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-2.5 pr-11 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                         fieldErrors.confirmPassword &&
                         touchedFields.has("confirmPassword")
                           ? "focus:ring-red-500/50 ring-2 ring-red-500/50 border-red-500/50"
@@ -798,7 +798,7 @@ export const Login: React.FC = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="group relative w-full overflow-hidden bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-300 hover:to-lime-400 text-stone-950 font-bold py-3.5 rounded-xl transition-all duration-300 shadow-lg shadow-lime-400/25 hover:shadow-lime-400/40 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+                className="group relative w-full overflow-hidden bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-300 hover:to-lime-400 text-stone-950 font-bold py-2.5 rounded-xl transition-all duration-300 shadow-lg shadow-lime-400/25 hover:shadow-lime-400/40 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
               >
                 {/* Destello al pasar */}
                 <span className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 -skew-x-12 bg-white/30 blur-md opacity-0 group-hover:opacity-100 group-hover:animate-[gt-sheen_0.9s_ease-out]" />
@@ -813,7 +813,7 @@ export const Login: React.FC = () => {
             </form>
 
             {/* Divider - más sutil */}
-            <div className="relative my-6">
+            <div className="relative my-4">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-stone-800"></div>
               </div>
@@ -825,12 +825,12 @@ export const Login: React.FC = () => {
             </div>
 
             {/* Social login - sin bordes */}
-            <div className="space-y-3">
+            <div className="space-y-2">
               <button
                 type="button"
                 onClick={handleGoogleLogin}
                 disabled={isLoading}
-                className="w-full bg-white/5 hover:bg-white/10 text-stone-300 font-medium py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-3 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="w-full bg-white/5 hover:bg-white/10 text-stone-300 font-medium py-2 rounded-lg transition-all duration-300 flex items-center justify-center gap-3 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path
@@ -857,7 +857,7 @@ export const Login: React.FC = () => {
                 type="button"
                 onClick={handleGitHubLogin}
                 disabled={isLoading}
-                className="w-full bg-white/5 hover:bg-white/10 text-stone-300 font-medium py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-3 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="w-full bg-white/5 hover:bg-white/10 text-stone-300 font-medium py-2 rounded-lg transition-all duration-300 flex items-center justify-center gap-3 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 <svg
                   className="w-5 h-5"
@@ -871,7 +871,7 @@ export const Login: React.FC = () => {
             </div>
 
             {/* Toggle entre login y registro */}
-            <div className="mt-6 text-center text-sm">
+            <div className="mt-4 text-center text-sm">
               <span className="text-stone-400">
                 {isRegistering ? "¿Ya tienes cuenta?" : "¿No tienes cuenta?"}
               </span>{" "}
