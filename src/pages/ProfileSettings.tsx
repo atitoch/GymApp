@@ -704,33 +704,6 @@ export default function ProfileSettings() {
           </Section>
         )}
 
-        {/* Color de acento — UI oculta temporalmente, pendiente implementación completa
-        <Section title="Apariencia" icon={Palette}>
-          <div className="px-4 py-3 space-y-3">
-            <p className="text-sm text-stone-400">Color de acento</p>
-            <div className="flex gap-3">
-              {ACCENT_THEMES.map(({ id, label, color }) => (
-                <button
-                  key={id}
-                  onClick={() => setTheme(id)}
-                  title={label}
-                  className="flex flex-col items-center gap-1.5"
-                >
-                  <div
-                    className="w-9 h-9 rounded-full transition-all"
-                    style={{
-                      background: color,
-                      boxShadow: currentTheme.name === id ? `0 0 0 3px rgba(255,255,255,0.15), 0 0 0 2px ${color}` : 'none',
-                      transform: currentTheme.name === id ? 'scale(1.15)' : 'scale(1)',
-                    }}
-                  />
-                  <span className="text-[10px] text-stone-500">{label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </Section>
-        */}
 
         <Section title="Cuenta" icon={Shield}>
           <button
