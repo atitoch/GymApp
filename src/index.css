@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* Valores default del tema — el ThemeProvider los sobreescribe al montar,
+   pero estos evitan que los gradientes y colores fallen en el primer render */
+:root {
+  --color-accent-300: #bef264;
+  --color-accent-400: #a3e635;
+  --color-accent-500: #84cc16;
+  --color-accent-600: #65a30d;
+}
+
 html,
 body,
 #root {
