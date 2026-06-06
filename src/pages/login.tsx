@@ -414,7 +414,7 @@ export const Login: React.FC = () => {
       </header>
 
       {/* Panel izquierdo - Showcase atlético */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-stone-950 p-10 xl:p-14 flex-col justify-between">
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-y-auto bg-stone-950 p-8 xl:p-12 flex-col justify-between">
         {/* Capas de fondo: rejilla blueprint + glows + halo lima */}
         <div className="absolute inset-0 gt-grid opacity-70" />
         <div className="absolute inset-0 bg-gradient-to-br from-lime-500/[0.12] via-transparent to-transparent" />
@@ -427,7 +427,7 @@ export const Login: React.FC = () => {
 
         <div className="relative z-10">
           {/* Marca */}
-          <div className="flex items-center gap-3 mb-8 gt-rise">
+          <div className="flex items-center gap-3 mb-5 gt-rise">
             <div className="relative w-12 h-12 bg-gradient-to-br from-lime-400 to-lime-500 rounded-2xl flex items-center justify-center shadow-lg shadow-lime-500/40">
               <div className="absolute inset-0 rounded-2xl bg-lime-400 blur-lg opacity-50 gt-glow" />
               <Dumbbell className="relative w-7 h-7 text-stone-950" />
@@ -444,7 +444,7 @@ export const Login: React.FC = () => {
 
           {/* Eyebrow */}
           <div
-            className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 rounded-full border border-lime-400/30 bg-lime-400/10 gt-rise"
+            className="inline-flex items-center gap-2 px-3 py-1.5 mb-4 rounded-full border border-lime-400/30 bg-lime-400/10 gt-rise"
             style={{ animationDelay: "0.05s" }}
           >
             <span className="relative flex h-2 w-2">
@@ -458,7 +458,7 @@ export const Login: React.FC = () => {
 
           {/* Titular kinético */}
           <h1
-            className="text-5xl xl:text-6xl font-extrabold text-white mb-6 leading-[0.95] tracking-tight gt-rise"
+            className="text-4xl xl:text-5xl font-extrabold text-white mb-4 leading-[0.95] tracking-tight gt-rise"
             style={{ animationDelay: "0.1s" }}
           >
             ENTRENA.
@@ -472,7 +472,7 @@ export const Login: React.FC = () => {
           </h1>
 
           <p
-            className="text-stone-400 text-base mb-6 leading-relaxed gt-rise"
+            className="text-stone-400 text-sm mb-4 leading-relaxed gt-rise"
             style={{ animationDelay: "0.15s" }}
           >
             No es solo otra app de fitness. Es el sistema que convierte cada
@@ -505,9 +505,9 @@ export const Login: React.FC = () => {
             ].map(({ icon: Icon, title, desc }) => (
               <div
                 key={title}
-                className="group flex items-center gap-4 rounded-2xl border border-stone-800/80 bg-stone-900/30 p-3.5 hover:bg-stone-900/60 hover:border-lime-400/30 transition-all"
+                className="group flex items-center gap-3 rounded-xl border border-stone-800/80 bg-stone-900/30 p-3 hover:bg-stone-900/60 hover:border-lime-400/30 transition-all"
               >
-                <div className="relative w-11 h-11 shrink-0 rounded-xl bg-lime-400/10 border border-lime-400/20 flex items-center justify-center group-hover:bg-lime-400/20 transition-colors">
+                <div className="relative w-9 h-9 shrink-0 rounded-lg bg-lime-400/10 border border-lime-400/20 flex items-center justify-center group-hover:bg-lime-400/20 transition-colors">
                   <Icon className="w-5 h-5 text-lime-400" />
                 </div>
                 <div className="min-w-0">
@@ -521,7 +521,7 @@ export const Login: React.FC = () => {
 
         {/* Footer: racha semanal + trust */}
         <div
-          className="relative z-10 mt-6 gt-rise"
+          className="relative z-10 mt-4 gt-rise"
           style={{ animationDelay: "0.3s" }}
         >
           <div className="flex items-end justify-between rounded-2xl border border-stone-800 bg-stone-900/40 backdrop-blur-sm px-5 py-4">
