@@ -13,11 +13,10 @@ import {
   AlertCircle,
   Ruler,
   Camera,
-  Palette,
 } from 'lucide-react';
 import * as profileService from '../services/profile';
 import { useAuth } from '../contexts/useAuth';
-import { useTheme } from '../theme';
+// import { useTheme } from '../theme'; // pendiente reimplementación selector de color
 
 // ─── Types (mapeados a public.users) ─────────────────────────────────────────
 
@@ -41,12 +40,14 @@ interface UserProfile {
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
-const ACCENT_THEMES = [
-  { id: 'default', label: 'Lima', color: '#a3e635' },
-  { id: 'coach1',  label: 'Cielo', color: '#38bdf8' },
-  { id: 'coach2',  label: 'Fucsia', color: '#e879f9' },
-  { id: 'coach3',  label: 'Naranja', color: '#fb923c' },
-];
+/* ACCENT_THEMES — pendiente reimplementación completa
+// ACCENT_THEMES — pendiente reimplementación completa del selector de color
+// const ACCENT_THEMES = [
+//   { id: 'default', label: 'Lima', color: '#a3e635' },
+//   { id: 'coach1',  label: 'Cielo', color: '#38bdf8' },
+//   { id: 'coach2',  label: 'Fucsia', color: '#e879f9' },
+//   { id: 'coach3',  label: 'Naranja', color: '#fb923c' },
+// ];
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -306,7 +307,7 @@ function RestAdjust({
 export default function ProfileSettings() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const { currentTheme, setTheme } = useTheme();
+  // const { currentTheme, setTheme } = useTheme();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
