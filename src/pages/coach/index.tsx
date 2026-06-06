@@ -92,11 +92,14 @@ export const CoachDashboard: React.FC = () => {
           <p className="text-2xl font-bold">{pendingRequests.length}</p>
           <p className="text-stone-400 text-sm">Solicitudes pendientes</p>
         </div>
-        <div className="bg-stone-900 border border-stone-800 rounded-xl p-4 text-center">
+        <button
+          onClick={() => navigate('/coach/routines')}
+          className="bg-stone-900 border border-stone-800 rounded-xl p-4 text-center hover:border-lime-400/40 transition-colors"
+        >
           <Dumbbell className="w-6 h-6 text-lime-400 mx-auto mb-2" />
           <p className="text-2xl font-bold">{routines.length}</p>
           <p className="text-stone-400 text-sm">Mis rutinas</p>
-        </div>
+        </button>
       </div>
 
       {/* Pending requests */}

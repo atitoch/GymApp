@@ -11,11 +11,14 @@ import {
   Award,
   Loader2,
   Users,
+  UserMinus,
 } from 'lucide-react';
-import { getMyCoach, type MyCoachData } from '../services/coachDashboard';
+import { getMyCoach, disconnectFromCoach, type MyCoachData } from '../services/coachDashboard';
 
 const COMMENT_TYPE_LABELS: Record<string, string> = {
   general: 'General',
+  nutrition: 'Nutrición',
+  training: 'Entrenamiento',
   progress: 'Progreso',
   technique: 'Técnica',
   motivation: 'Motivación',
@@ -25,6 +28,8 @@ export const MyCoach: React.FC = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<MyCoachData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [confirmDisconnect, setConfirmDisconnect] = useState(false);
+  const [disconnecting, setDisconnecting] = useState(false);
 
   useEffect(() => {
     getMyCoach()
@@ -32,6 +37,17 @@ export const MyCoach: React.FC = () => {
       .catch(() => setData({ coach: null, comments: [], assigned_routine: null }))
       .finally(() => setLoading(false));
   }, []);
+
+  const handleDisconnect = async () => {
+    setDisconnecting(true);
+    try {
+      await disconnectFromCoach();
+      setData((prev) => prev ? { ...prev, coach: null, assigned_routine: null } : prev);
+      setConfirmDisconnect(false);
+    } catch {} finally {
+      setDisconnecting(false);
+    }
+  };
 
   const coach = data?.coach;
   const coachName = coach
@@ -184,6 +200,40 @@ export const MyCoach: React.FC = () => {
                 <p className="text-sm text-stone-500">Tu coach aún no te ha asignado una rutina.</p>
               </div>
             )}
+
+            {/* Terminar conexión */}
+            <div className="bg-stone-900 rounded-2xl p-5 border border-stone-800">
+              {!confirmDisconnect ? (
+                <button
+                  onClick={() => setConfirmDisconnect(true)}
+                  className="flex items-center gap-2 text-sm text-stone-500 hover:text-red-400 transition-colors"
+                >
+                  <UserMinus size={15} />
+                  Terminar conexión con este coach
+                </button>
+              ) : (
+                <div className="space-y-3">
+                  <p className="text-sm text-stone-300">
+                    ⚠️ Esto finalizará la relación y <strong>perderás la rutina asignada</strong>.
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleDisconnect}
+                      disabled={disconnecting}
+                      className="px-3 py-1.5 rounded-lg bg-red-500 text-white text-sm font-bold hover:bg-red-400 disabled:opacity-50 transition-colors"
+                    >
+                      {disconnecting ? <Loader2 size={14} className="animate-spin" /> : 'Confirmar'}
+                    </button>
+                    <button
+                      onClick={() => setConfirmDisconnect(false)}
+                      className="px-3 py-1.5 rounded-lg bg-stone-800 text-stone-300 text-sm hover:bg-stone-700 transition-colors"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Comentarios del coach */}
             <div className="bg-stone-900 rounded-2xl p-5 border border-stone-800 space-y-3">

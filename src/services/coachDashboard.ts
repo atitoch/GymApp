@@ -35,6 +35,46 @@ export interface CoachRoutine {
   is_cyclic: boolean;
 }
 
+export interface ExerciseInput {
+  name: string;
+  sets: string;
+  reps: string;
+  rpe: string;
+  rest: string;
+  notes?: string;
+}
+
+export interface SectionInput {
+  title: string;
+  exercises: ExerciseInput[];
+}
+
+export interface DayRoutineInput {
+  dayName: string;
+  title: string;
+  warmup?: string[];
+  sections: SectionInput[];
+  cooldown?: string[];
+}
+
+export interface RoutineTemplateInput {
+  name: string;
+  description?: string;
+  isCyclic?: boolean;
+  pattern: string[];
+  routines: DayRoutineInput[];
+}
+
+export interface RoutineTemplateDetail {
+  id: string;
+  name: string;
+  description?: string;
+  isCyclic: boolean;
+  totalDays: number;
+  pattern: string[];
+  routines: (DayRoutineInput & { id?: string })[];
+}
+
 export interface MyCoachData {
   coach: (CoachProfile & { relationship_id: string; connected_since?: string }) | null;
   comments: { id: string; comment: string; comment_type: string; created_at: string }[];
@@ -57,6 +97,9 @@ export const getPendingRequests = async (): Promise<ClientRelationship[]> => {
 export const acceptRequest = (id: string) => authenticatedPost(`/coach/connections/${id}/accept`, {});
 export const rejectRequest = (id: string) => authenticatedPost(`/coach/connections/${id}/reject`, {});
 export const getClientDetail = (userId: string) => authenticatedGet<any>(`/coach/clients/${userId}`);
+
+export const disconnectClient = (userId: string) =>
+  authenticatedPost<{ ended: boolean }>(`/coach/clients/${userId}/disconnect`, {});
 
 export const addComment = async (userId: string, data: { comment: string; comment_type: string; is_private?: boolean }): Promise<CoachComment> => {
   const res = await authenticatedPost<{ comment: CoachComment }>(`/coach/clients/${userId}/comments`, data);
@@ -89,7 +132,29 @@ export const getMyRoutines = async (): Promise<CoachRoutine[]> => {
   return res.routines ?? [];
 };
 
+export const getRoutineTemplate = async (routineId: string): Promise<RoutineTemplateDetail> => {
+  const res = await authenticatedGet<{ routine: RoutineTemplateDetail }>(`/coach/routines/${routineId}`);
+  return res.routine;
+};
+
+export const createRoutineTemplate = async (data: RoutineTemplateInput): Promise<string> => {
+  const res = await authenticatedPost<{ routine_id: string }>('/coach/routines', data);
+  return res.routine_id;
+};
+
+export const updateRoutineTemplate = async (routineId: string, data: Partial<RoutineTemplateInput>): Promise<string> => {
+  const res = await authenticatedPut<{ routine_id: string }>(`/coach/routines/${routineId}`, data);
+  return res.routine_id;
+};
+
+export const deleteRoutineTemplate = async (routineId: string): Promise<void> => {
+  await authenticatedDelete(`/coach/routines/${routineId}`);
+};
+
 export const getMyCoach = () => authenticatedGet<MyCoachData>('/coaches/my-coach');
+
+export const disconnectFromCoach = () =>
+  authenticatedPost<{ ended: boolean }>('/coaches/disconnect', {});
 
 export const listCoaches = async (): Promise<any[]> => {
   const res = await authenticatedGet<{ coaches: any[] }>('/coaches');

@@ -1,33 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Star, MessageSquare, Dumbbell, Pencil, Trash2, Loader2, X, Check, Send } from 'lucide-react';
+import { ArrowLeft, Star, MessageSquare, Dumbbell, Pencil, Trash2, Loader2, X, Check, Send, UserMinus } from 'lucide-react';
 import {
   getClientDetail,
   addComment,
   getClientComments,
   updateComment,
   deleteComment,
+  disconnectClient,
   getMyRoutines,
   assignRoutine,
   type CoachComment,
   type CoachRoutine,
 } from '../../services/coachDashboard';
 
-const COMMENT_TYPES = ['general', 'progress', 'nutrition', 'motivation', 'technique'] as const;
+const COMMENT_TYPES = ['general', 'nutrition', 'training', 'progress', 'motivation', 'technique'] as const;
 type CommentType = typeof COMMENT_TYPES[number];
 
 const TYPE_LABELS: Record<CommentType, string> = {
   general: 'General',
-  progress: 'Progreso',
   nutrition: 'Nutrición',
+  training: 'Entrenamiento',
+  progress: 'Progreso',
   motivation: 'Motivación',
   technique: 'Técnica',
 };
 
 const TYPE_COLORS: Record<CommentType, string> = {
   general: 'bg-stone-700 text-stone-200',
-  progress: 'bg-lime-900 text-lime-300',
   nutrition: 'bg-green-900 text-green-300',
+  training: 'bg-indigo-900 text-indigo-300',
+  progress: 'bg-lime-900 text-lime-300',
   motivation: 'bg-yellow-900 text-yellow-300',
   technique: 'bg-blue-900 text-blue-300',
 };
@@ -62,6 +65,8 @@ export const ClientDetail: React.FC = () => {
   const [showResetWarning, setShowResetWarning] = useState(false);
   const [assignMsg, setAssignMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [assigning, setAssigning] = useState(false);
+  const [confirmDisconnect, setConfirmDisconnect] = useState(false);
+  const [disconnecting, setDisconnecting] = useState(false);
 
   useEffect(() => {
     if (!userId) return;
@@ -114,6 +119,17 @@ export const ClientDetail: React.FC = () => {
       setEditingId(null);
     } finally {
       setSavingEdit(false);
+    }
+  };
+
+  const handleDisconnect = async () => {
+    if (!userId) return;
+    setDisconnecting(true);
+    try {
+      await disconnectClient(userId);
+      navigate('/coach');
+    } catch {} finally {
+      setDisconnecting(false);
     }
   };
 
@@ -338,6 +354,42 @@ export const ClientDetail: React.FC = () => {
             </button>
           </div>
         </form>
+      </section>
+
+      {/* Terminar conexión */}
+      <section className="mb-8">
+        <div className="bg-stone-900 border border-stone-800 rounded-xl p-4">
+          {!confirmDisconnect ? (
+            <button
+              onClick={() => setConfirmDisconnect(true)}
+              className="flex items-center gap-2 text-sm text-stone-500 hover:text-red-400 transition-colors"
+            >
+              <UserMinus size={15} />
+              Terminar conexión con este cliente
+            </button>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-sm text-stone-300">
+                ⚠️ Esto finalizará la relación y el cliente <strong>perderá la rutina asignada</strong>.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleDisconnect}
+                  disabled={disconnecting}
+                  className="px-3 py-1.5 rounded-lg bg-red-500 text-white text-sm font-bold hover:bg-red-400 disabled:opacity-50 transition-colors"
+                >
+                  {disconnecting ? <Loader2 size={14} className="animate-spin" /> : 'Confirmar'}
+                </button>
+                <button
+                  onClick={() => setConfirmDisconnect(false)}
+                  className="px-3 py-1.5 rounded-lg bg-stone-800 text-stone-300 text-sm hover:bg-stone-700 transition-colors"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </section>
 
       {/* Assign routine */}

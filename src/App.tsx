@@ -17,6 +17,8 @@ import { AdminRoute } from './components/AdminRoute';
 import { CoachRoute } from './components/CoachRoute';
 import { CoachDashboard } from './pages/coach/index';
 import { ClientDetail } from './pages/coach/ClientDetail';
+import { CoachRoutines } from './pages/coach/Routines';
+import { RoutineEditor } from './pages/coach/RoutineEditor';
 import { BrowseCoaches } from './pages/coaches/Browse';
 import { CoachProfile } from './pages/coaches/CoachProfile';
 import { MyCoach } from './pages/MyCoach';
@@ -91,6 +93,9 @@ const App = () => {
         <Route path="/messages/:partnerId" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
         <Route path="/coach" element={<CoachRoute><CoachDashboard /></CoachRoute>} />
         <Route path="/coach/clients/:userId" element={<CoachRoute><ClientDetail /></CoachRoute>} />
+        <Route path="/coach/routines" element={<CoachRoute><CoachRoutines /></CoachRoute>} />
+        <Route path="/coach/routines/new" element={<CoachRoute><RoutineEditor /></CoachRoute>} />
+        <Route path="/coach/routines/:routineId/edit" element={<CoachRoute><RoutineEditor /></CoachRoute>} />
         <Route path="/coaches" element={<ProtectedRoute><BrowseCoaches /></ProtectedRoute>} />
         <Route path="/coaches/:id" element={<ProtectedRoute><CoachProfile /></ProtectedRoute>} />
         <Route path="/my-coach" element={<ProtectedRoute><MyCoach /></ProtectedRoute>} />
