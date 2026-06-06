@@ -39,6 +39,7 @@ export const DayRoutine: React.FC = () => {
     useState<CalculatedDayRoutine | null>(null);
   const [loading, setLoading] = useState(true);
   const [timerOpen, setTimerOpen] = useState(false);
+  const [timerExerciseName, setTimerExerciseName] = useState('');
   const [exerciseStatuses, setExerciseStatuses] = useState<ExerciseStatus[]>(
     [],
   );
@@ -279,6 +280,10 @@ export const DayRoutine: React.FC = () => {
 
       return updated;
     });
+
+    // Auto-iniciar el timer de descanso tras guardar una serie
+    setTimerExerciseName(exerciseName);
+    setTimerOpen(true);
   };
 
   // Función para terminar el entrenamiento
@@ -408,7 +413,7 @@ export const DayRoutine: React.FC = () => {
         isOpen={timerOpen}
         onClose={() => setTimerOpen(false)}
         defaultSeconds={defaultRestSeconds}
-        exerciseName=""
+        exerciseName={timerExerciseName}
         onComplete={() => setTimerOpen(false)}
       />
 

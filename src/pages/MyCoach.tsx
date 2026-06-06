@@ -202,38 +202,62 @@ export const MyCoach: React.FC = () => {
             )}
 
             {/* Terminar conexión */}
-            <div className="bg-stone-900 rounded-2xl p-5 border border-stone-800">
-              {!confirmDisconnect ? (
-                <button
-                  onClick={() => setConfirmDisconnect(true)}
-                  className="flex items-center gap-2 text-sm text-stone-500 hover:text-red-400 transition-colors"
+            <div className="bg-stone-900 rounded-2xl p-5 border border-red-900/40">
+              <button
+                onClick={() => setConfirmDisconnect(true)}
+                className="flex items-center gap-2 text-sm font-medium text-red-400 hover:text-red-300 transition-colors"
+              >
+                <UserMinus size={15} />
+                Terminar conexión con este coach
+              </button>
+            </div>
+
+            {/* Modal de confirmación — desconectar coach */}
+            {confirmDisconnect && (
+              <>
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50" />
+                <div
+                  className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
+                  onClick={() => !disconnecting && setConfirmDisconnect(false)}
                 >
-                  <UserMinus size={15} />
-                  Terminar conexión con este coach
-                </button>
-              ) : (
-                <div className="space-y-3">
-                  <p className="text-sm text-stone-300">
-                    ⚠️ Esto finalizará la relación y <strong>perderás la rutina asignada</strong>.
-                  </p>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={handleDisconnect}
-                      disabled={disconnecting}
-                      className="px-3 py-1.5 rounded-lg bg-red-500 text-white text-sm font-bold hover:bg-red-400 disabled:opacity-50 transition-colors"
-                    >
-                      {disconnecting ? <Loader2 size={14} className="animate-spin" /> : 'Confirmar'}
-                    </button>
-                    <button
-                      onClick={() => setConfirmDisconnect(false)}
-                      className="px-3 py-1.5 rounded-lg bg-stone-800 text-stone-300 text-sm hover:bg-stone-700 transition-colors"
-                    >
-                      Cancelar
-                    </button>
+                  <div
+                    onClick={(e) => e.stopPropagation()}
+                    className="bg-stone-900 border border-stone-800 rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-full bg-red-500/15">
+                        <UserMinus size={20} className="text-red-400" />
+                      </div>
+                      <h3 className="text-base font-bold text-white">¿Terminar conexión?</h3>
+                    </div>
+                    <p className="text-sm text-stone-400 leading-relaxed">
+                      Esto finalizará la relación con tu coach y{' '}
+                      <strong className="text-stone-200">perderás la rutina asignada</strong>.
+                      No podrás deshacer esta acción.
+                    </p>
+                    <div className="flex gap-3 pt-1">
+                      <button
+                        onClick={() => setConfirmDisconnect(false)}
+                        disabled={disconnecting}
+                        className="flex-1 px-4 py-2.5 rounded-xl bg-stone-800 text-stone-300 text-sm font-medium hover:bg-stone-700 disabled:opacity-50 transition-colors"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        onClick={handleDisconnect}
+                        disabled={disconnecting}
+                        className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-sm font-bold disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+                      >
+                        {disconnecting
+                          ? <Loader2 size={15} className="animate-spin" />
+                          : <><UserMinus size={15} /> Terminar</>
+                        }
+                      </button>
+                    </div>
                   </div>
                 </div>
-              )}
-            </div>
+              </>
+            )}
 
             {/* Comentarios del coach */}
             <div className="bg-stone-900 rounded-2xl p-5 border border-stone-800 space-y-3">

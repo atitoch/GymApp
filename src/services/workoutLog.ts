@@ -123,6 +123,7 @@ export const getWeeklyStats = async (): Promise<{
   total_duration_min: number;
   total_volume: number;
   avg_rating: number | null;
+  current_streak: number;
 }> => {
   return authenticatedGet('/workout-logs/weekly-stats');
 };

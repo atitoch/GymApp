@@ -10,7 +10,7 @@ import { useAuth } from "../contexts/useAuth";
 import type { CalculatedDayRoutine } from "../types/routineType";
 import { themeClasses, cn } from "../theme/constants";
 import { useColors } from "../theme";
-import { Dumbbell, Calendar, TrendingUp, Sparkles, ChevronRight, ChevronLeft, Users, Star } from "lucide-react";
+import { Dumbbell, Calendar, TrendingUp, Sparkles, ChevronRight, ChevronLeft, Users, Star, Flame } from "lucide-react";
 import { DashboardSkeleton } from "../components/DashboardSkeleton";
 import { OnboardingModal } from "../components/OnboardingModal";
 
@@ -30,6 +30,7 @@ export const Dashboard: React.FC = () => {
     completed_sessions: number;
     days_trained: number;
     total_duration_min: number;
+    current_streak: number;
   } | null>(null);
 
   const loadRoutines = useCallback(async () => {
@@ -132,6 +133,7 @@ export const Dashboard: React.FC = () => {
   const workoutDays = weekStats?.days_trained ?? routines.filter(r => r.dayName !== "DESCANSO").length;
   const completedSessions = weekStats?.completed_sessions ?? 0;
   const totalMinutes = weekStats?.total_duration_min ?? 0;
+  const currentStreak = weekStats?.current_streak ?? 0;
 
   return (
     <div
@@ -159,7 +161,7 @@ export const Dashboard: React.FC = () => {
         />
 
         {/* Estadísticas de la semana */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div
             className={cn(
               themeClasses.cards.base,
@@ -250,6 +252,40 @@ export const Dashboard: React.FC = () => {
             </div>
             <p className={cn("text-3xl font-bold", themeClasses.text.primary)}>
               {totalMinutes}
+            </p>
+          </div>
+
+          <div
+            className={cn(
+              themeClasses.cards.base,
+              themeClasses.cards.withShadow,
+              "p-6"
+            )}
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <div
+                className="p-2 rounded-lg"
+                style={{ backgroundColor: "#f97316" + "20" }}
+              >
+                <Flame
+                  className="w-5 h-5"
+                  style={{ color: "#f97316" }}
+                />
+              </div>
+              <h3
+                className={cn(
+                  "text-sm font-medium",
+                  themeClasses.text.tertiary
+                )}
+              >
+                Racha actual
+              </h3>
+            </div>
+            <p className={cn("text-3xl font-bold", themeClasses.text.primary)}>
+              {currentStreak}
+              <span className={cn("text-sm font-normal ml-1", themeClasses.text.tertiary)}>
+                {currentStreak === 1 ? "día" : "días"}
+              </span>
             </p>
           </div>
         </div>

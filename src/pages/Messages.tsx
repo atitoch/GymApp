@@ -25,9 +25,9 @@ export const Messages: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-stone-950 pb-20">
+    <div className="h-screen flex flex-col bg-stone-950">
       <div
-        className="sticky top-0 z-20"
+        className="shrink-0 z-20"
         style={{
           background: 'rgba(12,10,9,0.90)',
           backdropFilter: 'blur(12px)',
@@ -46,6 +46,7 @@ export const Messages: React.FC = () => {
         </div>
       </div>
 
+      <div className="flex-1 overflow-y-auto">
       <div className="max-w-lg mx-auto px-4 py-4">
         {loading ? (
           <div className="flex justify-center py-16">
@@ -98,6 +99,7 @@ export const Messages: React.FC = () => {
             })}
           </div>
         )}
+      </div>
       </div>
     </div>
   );
