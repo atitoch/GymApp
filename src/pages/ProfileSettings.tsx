@@ -40,7 +40,6 @@ interface UserProfile {
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
-/* ACCENT_THEMES — pendiente reimplementación completa
 // ACCENT_THEMES — pendiente reimplementación completa del selector de color
 // const ACCENT_THEMES = [
 //   { id: 'default', label: 'Lima', color: '#a3e635' },
