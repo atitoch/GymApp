@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, ChevronRight, ArrowLeft } from 'lucide-react';
+import { Users, ChevronRight, ArrowLeft, Search } from 'lucide-react';
 import { listCoaches, requestConnection, getMyConnections } from '../../services/coachDashboard';
 
 export const BrowseCoaches: React.FC = () => {
@@ -9,6 +9,24 @@ export const BrowseCoaches: React.FC = () => {
   const [connections, setConnections] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [requesting, setRequesting] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+  const [specFilter, setSpecFilter] = useState('');
+
+  const specializations = useMemo(() => {
+    const set = new Set(coaches.map((c) => c.specialization).filter(Boolean));
+    return Array.from(set).sort() as string[];
+  }, [coaches]);
+
+  const filtered = useMemo(() => {
+    return coaches.filter((c) => {
+      const name = [c.users?.first_name, c.users?.last_name].filter(Boolean).join(' ').toLowerCase();
+      const spec = (c.specialization ?? '').toLowerCase();
+      const q = search.toLowerCase();
+      const matchSearch = !q || name.includes(q) || spec.includes(q);
+      const matchSpec = !specFilter || c.specialization === specFilter;
+      return matchSearch && matchSpec;
+    });
+  }, [coaches, search, specFilter]);
 
   useEffect(() => {
     Promise.all([listCoaches(), getMyConnections()]).then(([c, conn]) => {
@@ -71,14 +89,47 @@ export const BrowseCoaches: React.FC = () => {
         </div>
       </div>
       <div className="max-w-4xl mx-auto p-6">
+        {/* Search + filter */}
+        {!loading && coaches.length > 0 && (
+          <div className="space-y-3 mb-6">
+            <div className="flex items-center gap-2 bg-stone-900 border border-stone-800 rounded-xl px-3 py-2.5">
+              <Search size={14} className="text-stone-500 shrink-0" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Buscar por nombre o especialización..."
+                className="flex-1 bg-transparent text-sm text-stone-300 placeholder-stone-600 outline-none"
+              />
+            </div>
+            {specializations.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                <button
+                  onClick={() => setSpecFilter('')}
+                  className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${!specFilter ? 'bg-lime-400/20 text-lime-400 border border-lime-400/30' : 'bg-stone-900 text-stone-500 border border-stone-800'}`}
+                >
+                  Todos
+                </button>
+                {specializations.map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setSpecFilter(specFilter === s ? '' : s)}
+                    className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${specFilter === s ? 'bg-lime-400/20 text-lime-400 border border-lime-400/30' : 'bg-stone-900 text-stone-500 border border-stone-800'}`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
-      {coaches.length === 0 ? (
+      {filtered.length === 0 && !loading ? (
         <div className="bg-stone-900 border border-stone-800 rounded-xl p-8 text-center text-stone-400">
-          No hay entrenadores disponibles en este momento.
+          {coaches.length === 0 ? 'No hay entrenadores disponibles en este momento.' : 'Sin resultados para esta búsqueda.'}
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
-          {coaches.map((coach) => {
+          {filtered.map((coach) => {
             const name = [coach.users?.first_name, coach.users?.last_name].filter(Boolean).join(' ') || 'Entrenador';
             const status = getConnectionStatus(coach.id);
 

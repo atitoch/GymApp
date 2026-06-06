@@ -253,6 +253,67 @@ function SessionCard({ session }: { session: SessionWithDayInfo }) {
   );
 }
 
+// ─── Weekly Bar Chart ─────────────────────────────────────────────────────────
+
+function WeeklyChart({ sessions }: { sessions: SessionWithDayInfo[] }) {
+  // Build last 8 weeks: count completed sessions per week (Mon-Sun)
+  const weeks: { label: string; count: number }[] = [];
+  const now = new Date();
+  for (let w = 7; w >= 0; w--) {
+    const mon = new Date(now);
+    mon.setDate(now.getDate() - now.getDay() + 1 - w * 7);
+    mon.setHours(0, 0, 0, 0);
+    const sun = new Date(mon);
+    sun.setDate(mon.getDate() + 6);
+    sun.setHours(23, 59, 59, 999);
+    const count = sessions.filter((s) => {
+      const d = new Date(s.workout_date + 'T12:00:00');
+      return d >= mon && d <= sun && s.completed_at;
+    }).length;
+    const label = mon.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+    weeks.push({ label, count });
+  }
+
+  const max = Math.max(...weeks.map((w) => w.count), 1);
+
+  return (
+    <div
+      className="rounded-2xl p-4"
+      style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}
+    >
+      <p className="text-xs font-black uppercase tracking-widest text-stone-600 mb-4">
+        Sesiones por semana (últimas 8)
+      </p>
+      <div className="flex items-end gap-1.5 h-20">
+        {weeks.map(({ label, count }, i) => {
+          const isCurrentWeek = i === 7;
+          const pct = (count / max) * 100;
+          return (
+            <div key={i} className="flex-1 flex flex-col items-center gap-1">
+              <span className="text-[10px] text-stone-600 font-bold">{count > 0 ? count : ''}</span>
+              <div className="w-full rounded-t-md transition-all" style={{
+                height: `${Math.max(pct, count === 0 ? 4 : 8)}%`,
+                background: isCurrentWeek
+                  ? 'linear-gradient(180deg,#a3e635,#65a30d)'
+                  : count > 0
+                    ? 'rgba(163,230,53,0.35)'
+                    : 'rgba(255,255,255,0.05)',
+                minHeight: '4px',
+              }} />
+              <span
+                className="text-[9px] text-stone-700 truncate w-full text-center"
+                title={label}
+              >
+                {label.split(' ')[0]}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 const PAGE_SIZE = 20;
@@ -368,6 +429,7 @@ export default function WorkoutHistory() {
 
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-5">
         {!loading && <StatsSummary stats={weekStats} total={total} />}
+        {!loading && sessions.length > 0 && <WeeklyChart sessions={sessions} />}
 
         <div
           className="flex items-center gap-2 rounded-2xl px-4 py-3"
