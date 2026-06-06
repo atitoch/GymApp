@@ -2,7 +2,7 @@
  * ThemeProvider - Proporciona el tema actual a toda la aplicación
  */
 
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useCallback } from "react";
 import type { ReactNode } from "react";
 import type { ThemeContextValue, ThemeConfig } from "./types";
 import { getTheme, getThemeByCoachId, themes } from "./colors";
@@ -43,6 +43,20 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
       setCurrentThemeState(theme);
     }
   }, [coachId]);
+
+  // Sincronizar colores del tema activo como CSS variables en :root
+  const syncCSSVars = useCallback((theme: ThemeConfig) => {
+    const root = document.documentElement;
+    const c = theme.colors;
+    root.style.setProperty('--color-accent-300', c.primary[300]);
+    root.style.setProperty('--color-accent-400', c.primary[400]);
+    root.style.setProperty('--color-accent-500', c.primary[500]);
+    root.style.setProperty('--color-accent-600', c.primary[600]);
+  }, []);
+
+  useEffect(() => {
+    syncCSSVars(currentTheme);
+  }, [currentTheme, syncCSSVars]);
 
   const setTheme = (themeName: string) => {
     const theme = getTheme(themeName);

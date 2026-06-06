@@ -46,26 +46,26 @@ export const useThemeClasses = () => {
     // Borders
     borderDefault: "border-stone-700",
     borderHover: "border-stone-600",
-    borderFocus: "border-lime-400",
+    borderFocus: "border-[--color-accent-400]",
 
     // Buttons
     btnPrimary:
-      "bg-gradient-to-r from-lime-400 to-lime-500 hover:from-lime-500 hover:to-lime-600 text-white",
+      "bg-gradient-to-r from-[--color-accent-400] to-[--color-accent-500] hover:from-[--color-accent-500] hover:to-[--color-accent-600] text-stone-950",
     btnSecondary: "bg-stone-800 hover:bg-stone-700 text-stone-300",
-    btnGhost: "bg-transparent hover:bg-stone-800 text-lime-400",
+    btnGhost: "bg-transparent hover:bg-stone-800 text-[--color-accent-400]",
 
     // Cards
     card: "bg-stone-800 hover:bg-stone-700 border border-stone-700",
 
     // Inputs
     input:
-      "bg-stone-900/50 border border-stone-700 focus:border-lime-400 text-stone-50 placeholder-stone-500",
+      "bg-stone-900/50 border border-stone-700 focus:border-[--color-accent-400] text-stone-50 placeholder-stone-500",
 
     // Status colors
     success: "text-green-500 bg-green-500/10 border-green-500/50",
-    warning: "text-lime-400 bg-lime-400/10 border-lime-400/50",
+    warning: "text-[--color-accent-400] bg-[--color-accent-400]/10 border-[--color-accent-400]/50",
     error: "text-red-500 bg-red-500/10 border-red-500/50",
-    info: "text-lime-400 bg-lime-400/10 border-lime-400/50",
+    info: "text-[--color-accent-400] bg-[--color-accent-400]/10 border-[--color-accent-400]/50",
   };
 };
 
