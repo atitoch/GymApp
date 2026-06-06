@@ -703,7 +703,7 @@ export default function ProfileSettings() {
           </Section>
         )}
 
-        {/* Color de acento */}
+        {/* Color de acento — UI oculta temporalmente, pendiente implementación completa
         <Section title="Apariencia" icon={Palette}>
           <div className="px-4 py-3 space-y-3">
             <p className="text-sm text-stone-400">Color de acento</p>
@@ -729,6 +729,7 @@ export default function ProfileSettings() {
             </div>
           </div>
         </Section>
+        */}
 
         <Section title="Cuenta" icon={Shield}>
           <button
