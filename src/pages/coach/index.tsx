@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Dumbbell, Users, Clock, CheckCircle, XCircle, ArrowLeft, Settings } from 'lucide-react';
+import { Dumbbell, Users, Clock, CheckCircle, XCircle, ArrowLeft, Settings, Plus, Pencil, ChevronRight } from 'lucide-react';
 import {
   getMyClients,
   getPendingRequests,
@@ -114,6 +114,75 @@ export const CoachDashboard: React.FC = () => {
           </div>
         </button>
       </div>
+
+      {/* Mis rutinas — vista previa */}
+      <section className="mb-8">
+        <div className="flex items-center justify-between mb-4 gap-3">
+          <h2 className="text-xl font-semibold text-stone-200">Mis rutinas</h2>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => navigate('/coach/routines/new')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold text-stone-950 transition-all hover:brightness-110"
+              style={{ background: 'linear-gradient(135deg,#a3e635,#84cc16)' }}
+            >
+              <Plus size={15} />
+              Nueva
+            </button>
+            {routines.length > 0 && (
+              <button
+                onClick={() => navigate('/coach/routines')}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium text-lime-400 hover:bg-white/5 transition-colors"
+              >
+                Ver todas
+                <ChevronRight size={15} />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {routines.length === 0 ? (
+          <button
+            onClick={() => navigate('/coach/routines/new')}
+            className="w-full bg-stone-900 border border-dashed border-stone-700 rounded-xl p-8 text-center text-stone-400 hover:border-(--color-accent-400)/40 hover:text-stone-300 transition-all"
+          >
+            <Dumbbell className="w-7 h-7 mx-auto mb-2 text-stone-600" />
+            <p className="font-medium">Aún no tienes rutinas</p>
+            <p className="text-sm text-stone-500 mt-1">Crea tu primera plantilla para asignarla a tus clientes.</p>
+          </button>
+        ) : (
+          <div className="space-y-3">
+            {routines.slice(0, 3).map((r) => (
+              <button
+                key={r.id}
+                onClick={() => navigate(`/coach/routines/${r.id}/edit`)}
+                className="w-full bg-stone-900 border border-stone-800 rounded-xl p-4 flex items-center justify-between gap-3 hover:border-(--color-accent-400)/40 transition-colors text-left group"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-lg bg-(--color-accent-400)/10 flex items-center justify-center shrink-0">
+                    <Dumbbell className="w-5 h-5 text-(--color-accent-400)" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-medium truncate">{r.name}</p>
+                    <p className="text-stone-500 text-sm">
+                      {r.total_days ? `${r.total_days} días` : '—'}
+                      {r.is_cyclic && ' · Cíclica'}
+                    </p>
+                  </div>
+                </div>
+                <Pencil className="w-4 h-4 text-stone-500 group-hover:text-lime-400 transition-colors shrink-0" />
+              </button>
+            ))}
+            {routines.length > 3 && (
+              <button
+                onClick={() => navigate('/coach/routines')}
+                className="w-full text-center text-sm text-stone-400 hover:text-lime-400 py-2 transition-colors"
+              >
+                Ver las {routines.length} rutinas →
+              </button>
+            )}
+          </div>
+        )}
+      </section>
 
       {/* Pending requests */}
       {pendingRequests.length > 0 && (
