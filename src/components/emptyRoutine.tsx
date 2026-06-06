@@ -1,16 +1,14 @@
 import { AlertCircle, Dumbbell, Users, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { themeClasses, cn } from "../theme/constants";
 import { useColors } from "../theme";
 
 interface EmptyRoutineProps {
-  handleBackToSelect: () => void;
+  handleBackToSelect?: () => void;
   hasCoach?: boolean;
   coachId?: string;
 }
 
 export const EmptyRoutine: React.FC<EmptyRoutineProps> = ({
-  handleBackToSelect,
   hasCoach = false,
   coachId,
 }) => {
@@ -75,13 +73,6 @@ export const EmptyRoutine: React.FC<EmptyRoutineProps> = ({
               Buscar un coach
             </button>
           )}
-
-          <button
-            onClick={handleBackToSelect}
-            className={cn(themeClasses.buttons.secondary, "px-6 py-3")}
-          >
-            ← Volver al dashboard
-          </button>
         </div>
       </div>
     </div>
