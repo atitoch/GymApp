@@ -31,7 +31,7 @@ function ExerciseRow({
     <input
       value={ex[key] ?? ''}
       onChange={(e) => onChange({ ...ex, [key]: e.target.value })}
-      className="bg-stone-800 border border-stone-700 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-lime-400"
+      className="w-full min-w-0 bg-stone-800 border border-stone-700 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-lime-400"
     />
   );
 
@@ -50,8 +50,8 @@ function ExerciseRow({
       </div>
       <div className="grid grid-cols-4 gap-1.5">
         {(['sets', 'reps', 'rpe', 'rest'] as const).map((k) => (
-          <div key={k}>
-            <p className="text-[10px] text-stone-500 mb-0.5 uppercase tracking-wider">{k === 'rest' ? 'Descanso' : k.toUpperCase()}</p>
+          <div key={k} className="min-w-0">
+            <p className="text-[10px] text-stone-500 mb-0.5 uppercase tracking-wider truncate">{k === 'rest' ? 'Descanso' : k.toUpperCase()}</p>
             {field(k)}
           </div>
         ))}

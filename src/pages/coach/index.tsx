@@ -190,12 +190,12 @@ export const CoachDashboard: React.FC = () => {
           <h2 className="text-xl font-semibold mb-4 text-stone-200">Solicitudes pendientes</h2>
           <div className="space-y-3">
             {pendingRequests.map((req) => (
-              <div key={req.id} className="bg-stone-900 border border-stone-800 rounded-xl p-4 flex items-center justify-between">
-                <div>
-                  <p className="font-medium">{fullName(req)}</p>
-                  <p className="text-stone-400 text-sm">{req.users?.email}</p>
+              <div key={req.id} className="bg-stone-900 border border-stone-800 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
+                <div className="min-w-0">
+                  <p className="font-medium truncate">{fullName(req)}</p>
+                  <p className="text-stone-400 text-sm truncate">{req.users?.email}</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 shrink-0">
                   <button
                     onClick={() => handleAccept(req.id)}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-lime-400 text-black font-medium text-sm hover:bg-lime-300 transition-colors"
@@ -205,7 +205,7 @@ export const CoachDashboard: React.FC = () => {
                   </button>
                   <button
                     onClick={() => handleReject(req.id)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-red-400 font-medium text-sm hover:text-red-300 transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-400/40 text-red-400 font-medium text-sm hover:bg-red-400/10 transition-colors"
                   >
                     <XCircle className="w-4 h-4" />
                     Rechazar
