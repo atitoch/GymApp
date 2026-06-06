@@ -12,16 +12,6 @@ import { AuthContext, type AuthContextType, type User } from "./authContext";
 const TOKEN_KEY = "auth_token";
 const REFRESH_TOKEN_KEY = "auth_refresh_token";
 const USER_KEY = "auth_user";
-const REMEMBER_KEY = "auth_remember";
-
-// Devuelve el storage correcto según la preferencia guardada
-const getAuthStorage = (): Storage => {
-  try {
-    return localStorage.getItem(REMEMBER_KEY) === 'true' ? localStorage : sessionStorage;
-  } catch {
-    return sessionStorage;
-  }
-};
 
 const enrichUserWithRole = async (token: string, baseUser: User): Promise<User> => {
   try {
@@ -58,17 +48,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
           return;
         }
 
-        // Buscar token en localStorage primero (remember me), luego en sessionStorage
-        const storedToken =
-          localStorage.getItem(TOKEN_KEY) ?? sessionStorage.getItem(TOKEN_KEY);
-        const storedUser =
-          localStorage.getItem(USER_KEY) ?? sessionStorage.getItem(USER_KEY);
-
-        // Compatibilidad con sesiones guardadas antes del feature de "recordarme":
-        // si hay token en localStorage pero sin REMEMBER_KEY, marcarlo como recordado
-        if (localStorage.getItem(TOKEN_KEY) && !localStorage.getItem(REMEMBER_KEY)) {
-          localStorage.setItem(REMEMBER_KEY, 'true');
-        }
+        const storedToken = localStorage.getItem(TOKEN_KEY);
+        const storedUser = localStorage.getItem(USER_KEY);
 
         if (storedToken && storedUser) {
           setToken(storedToken);
@@ -83,7 +64,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
               // Refresh role in background
               enrichUserWithRole(storedToken, parsed).then(enriched => {
                 setUser(enriched);
-                getAuthStorage().setItem(USER_KEY, JSON.stringify(enriched));
+                localStorage.setItem(USER_KEY, JSON.stringify(enriched));
               });
             } else {
               clearSession();
@@ -106,42 +87,33 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     loadSession();
   }, []);
 
-  const saveSession = (authData: AuthResponse, rememberMe?: boolean) => {
-    // Si se pasa rememberMe explícito, actualizar la preferencia; si no, mantener la existente
-    if (rememberMe !== undefined) {
-      localStorage.setItem(REMEMBER_KEY, String(rememberMe));
-    }
-    const storage = getAuthStorage();
-
+  const saveSession = (authData: AuthResponse) => {
     setToken(authData.token);
     setUser(authData.user);
 
-    storage.setItem(TOKEN_KEY, authData.token);
-    storage.setItem(USER_KEY, JSON.stringify(authData.user));
+    localStorage.setItem(TOKEN_KEY, authData.token);
+    localStorage.setItem(USER_KEY, JSON.stringify(authData.user));
 
     if (authData.refreshToken) {
-      storage.setItem(REFRESH_TOKEN_KEY, authData.refreshToken);
+      localStorage.setItem(REFRESH_TOKEN_KEY, authData.refreshToken);
     }
   };
 
   const clearSession = () => {
     setToken(null);
     setUser(null);
-    [localStorage, sessionStorage].forEach((s) => {
-      s.removeItem(TOKEN_KEY);
-      s.removeItem(REFRESH_TOKEN_KEY);
-      s.removeItem(USER_KEY);
-    });
-    localStorage.removeItem(REMEMBER_KEY);
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
   };
 
   const login = async (credentials: LoginCredentials) => {
     try {
       const authData = await authService.login(credentials);
-      saveSession(authData, credentials.rememberMe ?? false);
+      saveSession(authData);
       const enriched = await enrichUserWithRole(authData.token, authData.user);
       setUser(enriched);
-      getAuthStorage().setItem(USER_KEY, JSON.stringify(enriched));
+      localStorage.setItem(USER_KEY, JSON.stringify(enriched));
 
       navigate(enriched.role === 'admin' ? '/admin' : '/dashboard');
     } catch (error) {
