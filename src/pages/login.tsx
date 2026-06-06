@@ -8,7 +8,6 @@ import {
   EyeOff,
   Menu,
   X,
-  Flame,
   Zap,
   Activity,
   ArrowRight,
