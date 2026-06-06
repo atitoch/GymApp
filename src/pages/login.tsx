@@ -477,29 +477,6 @@ export const Login: React.FC = () => {
             <span className="text-stone-200 font-medium">progreso medible</span>.
           </p>
 
-          {/* Métricas estilo tracker */}
-          <div
-            className="grid grid-cols-3 gap-4 mb-10 max-w-md gt-rise"
-            style={{ animationDelay: "0.2s" }}
-          >
-            {[
-              { value: "12K+", label: "Atletas activos" },
-              { value: "850K", label: "Series registradas" },
-              { value: "98%", label: "Vuelven al día siguiente" },
-            ].map((stat) => (
-              <div
-                key={stat.label}
-                className="rounded-2xl border border-stone-800 bg-stone-900/40 backdrop-blur-sm p-4 hover:border-lime-400/40 transition-colors"
-              >
-                <div className="text-2xl font-extrabold text-lime-400 tracking-tight">
-                  {stat.value}
-                </div>
-                <div className="text-[11px] text-stone-500 leading-tight mt-1">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
 
           {/* Features compactos */}
           <div
