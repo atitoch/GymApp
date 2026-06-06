@@ -215,9 +215,14 @@ export const Chat: React.FC = () => {
 
       {/* Input */}
       <div
-        className="shrink-0 px-4 py-3 max-w-lg mx-auto w-full"
-        style={{ background: 'rgba(12,10,9,0.95)', borderTop: '1px solid rgba(255,255,255,0.05)' }}
+        className="shrink-0 w-full"
+        style={{
+          background: 'rgba(12,10,9,0.95)',
+          borderTop: '1px solid rgba(255,255,255,0.05)',
+          paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 12px)',
+        }}
       >
+      <div className="px-4 pt-3 max-w-lg mx-auto w-full">
         <div className="flex items-end gap-2">
           <textarea
             ref={inputRef}
@@ -239,6 +244,7 @@ export const Chat: React.FC = () => {
             {sending ? <Loader2 size={16} className="animate-spin text-stone-950" /> : <Send size={16} className="text-stone-950" />}
           </button>
         </div>
+      </div>
       </div>
     </div>
   );
