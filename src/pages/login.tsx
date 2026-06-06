@@ -14,7 +14,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/useAuth";
 import { ApiError } from "../types/api";
 import { normalizeFieldErrors } from "../utils/errorHandler";
@@ -28,8 +28,13 @@ interface FieldErrors {
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, register, loginWithGoogle, loginWithGitHub } = useAuth();
-  const [isRegistering, setIsRegistering] = useState(false);
+  // Permite abrir directamente en modo registro desde la landing
+  // (navigate("/login", { state: { register: true } }))
+  const [isRegistering, setIsRegistering] = useState(
+    Boolean((location.state as { register?: boolean } | null)?.register)
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
