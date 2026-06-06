@@ -414,7 +414,7 @@ export const Login: React.FC = () => {
       </header>
 
       {/* Panel izquierdo - Showcase atlético */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-stone-950 p-12 xl:p-16 flex-col justify-between shrink-0">
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-stone-950 p-10 xl:p-14 flex-col justify-between">
         {/* Capas de fondo: rejilla blueprint + glows + halo lima */}
         <div className="absolute inset-0 gt-grid opacity-70" />
         <div className="absolute inset-0 bg-gradient-to-br from-lime-500/[0.12] via-transparent to-transparent" />
@@ -427,7 +427,7 @@ export const Login: React.FC = () => {
 
         <div className="relative z-10">
           {/* Marca */}
-          <div className="flex items-center gap-3 mb-14 gt-rise">
+          <div className="flex items-center gap-3 mb-8 gt-rise">
             <div className="relative w-12 h-12 bg-gradient-to-br from-lime-400 to-lime-500 rounded-2xl flex items-center justify-center shadow-lg shadow-lime-500/40">
               <div className="absolute inset-0 rounded-2xl bg-lime-400 blur-lg opacity-50 gt-glow" />
               <Dumbbell className="relative w-7 h-7 text-stone-950" />
@@ -472,7 +472,7 @@ export const Login: React.FC = () => {
           </h1>
 
           <p
-            className="text-stone-400 text-lg mb-10 max-w-md leading-relaxed gt-rise"
+            className="text-stone-400 text-base mb-6 leading-relaxed gt-rise"
             style={{ animationDelay: "0.15s" }}
           >
             No es solo otra app de fitness. Es el sistema que convierte cada
@@ -483,7 +483,7 @@ export const Login: React.FC = () => {
 
           {/* Features compactos */}
           <div
-            className="space-y-3 max-w-md gt-rise"
+            className="space-y-2.5 gt-rise"
             style={{ animationDelay: "0.25s" }}
           >
             {[
@@ -521,7 +521,7 @@ export const Login: React.FC = () => {
 
         {/* Footer: racha semanal + trust */}
         <div
-          className="relative z-10 mt-10 gt-rise"
+          className="relative z-10 mt-6 gt-rise"
           style={{ animationDelay: "0.3s" }}
         >
           <div className="flex items-end justify-between rounded-2xl border border-stone-800 bg-stone-900/40 backdrop-blur-sm px-5 py-4">
