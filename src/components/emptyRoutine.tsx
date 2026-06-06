@@ -1,11 +1,21 @@
-import { AlertCircle, Dumbbell } from "lucide-react";
+import { AlertCircle, Dumbbell, Users, MessageCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { themeClasses, cn } from "../theme/constants";
 import { useColors } from "../theme";
 
-export const EmptyRoutine: React.FC<{ handleBackToSelect: () => void }> = ({
+interface EmptyRoutineProps {
+  handleBackToSelect: () => void;
+  hasCoach?: boolean;
+  coachId?: string;
+}
+
+export const EmptyRoutine: React.FC<EmptyRoutineProps> = ({
   handleBackToSelect,
+  hasCoach = false,
+  coachId,
 }) => {
   const colors = useColors();
+  const navigate = useNavigate();
 
   return (
     <div className="w-full">
@@ -39,20 +49,40 @@ export const EmptyRoutine: React.FC<{ handleBackToSelect: () => void }> = ({
             className="mb-6"
             style={{ color: colors.text.tertiary }}
           >
-            Aún no se ha configurado una rutina de entrenamiento para tu cuenta.
-            Contacta con tu coach para obtener un plan personalizado.
+            {hasCoach
+              ? "Tu coach aún no ha configurado una rutina para ti. Puedes escribirle directamente."
+              : "Aún no tienes un coach asignado. Busca uno para recibir un plan de entrenamiento personalizado."}
           </p>
         </div>
 
-        <button
-          onClick={handleBackToSelect}
-          className={cn(
-            themeClasses.buttons.primary,
-            "px-8 py-3"
+        <div className="flex flex-col gap-3">
+          {hasCoach ? (
+            <button
+              onClick={() => navigate(coachId ? `/messages/${coachId}` : '/messages')}
+              className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-stone-950 transition-all hover:brightness-110"
+              style={{ background: `linear-gradient(135deg, ${colors.primary[400]}, ${colors.primary[600]})` }}
+            >
+              <MessageCircle className="w-5 h-5" />
+              Escribirle a mi coach
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate('/coaches')}
+              className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-stone-950 transition-all hover:brightness-110"
+              style={{ background: `linear-gradient(135deg, ${colors.primary[400]}, ${colors.primary[600]})` }}
+            >
+              <Users className="w-5 h-5" />
+              Buscar un coach
+            </button>
           )}
-        >
-          ← Volver al dashboard
-        </button>
+
+          <button
+            onClick={handleBackToSelect}
+            className={cn(themeClasses.buttons.secondary, "px-6 py-3")}
+          >
+            ← Volver al dashboard
+          </button>
+        </div>
       </div>
     </div>
   );
