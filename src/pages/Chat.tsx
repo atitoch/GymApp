@@ -121,7 +121,7 @@ export const Chat: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-stone-950">
+    <div className="flex flex-col bg-stone-950" style={{ height: '100dvh', minHeight: '100vh' }}>
       {/* Header */}
       <div
         className="shrink-0"

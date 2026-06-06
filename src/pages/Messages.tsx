@@ -25,7 +25,7 @@ export const Messages: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-screen flex flex-col bg-stone-950">
+    <div className="flex flex-col bg-stone-950" style={{ height: '100dvh', minHeight: '100vh' }}>
       <div
         className="shrink-0 z-20"
         style={{
