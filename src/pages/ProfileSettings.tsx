@@ -12,9 +12,12 @@ import {
   Dumbbell,
   AlertCircle,
   Ruler,
+  Camera,
+  Palette,
 } from 'lucide-react';
 import * as profileService from '../services/profile';
 import { useAuth } from '../contexts/useAuth';
+import { useTheme } from '../theme';
 
 // ─── Types (mapeados a public.users) ─────────────────────────────────────────
 
@@ -37,6 +40,13 @@ interface UserProfile {
 }
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
+
+const ACCENT_THEMES = [
+  { id: 'default', label: 'Lima', color: '#a3e635' },
+  { id: 'coach1',  label: 'Cielo', color: '#38bdf8' },
+  { id: 'coach2',  label: 'Fucsia', color: '#e879f9' },
+  { id: 'coach3',  label: 'Naranja', color: '#fb923c' },
+];
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -296,8 +306,11 @@ function RestAdjust({
 export default function ProfileSettings() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { currentTheme, setTheme } = useTheme();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
   const [error, setError] = useState<string | null>(null);
   const [logoutConfirm, setLogoutConfirm] = useState(false);
@@ -416,6 +429,22 @@ export default function ProfileSettings() {
     }, 1000);
   };
 
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !profile) return;
+    setUploadingAvatar(true);
+    try {
+      const publicUrl = await profileService.uploadAvatar(file);
+      await profileService.updateUserProfile({ avatar_url: publicUrl });
+      setProfile({ ...profile, avatar_url: publicUrl });
+    } catch {
+      // silently ignore upload errors
+    } finally {
+      setUploadingAvatar(false);
+      if (avatarInputRef.current) avatarInputRef.current.value = '';
+    }
+  };
+
   const handleLogout = async () => {
     await logout();
   };
@@ -495,7 +524,26 @@ export default function ProfileSettings() {
         {/* Avatar */}
         {profile && (
           <div className="flex flex-col items-center gap-3 py-4">
-            <Avatar url={profile.avatar_url} name={fullName} size={88} />
+            <button
+              onClick={() => avatarInputRef.current?.click()}
+              disabled={uploadingAvatar}
+              className="relative group"
+              title="Cambiar foto"
+            >
+              <Avatar url={profile.avatar_url} name={fullName} size={88} />
+              <div className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                {uploadingAvatar
+                  ? <Loader2 size={20} className="text-white animate-spin" />
+                  : <Camera size={20} className="text-white" />}
+              </div>
+            </button>
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="hidden"
+              onChange={handleAvatarChange}
+            />
             <div className="text-center">
               <p className="text-base font-bold text-white">
                 {fullName || 'Sin nombre'}
@@ -654,6 +702,33 @@ export default function ProfileSettings() {
             </button>
           </Section>
         )}
+
+        {/* Color de acento */}
+        <Section title="Apariencia" icon={Palette}>
+          <div className="px-4 py-3 space-y-3">
+            <p className="text-sm text-stone-400">Color de acento</p>
+            <div className="flex gap-3">
+              {ACCENT_THEMES.map(({ id, label, color }) => (
+                <button
+                  key={id}
+                  onClick={() => setTheme(id)}
+                  title={label}
+                  className="flex flex-col items-center gap-1.5"
+                >
+                  <div
+                    className="w-9 h-9 rounded-full transition-all"
+                    style={{
+                      background: color,
+                      boxShadow: currentTheme.name === id ? `0 0 0 3px rgba(255,255,255,0.15), 0 0 0 2px ${color}` : 'none',
+                      transform: currentTheme.name === id ? 'scale(1.15)' : 'scale(1)',
+                    }}
+                  />
+                  <span className="text-[10px] text-stone-500">{label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </Section>
 
         <Section title="Cuenta" icon={Shield}>
           <button

@@ -1,4 +1,4 @@
-import { authenticatedGet, authenticatedPut } from '../utils/api';
+import { authenticatedGet, authenticatedPut, authenticatedPost } from '../utils/api';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -60,4 +60,17 @@ export const updateUserProfile = async (
   data: UpdateProfileData,
 ): Promise<UserProfile> => {
   return await authenticatedPut<UserProfile>(`/users/profile`, data);
+};
+
+export const getAvatarUploadUrl = async (file: File): Promise<{ upload_url: string; public_url: string }> => {
+  return authenticatedPost(`/users/avatar/upload-url`, {
+    file_name: file.name,
+    content_type: file.type,
+  });
+};
+
+export const uploadAvatar = async (file: File): Promise<string> => {
+  const { upload_url, public_url } = await getAvatarUploadUrl(file);
+  await fetch(upload_url, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } });
+  return public_url;
 };

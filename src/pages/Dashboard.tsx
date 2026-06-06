@@ -12,6 +12,7 @@ import { themeClasses, cn } from "../theme/constants";
 import { useColors } from "../theme";
 import { Dumbbell, Calendar, TrendingUp, Sparkles, ChevronRight, ChevronLeft, Users, Star } from "lucide-react";
 import { DashboardSkeleton } from "../components/DashboardSkeleton";
+import { OnboardingModal } from "../components/OnboardingModal";
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -23,6 +24,8 @@ export const Dashboard: React.FC = () => {
   const [weekOffset, setWeekOffset] = useState(0);
   const [weekLabel, setWeekLabel] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
   const [weekStats, setWeekStats] = useState<{
     completed_sessions: number;
     days_trained: number;
@@ -63,6 +66,14 @@ export const Dashboard: React.FC = () => {
       setLoading(false);
     }
   }, [user?.id, weekOffset]);
+
+  // Show onboarding if user has no first name set
+  useEffect(() => {
+    if (user && !user.name && !loading) {
+      const seen = localStorage.getItem('onboarding_done');
+      if (!seen) setShowOnboarding(true);
+    }
+  }, [user, loading]);
 
   // Coach widget loads independently — doesn't block the dashboard skeleton
   useEffect(() => {
@@ -130,6 +141,16 @@ export const Dashboard: React.FC = () => {
         "p-6"
       )}
     >
+      {showOnboarding && (
+        <OnboardingModal
+          onComplete={(name) => {
+            localStorage.setItem('onboarding_done', '1');
+            setShowOnboarding(false);
+            // Refresh page so header picks up new name
+            if (name) window.location.reload();
+          }}
+        />
+      )}
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <Header
