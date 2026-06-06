@@ -57,25 +57,19 @@ export const RoutineList: React.FC<RoutineListProps> = ({
     index: number
   ): boolean => {
     if (isCalculatedRoutine(routine)) {
-      // Primero intentar comparar por fecha (más preciso)
+      // Si hay fecha, es la fuente de verdad — no caer al fallback
       if (routine.date) {
         const today = new Date();
-        // Usar hora local para evitar problemas de zona horaria
         const year = today.getFullYear();
         const month = String(today.getMonth() + 1).padStart(2, "0");
         const day = String(today.getDate()).padStart(2, "0");
-        const todayString = `${year}-${month}-${day}`;
-        
-        if (routine.date === todayString) {
-          return true;
-        }
+        return routine.date === `${year}-${month}-${day}`;
       }
-      // Fallback: comparar por dayNumber si está disponible
+      // Fallback solo cuando no hay fecha en el objeto
       if (currentDayNumber) {
         return routine.dayNumber === currentDayNumber;
       }
     }
-    // Fallback: si no hay dayNumber, usar el primer día como "hoy"
     return index === 0;
   };
 
