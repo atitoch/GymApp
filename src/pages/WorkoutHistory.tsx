@@ -12,6 +12,7 @@ import {
   Filter,
   Star,
   Zap,
+  Download,
 } from 'lucide-react';
 import { getWorkoutHistory, getWeeklyStats } from '../services/workoutLog';
 import type { WorkoutLog } from '../types/workoutLog';
@@ -253,6 +254,30 @@ function SessionCard({ session }: { session: SessionWithDayInfo }) {
   );
 }
 
+// ─── CSV Export ──────────────────────────────────────────────────────────────
+
+function exportCSV(sessions: SessionWithDayInfo[]) {
+  const headers = ['Fecha', 'Tipo', 'Título', 'Duración (min)', 'Volumen (kg)', 'Rating', 'Energía', 'Notas'];
+  const rows = sessions.map((s) => [
+    s.workout_date,
+    s.day_name ?? '',
+    s.day_title ?? '',
+    s.duration_minutes ?? '',
+    s.total_volume ?? '',
+    s.rating ?? '',
+    s.energy_level ?? '',
+    (s.notes ?? '').replace(/,/g, ' '),
+  ]);
+  const csv = [headers, ...rows].map((r) => r.join(',')).join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `entrenamientos_${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 // ─── Weekly Bar Chart ─────────────────────────────────────────────────────────
 
 function WeeklyChart({ sessions }: { sessions: SessionWithDayInfo[] }) {
@@ -418,12 +443,21 @@ export default function WorkoutHistory() {
           >
             <ArrowLeft size={20} />
           </button>
-          <div>
+          <div className="flex-1">
             <h1 className="text-lg font-black text-white">Historial</h1>
             <p className="text-xs text-stone-500">
               {total} entrenos registrados
             </p>
           </div>
+          {sessions.length > 0 && (
+            <button
+              onClick={() => exportCSV(sessions)}
+              title="Exportar CSV"
+              className="p-2 rounded-xl text-stone-400 hover:text-lime-400 hover:bg-white/10 transition-all"
+            >
+              <Download size={18} />
+            </button>
+          )}
         </div>
       </div>
 
