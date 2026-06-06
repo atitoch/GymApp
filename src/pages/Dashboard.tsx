@@ -10,7 +10,7 @@ import { useAuth } from "../contexts/useAuth";
 import type { CalculatedDayRoutine } from "../types/routineType";
 import { themeClasses, cn } from "../theme/constants";
 import { useColors } from "../theme";
-import { Dumbbell, Calendar, TrendingUp, Sparkles, ChevronRight, ChevronLeft } from "lucide-react";
+import { Dumbbell, Calendar, TrendingUp, Sparkles, ChevronRight, ChevronLeft, Users, Star } from "lucide-react";
 import { DashboardSkeleton } from "../components/DashboardSkeleton";
 
 export const Dashboard: React.FC = () => {
@@ -359,19 +359,28 @@ export const Dashboard: React.FC = () => {
                     themeClasses.text.secondary
                   )}
                 >
-                  Pronto podrás acceder a entrenamientos personalizados
-                  diseñados especialmente para ti. Contacta con nuestros coaches
-                  certificados para obtener un plan de entrenamiento adaptado a
-                  tus objetivos y necesidades.
+                  Obtén un plan de entrenamiento personalizado con un coach certificado
+                  adaptado a tus objetivos y necesidades.
                 </p>
-                <div
-                  className="flex items-center gap-2 flex-wrap"
-                  style={{ color: colors.primary[400] }}
-                >
-                  <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm font-medium">
-                    Contacta con un coach para más información
-                  </span>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <button
+                    onClick={() => navigate('/coaches')}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold text-stone-950 transition-all hover:brightness-110"
+                    style={{ background: `linear-gradient(135deg,${colors.primary[400]},${colors.primary[600]})` }}
+                  >
+                    <Users className="w-4 h-4" />
+                    Ver coaches
+                  </button>
+                  {user?.role === 'user' && (
+                    <button
+                      onClick={() => navigate('/apply-as-coach')}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold border transition-all hover:bg-white/5"
+                      style={{ borderColor: colors.primary[500] + '40', color: colors.primary[400] }}
+                    >
+                      <Star className="w-4 h-4" />
+                      Ser coach
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

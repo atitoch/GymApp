@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../contexts/useAuth';
 import {
   ArrowLeft,
   Dumbbell,
@@ -66,6 +67,7 @@ const StatusBadge = ({ status }: { status: CoachApplication['status'] }) => {
 
 export const ApplyAsCoach: React.FC = () => {
   const navigate = useNavigate();
+  const { user, refreshAuth } = useAuth();
   const [step, setStep] = useState<Step>('loading');
   const [application, setApplication] = useState<CoachApplication | null>(null);
   const [documents, setDocuments] = useState<CoachDocument[]>([]);
@@ -372,13 +374,23 @@ export const ApplyAsCoach: React.FC = () => {
                     <p className="text-sm text-stone-400 leading-relaxed">
                       ¡Felicidades! Ya eres entrenador en GymApp.
                     </p>
-                    <Link
-                      to="/dashboard"
-                      className="inline-block px-4 py-2 rounded-xl text-sm font-bold text-stone-950"
-                      style={{ background: 'linear-gradient(135deg,#a3e635,#84cc16)' }}
-                    >
-                      Ir al dashboard
-                    </Link>
+                    {user?.role !== 'coach' ? (
+                      <button
+                        onClick={async () => { await refreshAuth(); navigate('/coach'); }}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-stone-950"
+                        style={{ background: 'linear-gradient(135deg,#a3e635,#84cc16)' }}
+                      >
+                        Activar perfil de coach
+                      </button>
+                    ) : (
+                      <Link
+                        to="/coach"
+                        className="inline-block px-4 py-2 rounded-xl text-sm font-bold text-stone-950"
+                        style={{ background: 'linear-gradient(135deg,#a3e635,#84cc16)' }}
+                      >
+                        Ir al panel de coach
+                      </Link>
+                    )}
                   </div>
                 </div>
               )}
