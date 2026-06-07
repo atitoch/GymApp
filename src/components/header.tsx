@@ -84,7 +84,7 @@ export const Header: React.FC<HeaderProps> = ({
           {showBackButton ? (
             <button
               onClick={handleBack}
-              className="w-11 h-11 shrink-0 rounded-full flex items-center justify-center text-xl font-bold transition-transform hover:scale-110"
+              className="w-11 h-11 shrink-0 rounded-full flex items-center justify-center text-xl font-bold transition-[transform] duration-150 hover:scale-105 active:scale-95"
               style={{ backgroundColor: userColor, color: colors.text.inverse }}
               title="Volver al dashboard"
             >
@@ -151,7 +151,7 @@ export const Header: React.FC<HeaderProps> = ({
         isOpen={showLogoutDialog}
         onClose={() => setShowLogoutDialog(false)}
         onConfirm={logout}
-        title="¡Gran trabajo hoy! 💪"
+        title="Cerrar sesión"
         message="¿Confirmas que deseas cerrar sesión? Nos vemos en tu próximo entrenamiento."
         confirmText="Cerrar sesión"
         cancelText="Cancelar"

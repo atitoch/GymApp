@@ -590,9 +590,9 @@ export const Login: React.FC = () => {
                     value={formData.fullName}
                     onChange={handleInputChange}
                     onBlur={handleBlur}
-                    placeholder="John Doe"
+                    placeholder="Carlos Mendoza"
                     disabled={isLoading}
-                    className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-2.5 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                    className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-2.5 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-[border-color,box-shadow,background-color] duration-150 disabled:opacity-50 disabled:cursor-not-allowed ${
                       fieldErrors.fullName && touchedFields.has("fullName")
                         ? "focus:ring-red-500/50 ring-2 ring-red-500/50 border-red-500/50"
                         : "focus:ring-lime-400/50"
@@ -620,7 +620,7 @@ export const Login: React.FC = () => {
                   placeholder="tu@email.com"
                   disabled={isLoading}
                   autoComplete="email"
-                  className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-2.5 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                  className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-2.5 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-[border-color,box-shadow,background-color] duration-150 disabled:opacity-50 disabled:cursor-not-allowed ${
                     fieldErrors.email && touchedFields.has("email")
                       ? "focus:ring-red-500/50 ring-2 ring-red-500/50 border-red-500/50"
                       : "focus:ring-lime-400/50"
@@ -650,7 +650,7 @@ export const Login: React.FC = () => {
                     autoComplete={
                       isRegistering ? "new-password" : "current-password"
                     }
-                    className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-2.5 pr-11 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                    className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-2.5 pr-11 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-[border-color,box-shadow,background-color] duration-150 disabled:opacity-50 disabled:cursor-not-allowed ${
                       fieldErrors.password && touchedFields.has("password")
                         ? "focus:ring-red-500/50 ring-2 ring-red-500/50 border-red-500/50"
                         : "focus:ring-lime-400/50"
@@ -695,7 +695,7 @@ export const Login: React.FC = () => {
                       placeholder="••••••••"
                       disabled={isLoading}
                       autoComplete="new-password"
-                      className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-2.5 pr-11 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                      className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-2.5 pr-11 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-[border-color,box-shadow,background-color] duration-150 disabled:opacity-50 disabled:cursor-not-allowed ${
                         fieldErrors.confirmPassword &&
                         touchedFields.has("confirmPassword")
                           ? "focus:ring-red-500/50 ring-2 ring-red-500/50 border-red-500/50"

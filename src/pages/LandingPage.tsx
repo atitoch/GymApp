@@ -373,7 +373,7 @@ export const LandingPage: React.FC = () => {
 
             {/* Main Headline - Más profesional y legible */}
             <h2
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-5 leading-[1.15] tracking-tight"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-5 leading-[1.15] tracking-tight text-balance"
               style={{ color: colors.text.primary }}
             >
               El seguimiento preciso que necesitas
@@ -515,7 +515,7 @@ export const LandingPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="gt-stagger grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {dailyFlow.map((step, index) => {
               const Icon = step.icon;
               return (
@@ -590,7 +590,7 @@ export const LandingPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="gt-stagger grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {solutionFeatures.map((feature, index) => {
               const Icon = feature.icon;
               return (
@@ -691,7 +691,7 @@ export const LandingPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 max-w-6xl mx-auto">
+            <div className="gt-stagger grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 max-w-6xl mx-auto">
               {benefits.map((benefit, index) => (
                 <div
                   key={index}
@@ -847,12 +847,6 @@ export const LandingPage: React.FC = () => {
                 Próximamente habrá planes de pago para coaches y usuarios
                 individuales (principalmente por almacenamiento en la nube).
               </span>
-            </p>
-            <p
-              className="text-base sm:text-lg mb-6 sm:mb-10 max-w-2xl mx-auto font-semibold"
-              style={{ color: colors.primary[400] }}
-            >
-              "Lo que no se mide, no se puede mejorar"
             </p>
             <button
               onClick={() => navigate("/login", { state: { register: true } })}

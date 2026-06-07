@@ -165,55 +165,55 @@ export const Dashboard: React.FC = () => {
         />
 
         {/* Estadísticas de la semana */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+        <div className="gt-stagger grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
           {/* Entrenos completados */}
-          <div className={cn(themeClasses.cards.base, themeClasses.cards.withShadow, "p-4 flex flex-col gap-2")}>
+          <div className={cn("bg-stone-800 rounded-xl", themeClasses.cards.withShadow, "p-4 flex flex-col gap-2")}>
             <div className="p-2 rounded-lg w-fit" style={{ backgroundColor: colors.primary[500] + "20" }}>
               <Dumbbell className="w-4 h-4" style={{ color: colors.primary[400] }} />
             </div>
             <p className={cn("text-xs font-medium leading-tight", themeClasses.text.tertiary)}>
               Entrenos completados
             </p>
-            <p className={cn("text-2xl md:text-3xl font-bold", themeClasses.text.primary)}>
+            <p className={cn("text-2xl md:text-3xl font-bold tabular-nums", themeClasses.text.primary)}>
               {completedSessions}
             </p>
           </div>
 
           {/* Días de entrenamiento */}
-          <div className={cn(themeClasses.cards.base, themeClasses.cards.withShadow, "p-4 flex flex-col gap-2")}>
+          <div className={cn("bg-stone-800 rounded-xl", themeClasses.cards.withShadow, "p-4 flex flex-col gap-2")}>
             <div className="p-2 rounded-lg w-fit" style={{ backgroundColor: colors.status.success + "20" }}>
               <Calendar className="w-4 h-4" style={{ color: colors.status.success }} />
             </div>
             <p className={cn("text-xs font-medium leading-tight", themeClasses.text.tertiary)}>
               Días entrenados
             </p>
-            <p className={cn("text-2xl md:text-3xl font-bold", themeClasses.text.primary)}>
+            <p className={cn("text-2xl md:text-3xl font-bold tabular-nums", themeClasses.text.primary)}>
               {workoutDays}
             </p>
           </div>
 
           {/* Minutos esta semana */}
-          <div className={cn(themeClasses.cards.base, themeClasses.cards.withShadow, "p-4 flex flex-col gap-2")}>
+          <div className={cn("bg-stone-800 rounded-xl", themeClasses.cards.withShadow, "p-4 flex flex-col gap-2")}>
             <div className="p-2 rounded-lg w-fit" style={{ backgroundColor: colors.secondary[500] + "20" }}>
               <TrendingUp className="w-4 h-4" style={{ color: colors.secondary[400] }} />
             </div>
             <p className={cn("text-xs font-medium leading-tight", themeClasses.text.tertiary)}>
               Minutos esta semana
             </p>
-            <p className={cn("text-2xl md:text-3xl font-bold", themeClasses.text.primary)}>
+            <p className={cn("text-2xl md:text-3xl font-bold tabular-nums", themeClasses.text.primary)}>
               {totalMinutes}
             </p>
           </div>
 
           {/* Racha actual */}
-          <div className={cn(themeClasses.cards.base, themeClasses.cards.withShadow, "p-4 flex flex-col gap-2")}>
+          <div className={cn("bg-stone-800 rounded-xl", themeClasses.cards.withShadow, "p-4 flex flex-col gap-2")}>
             <div className="p-2 rounded-lg w-fit" style={{ backgroundColor: "#f97316" + "20" }}>
               <Flame className="w-4 h-4" style={{ color: "#f97316" }} />
             </div>
             <p className={cn("text-xs font-medium leading-tight", themeClasses.text.tertiary)}>
               Racha actual
             </p>
-            <p className={cn("text-2xl md:text-3xl font-bold", themeClasses.text.primary)}>
+            <p className={cn("text-2xl md:text-3xl font-bold tabular-nums", themeClasses.text.primary)}>
               {currentStreak}
               <span className={cn("text-sm font-normal ml-1", themeClasses.text.tertiary)}>
                 {currentStreak === 1 ? "día" : "días"}

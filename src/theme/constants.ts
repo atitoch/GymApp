@@ -56,17 +56,17 @@ export const themeClasses = {
   // ===== BUTTONS =====
   buttons: {
     primary:
-      "bg-gradient-to-r from-(--color-accent-400) to-(--color-accent-500) hover:from-(--color-accent-500) hover:to-(--color-accent-600) text-stone-950 font-semibold py-2.5 rounded-lg transition-all duration-300 shadow-lg hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100",
+      "bg-gradient-to-r from-(--color-accent-400) to-(--color-accent-500) hover:from-(--color-accent-500) hover:to-(--color-accent-600) text-stone-950 font-semibold py-2.5 rounded-lg transition-[background-color,transform,box-shadow] duration-200 shadow-lg hover:scale-[1.02] active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:active:scale-100",
     secondary:
-      "bg-stone-800 hover:bg-stone-700 text-stone-300 font-medium py-2.5 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed",
+      "bg-stone-800 hover:bg-stone-700 text-stone-300 font-medium py-2.5 rounded-lg transition-[background-color,transform] duration-200 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100",
     ghost:
-      "bg-transparent hover:bg-stone-800 text-(--color-accent-400) hover:text-(--color-accent-300) font-medium py-2.5 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed",
-    icon: "p-2 bg-stone-800 hover:bg-stone-700 rounded-lg transition-colors",
+      "bg-transparent hover:bg-stone-800 text-(--color-accent-400) hover:text-(--color-accent-300) font-medium py-2.5 rounded-lg transition-[background-color,color,transform] duration-200 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100",
+    icon: "p-2 bg-stone-800 hover:bg-stone-700 rounded-lg transition-[background-color,transform] duration-150 active:scale-[0.94]",
   },
 
   // ===== INPUTS =====
   inputs: {
-    base: "w-full bg-stone-900/50 border border-stone-700 rounded-lg px-4 py-2.5 text-stone-50 placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-(--color-accent-400) focus:border-(--color-accent-400) transition-all disabled:opacity-50 disabled:cursor-not-allowed",
+    base: "w-full bg-stone-900/50 border border-stone-700 rounded-lg px-4 py-2.5 text-stone-50 placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-(--color-accent-400) focus:border-(--color-accent-400) transition-[border-color,box-shadow] duration-150 disabled:opacity-50 disabled:cursor-not-allowed",
     text: "text-sm",
   },
 
@@ -75,8 +75,8 @@ export const themeClasses = {
     base: "bg-stone-800 rounded-xl p-6",
     hover: "hover:bg-stone-700/50 transition-colors",
     interactive:
-      "bg-stone-800 hover:bg-stone-700 rounded-xl p-6 transition-all duration-300 hover:scale-105",
-    withShadow: "hover:shadow-xl hover:shadow-(--color-accent-400)/20",
+      "bg-stone-800 hover:bg-stone-700 rounded-xl p-6 transition-[transform,background-color] duration-200 hover:scale-[1.02]",
+    withShadow: "hover:shadow-md hover:shadow-(--color-accent-400)/15",
   },
 
   // ===== STATUS =====
