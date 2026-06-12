@@ -83,7 +83,13 @@ export interface MyCoachData {
 
 export const getMyCoachProfile = () =>
   authenticatedGet<{ coach: CoachProfile }>('/coach/profile').then(r => r.coach);
-export const updateMyCoachProfile = (data: Partial<CoachProfile>) => authenticatedPut<CoachProfile>('/coach/profile', data);
+
+/** Campos editables del perfil; null borra el valor en el backend */
+export type CoachProfileUpdate = {
+  [K in 'bio' | 'specialization' | 'certifications' | 'years_experience' | 'hourly_rate']?:
+    CoachProfile[K] | null;
+};
+export const updateMyCoachProfile = (data: CoachProfileUpdate) => authenticatedPut<CoachProfile>('/coach/profile', data);
 
 export const getMyClients = async (): Promise<ClientRelationship[]> => {
   const res = await authenticatedGet<{ clients: ClientRelationship[] }>('/coach/clients');
@@ -150,6 +156,54 @@ export const updateRoutineTemplate = async (routineId: string, data: Partial<Rou
 
 export const deleteRoutineTemplate = async (routineId: string): Promise<void> => {
   await authenticatedDelete(`/coach/routines/${routineId}`);
+};
+
+// ── Pagos coach ↔ cliente (solo registro, sin procesar cobros) ───────────────
+
+export type PaymentStatus = 'pending' | 'confirmed' | 'cancelled';
+
+export interface CoachPayment {
+  id: string;
+  coach_id: string;
+  user_id: string;
+  amount: number;
+  currency: string;
+  status: PaymentStatus;
+  concept?: string | null;
+  payment_date: string;
+  notes?: string | null;
+  created_at: string;
+  users?: { id: string; first_name?: string; last_name?: string; email: string };
+}
+
+export const getClientPayments = async (userId: string): Promise<CoachPayment[]> => {
+  const res = await authenticatedGet<{ payments: CoachPayment[] }>(`/coach/clients/${userId}/payments`);
+  return res.payments ?? [];
+};
+
+export const getAllMyPayments = async (): Promise<CoachPayment[]> => {
+  const res = await authenticatedGet<{ payments: CoachPayment[] }>('/coach/payments');
+  return res.payments ?? [];
+};
+
+export const createPayment = async (
+  userId: string,
+  data: { amount: number; status?: PaymentStatus; concept?: string; payment_date?: string; notes?: string; currency?: string },
+): Promise<CoachPayment> => {
+  const res = await authenticatedPost<{ payment: CoachPayment }>(`/coach/clients/${userId}/payments`, data);
+  return res.payment;
+};
+
+export const updatePayment = async (
+  paymentId: string,
+  data: Partial<{ amount: number; status: PaymentStatus; concept: string; payment_date: string; notes: string }>,
+): Promise<CoachPayment> => {
+  const res = await authenticatedPut<{ payment: CoachPayment }>(`/coach/payments/${paymentId}`, data);
+  return res.payment;
+};
+
+export const deletePayment = async (paymentId: string): Promise<void> => {
+  await authenticatedDelete(`/coach/payments/${paymentId}`);
 };
 
 export const getMyCoach = () => authenticatedGet<MyCoachData>('/coaches/my-coach');

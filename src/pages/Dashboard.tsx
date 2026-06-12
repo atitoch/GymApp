@@ -115,7 +115,22 @@ export const Dashboard: React.FC = () => {
     return <DashboardSkeleton />;
   }
 
-  // Si no hay rutinas para este usuario
+  const coachProfileBanner = coachProfileIncomplete && (
+    <button
+      onClick={() => navigate('/coach/edit-profile')}
+      className="w-full mb-6 flex items-center gap-3 bg-amber-400/10 border border-amber-400/30 hover:border-amber-400/60 hover:bg-amber-400/15 rounded-xl p-4 text-left transition-all group"
+    >
+      <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold text-amber-300">Completa tu perfil para aparecer en el directorio</p>
+        <p className="text-xs text-amber-400/70 mt-0.5">Agrega tu bio y especialización para que los usuarios puedan encontrarte</p>
+      </div>
+      <ChevronRight className="w-4 h-4 text-amber-400/60 group-hover:text-amber-400 transition-colors shrink-0" />
+    </button>
+  );
+
+  // Si no hay rutinas para este usuario (un coach sin rutina propia cae aquí:
+  // el banner también debe mostrarse en esta rama)
   if (!routines || routines.length === 0) {
     return (
       <div
@@ -130,6 +145,7 @@ export const Dashboard: React.FC = () => {
             handleBackToSelect={handleBackToDashboard}
             showBackButton={false}
           />
+          {coachProfileBanner}
           <div className="flex-1 flex items-center justify-center">
             <EmptyRoutine
               handleBackToSelect={handleBackToDashboard}
@@ -172,19 +188,7 @@ export const Dashboard: React.FC = () => {
           showBackButton={false}
         />
 
-        {coachProfileIncomplete && (
-          <button
-            onClick={() => navigate('/coach/edit-profile')}
-            className="w-full mb-6 flex items-center gap-3 bg-amber-400/10 border border-amber-400/30 hover:border-amber-400/60 hover:bg-amber-400/15 rounded-xl p-4 text-left transition-all group"
-          >
-            <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-amber-300">Completa tu perfil para aparecer en el directorio</p>
-              <p className="text-xs text-amber-400/70 mt-0.5">Agrega tu bio y especialización para que los usuarios puedan encontrarte</p>
-            </div>
-            <ChevronRight className="w-4 h-4 text-amber-400/60 group-hover:text-amber-400 transition-colors shrink-0" />
-          </button>
-        )}
+        {coachProfileBanner}
 
         {/* Estadísticas de la semana */}
         <div className="gt-stagger grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
