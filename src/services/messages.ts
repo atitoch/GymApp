@@ -61,8 +61,11 @@ export const subscribeToMessages = (
   let channel: ReturnType<typeof supabase.channel> | null = null;
 
   try {
+    // Nombre único por suscripción: el Header y el Chat se suscriben a la vez
+    // y dos canales con el mismo topic en el mismo socket chocan (solo uno
+    // recibe eventos).
     channel = supabase
-      .channel('my-messages')
+      .channel(`my-messages-${Math.random().toString(36).slice(2)}`)
       .on(
         'postgres_changes',
         {
