@@ -39,18 +39,10 @@ export const Dashboard: React.FC = () => {
 
     setLoading(true);
     try {
-      const promises: Promise<any>[] = [
+      const [result, stats] = await Promise.allSettled([
         fetchUserRoutines(user.id, 7, weekOffset),
         getWeeklyStats(),
-      ];
-      if (user.role === 'coach') promises.push(getMyCoachProfile().catch(() => null));
-
-      const [result, stats, coachProf] = await Promise.allSettled(promises);
-
-      if (user.role === 'coach') {
-        const prof = coachProf?.status === 'fulfilled' ? coachProf.value : null;
-        setCoachProfileIncomplete(!prof?.bio?.trim() || !prof?.specialization?.trim());
-      }
+      ]);
 
       if (result.status === 'fulfilled' && result.value?.routines?.length > 0) {
         setRoutines(result.value.routines);
@@ -91,6 +83,14 @@ export const Dashboard: React.FC = () => {
       .then(setMyCoachData)
       .catch(() => {}); // silent — widget stays hidden if it fails
   }, [user?.id]);
+
+  // Verifica perfil del coach incompleto — depende de role que carga async
+  useEffect(() => {
+    if (user?.role !== 'coach') return;
+    getMyCoachProfile()
+      .then(prof => setCoachProfileIncomplete(!prof?.bio?.trim() || !prof?.specialization?.trim()))
+      .catch(() => setCoachProfileIncomplete(true));
+  }, [user?.role]);
 
   useEffect(() => {
     loadRoutines();
