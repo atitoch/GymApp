@@ -17,6 +17,8 @@ import { AdminRoute } from './components/AdminRoute';
 import { CoachRoute } from './components/CoachRoute';
 import { CoachDashboard } from './pages/coach/index';
 import { ClientDetail } from './pages/coach/ClientDetail';
+import { CoachClients } from './pages/coach/Clients';
+import { CoachRequests } from './pages/coach/Requests';
 import { CoachRoutines } from './pages/coach/Routines';
 import { RoutineEditor } from './pages/coach/RoutineEditor';
 import { CoachProfileEditor } from './pages/coach/ProfileEditor';
@@ -30,6 +32,7 @@ import { AdminApplications } from './pages/admin/Applications';
 import { AdminCoaches } from './pages/admin/Coaches';
 import { AdminUsers } from './pages/admin/Users';
 import { AdminSystemHealth } from './pages/admin/SystemHealth';
+import { AdminDocuments } from './pages/admin/Documents';
 import { ApplyAsCoach } from './pages/ApplyAsCoach';
 import { Messages } from './pages/Messages';
 import { Chat } from './pages/Chat';
@@ -93,6 +96,8 @@ const App = () => {
         <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
         <Route path="/messages/:partnerId" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
         <Route path="/coach" element={<CoachRoute><CoachDashboard /></CoachRoute>} />
+        <Route path="/coach/clients" element={<CoachRoute><CoachClients /></CoachRoute>} />
+        <Route path="/coach/requests" element={<CoachRoute><CoachRequests /></CoachRoute>} />
         <Route path="/coach/clients/:userId" element={<CoachRoute><ClientDetail /></CoachRoute>} />
         <Route path="/coach/edit-profile" element={<CoachRoute><CoachProfileEditor /></CoachRoute>} />
         <Route path="/coach/routines" element={<CoachRoute><CoachRoutines /></CoachRoute>} />
@@ -106,6 +111,7 @@ const App = () => {
         <Route path="/admin/coaches" element={<AdminRoute><AdminCoaches /></AdminRoute>} />
         <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
         <Route path="/admin/system" element={<AdminRoute><AdminSystemHealth /></AdminRoute>} />
+        <Route path="/admin/documents" element={<AdminRoute><AdminDocuments /></AdminRoute>} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
         <Route path="/auth/callback" element={<AuthCallback />} />

@@ -69,7 +69,7 @@ export const Header: React.FC<HeaderProps> = ({
     ...(showBackButton ? [{ icon: Home, label: 'Dashboard', action: () => navigate('/dashboard') }] : []),
     { icon: History, label: 'Historial', action: () => navigate('/history') },
     { icon: User, label: 'Perfil', action: () => navigate('/profile') },
-    ...(authUser?.role === 'coach' ? [{ icon: Users2, label: 'Mis clientes', action: () => navigate('/coach') }] : []),
+    ...(authUser?.role === 'coach' ? [{ icon: Users2, label: 'Panel de coach', action: () => navigate('/coach') }] : []),
     ...(authUser?.role === 'user' ? [{ icon: UserCheck, label: 'Mi Coach', action: () => navigate('/my-coach') }] : []),
     ...(authUser?.role === 'admin' ? [{ icon: ShieldCheck, label: 'Admin', action: () => navigate('/admin') }] : []),
     { icon: MessageSquare, label: 'Mensajes', action: () => navigate('/messages'), badge: unread > 0 ? unread : undefined },

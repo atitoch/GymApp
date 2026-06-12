@@ -15,6 +15,7 @@ import {
   Camera,
 } from 'lucide-react';
 import * as profileService from '../services/profile';
+import { getMyCoachProfile, type CoachProfile } from '../services/coachDashboard';
 import { useAuth } from '../contexts/useAuth';
 // import { useTheme } from '../theme'; // pendiente reimplementación selector de color
 
@@ -314,6 +315,7 @@ export default function ProfileSettings() {
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
   const [error, setError] = useState<string | null>(null);
   const [logoutConfirm, setLogoutConfirm] = useState(false);
+  const [coachProfile, setCoachProfile] = useState<CoachProfile | null>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const statusTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mountedRef = useRef(true);
@@ -326,6 +328,14 @@ export default function ProfileSettings() {
       if (statusTimeoutRef.current) clearTimeout(statusTimeoutRef.current);
     };
   }, []);
+
+  // Si es coach, cargar su perfil de entrenador para mostrarlo aquí mismo
+  useEffect(() => {
+    if (user?.role !== 'coach') return;
+    getMyCoachProfile()
+      .then((p) => { if (mountedRef.current) setCoachProfile(p); })
+      .catch(() => {});
+  }, [user?.role]);
 
   useEffect(() => {
     async function load() {
@@ -698,6 +708,50 @@ export default function ProfileSettings() {
                   <p className="text-xs text-yellow-400">Solicitud pendiente</p>
                 )}
               </div>
+              <ChevronRight size={14} className="text-stone-600" />
+            </button>
+          </Section>
+        )}
+
+        {user?.role === 'coach' && (
+          <Section title="Mi perfil de entrenador" icon={Dumbbell}>
+            <div className="px-4 py-3 space-y-1">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-medium text-stone-300 flex-1">
+                  {coachProfile?.specialization || 'Sin especialización'}
+                </p>
+                {coachProfile && (!coachProfile.bio?.trim() || !coachProfile.specialization?.trim()) && (
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/30">
+                    Incompleto
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-stone-500 line-clamp-2">
+                {coachProfile?.bio || 'Agrega una biografía para que tus clientes te conozcan.'}
+              </p>
+              {coachProfile?.years_experience != null && (
+                <p className="text-xs text-stone-600">
+                  {coachProfile.years_experience} años de experiencia
+                  {coachProfile.hourly_rate != null && ` · $${coachProfile.hourly_rate}/hora`}
+                </p>
+              )}
+            </div>
+            <Divider />
+            <button
+              onClick={() => navigate('/coach/edit-profile')}
+              className="w-full px-4 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors text-left"
+            >
+              <User size={16} className="text-lime-400" />
+              <p className="flex-1 text-sm font-medium text-stone-300">Editar perfil de entrenador</p>
+              <ChevronRight size={14} className="text-stone-600" />
+            </button>
+            <Divider />
+            <button
+              onClick={() => navigate('/coach')}
+              className="w-full px-4 py-3 flex items-center gap-3 hover:bg-white/5 transition-colors text-left"
+            >
+              <Dumbbell size={16} className="text-lime-400" />
+              <p className="flex-1 text-sm font-medium text-stone-300">Ir al panel de coach</p>
               <ChevronRight size={14} className="text-stone-600" />
             </button>
           </Section>

@@ -116,20 +116,26 @@ export const CoachDashboard: React.FC = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <div className="bg-stone-900 border border-stone-800 rounded-xl p-4 flex sm:flex-col items-center sm:text-center gap-3 sm:gap-0">
+        <button
+          onClick={() => navigate('/coach/clients')}
+          className="bg-stone-900 border border-stone-800 rounded-xl p-4 flex sm:flex-col items-center sm:text-center gap-3 sm:gap-0 hover:border-(--color-accent-400)/40 transition-colors w-full text-left sm:text-center"
+        >
           <Users className="w-6 h-6 text-(--color-accent-400) shrink-0 sm:mx-auto sm:mb-2" />
           <div className="flex sm:flex-col items-baseline gap-2 sm:gap-0">
             <p className="text-2xl font-bold">{clients.length}</p>
             <p className="text-stone-400 text-sm">Clientes activos</p>
           </div>
-        </div>
-        <div className="bg-stone-900 border border-stone-800 rounded-xl p-4 flex sm:flex-col items-center sm:text-center gap-3 sm:gap-0">
+        </button>
+        <button
+          onClick={() => navigate('/coach/requests')}
+          className="bg-stone-900 border border-stone-800 rounded-xl p-4 flex sm:flex-col items-center sm:text-center gap-3 sm:gap-0 hover:border-yellow-400/40 transition-colors w-full text-left sm:text-center"
+        >
           <Clock className="w-6 h-6 text-yellow-400 shrink-0 sm:mx-auto sm:mb-2" />
           <div className="flex sm:flex-col items-baseline gap-2 sm:gap-0">
             <p className="text-2xl font-bold">{pendingRequests.length}</p>
             <p className="text-stone-400 text-sm">Solicitudes pendientes</p>
           </div>
-        </div>
+        </button>
         <button
           onClick={() => navigate('/coach/routines')}
           className="bg-stone-900 border border-stone-800 rounded-xl p-4 flex sm:flex-col items-center sm:text-center gap-3 sm:gap-0 hover:border-(--color-accent-400)/40 transition-colors w-full text-left sm:text-center"
