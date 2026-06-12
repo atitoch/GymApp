@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Plus, Trash2, Loader2, ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Loader2, ChevronDown, ChevronUp, GripVertical, Moon } from 'lucide-react';
 import {
   createRoutineTemplate,
   updateRoutineTemplate,
@@ -15,6 +15,9 @@ import {
 const emptyExercise = (): ExerciseInput => ({ name: '', sets: '3', reps: '10', rpe: '7', rest: '60s', notes: '' });
 const emptySection = (): SectionInput => ({ title: 'Serie', exercises: [emptyExercise()] });
 const emptyDay = (): DayRoutineInput => ({ dayName: 'DÍA', title: 'Entrenamiento', warmup: [], sections: [emptySection()], cooldown: [] });
+// El backend marca is_rest_day cuando dayName incluye "descanso"
+const restDay = (): DayRoutineInput => ({ dayName: 'DESCANSO', title: 'Descanso', warmup: [], sections: [], cooldown: [] });
+const isRestDay = (d: DayRoutineInput) => d.dayName.toLowerCase().includes('descanso') || d.dayName.toLowerCase().includes('rest');
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
@@ -185,6 +188,7 @@ function DayEditor({
       >
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <span className="text-xs font-bold text-stone-500">Día {index + 1}</span>
+          {isRestDay(day) && <Moon size={13} className="text-sky-400 shrink-0" />}
           <input
             value={day.dayName}
             onClick={(e) => e.stopPropagation()}
@@ -211,7 +215,14 @@ function DayEditor({
         </div>
       </div>
 
-      {open && (
+      {open && isRestDay(day) && (
+        <div className="p-4 bg-stone-950/50 flex items-center gap-3 text-sm text-stone-400">
+          <Moon size={16} className="text-sky-400 shrink-0" />
+          Día de descanso — sin ejercicios. Cambia el nombre del día si quieres convertirlo en entrenamiento.
+        </div>
+      )}
+
+      {open && !isRestDay(day) && (
         <div className="p-4 space-y-4 bg-stone-950/50">
           {/* Calentamiento */}
           <StringListEditor
@@ -378,14 +389,22 @@ export const RoutineEditor: React.FC = () => {
 
         {/* Days */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3">
             <p className="text-xs font-bold uppercase tracking-widest text-stone-500">Días ({days.length})</p>
-            <button
-              onClick={() => setDays((prev) => [...prev, emptyDay()])}
-              className="flex items-center gap-1.5 text-xs text-stone-500 hover:text-lime-400 transition-colors"
-            >
-              <Plus size={13} /> Agregar día
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setDays((prev) => [...prev, restDay()])}
+                className="flex items-center gap-1.5 text-xs text-stone-500 hover:text-sky-400 transition-colors"
+              >
+                <Moon size={13} /> Agregar descanso
+              </button>
+              <button
+                onClick={() => setDays((prev) => [...prev, emptyDay()])}
+                className="flex items-center gap-1.5 text-xs text-stone-500 hover:text-lime-400 transition-colors"
+              >
+                <Plus size={13} /> Agregar día
+              </button>
+            </div>
           </div>
           {days.map((day, i) => (
             <DayEditor

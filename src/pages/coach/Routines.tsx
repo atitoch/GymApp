@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Dumbbell, Pencil, Trash2, Loader2 } from 'lucide-react';
-import { getMyRoutines, deleteRoutineTemplate, type CoachRoutine } from '../../services/coachDashboard';
+import { ArrowLeft, Plus, Dumbbell, Pencil, Trash2, Loader2, UserPlus, Check } from 'lucide-react';
+import { getMyRoutines, deleteRoutineTemplate, assignRoutine, type CoachRoutine } from '../../services/coachDashboard';
+import { useAuth } from '../../contexts/useAuth';
 
 export const CoachRoutines: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [routines, setRoutines] = useState<CoachRoutine[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [confirmSelfAssignId, setConfirmSelfAssignId] = useState<string | null>(null);
+  const [selfAssigningId, setSelfAssigningId] = useState<string | null>(null);
+  const [selfAssignedId, setSelfAssignedId] = useState<string | null>(null);
 
   useEffect(() => {
     getMyRoutines().then(setRoutines).finally(() => setLoading(false));
@@ -22,6 +27,20 @@ export const CoachRoutines: React.FC = () => {
       setConfirmDeleteId(null);
     } catch {} finally {
       setDeletingId(null);
+    }
+  };
+
+  // El coach también entrena: se asigna la plantilla a sí mismo como cualquier cliente
+  const handleSelfAssign = async (id: string) => {
+    if (!user?.id) return;
+    setSelfAssigningId(id);
+    try {
+      await assignRoutine(user.id, id, 'monday');
+      setSelfAssignedId(id);
+      setConfirmSelfAssignId(null);
+      setTimeout(() => setSelfAssignedId(null), 3000);
+    } catch {} finally {
+      setSelfAssigningId(null);
     }
   };
 
@@ -80,6 +99,13 @@ export const CoachRoutines: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
                     <button
+                      onClick={() => { setConfirmSelfAssignId(r.id); setConfirmDeleteId(null); }}
+                      className="p-2 rounded-lg text-stone-400 hover:text-sky-400 hover:bg-stone-800 transition-all"
+                      title="Asignármela a mí"
+                    >
+                      {selfAssignedId === r.id ? <Check size={15} className="text-lime-400" /> : <UserPlus size={15} />}
+                    </button>
+                    <button
                       onClick={() => navigate(`/coach/routines/${r.id}/edit`)}
                       className="p-2 rounded-lg text-stone-400 hover:text-lime-400 hover:bg-stone-800 transition-all"
                       title="Editar"
@@ -87,7 +113,7 @@ export const CoachRoutines: React.FC = () => {
                       <Pencil size={15} />
                     </button>
                     <button
-                      onClick={() => setConfirmDeleteId(r.id)}
+                      onClick={() => { setConfirmDeleteId(r.id); setConfirmSelfAssignId(null); }}
                       className="p-2 rounded-lg text-stone-400 hover:text-red-400 hover:bg-stone-800 transition-all"
                       title="Borrar"
                     >
@@ -95,6 +121,24 @@ export const CoachRoutines: React.FC = () => {
                     </button>
                   </div>
                 </div>
+                {selfAssignedId === r.id && (
+                  <p className="mt-2 text-xs text-lime-400">Rutina asignada a tu cuenta. La verás en tu dashboard a partir del lunes.</p>
+                )}
+                {confirmSelfAssignId === r.id && (
+                  <div className="mt-3 flex items-center gap-2 text-sm border-t border-stone-800 pt-3">
+                    <span className="text-stone-400 flex-1">¿Asignarte esta rutina? Reemplaza tu rutina actual.</span>
+                    <button
+                      onClick={() => handleSelfAssign(r.id)}
+                      disabled={selfAssigningId === r.id}
+                      className="px-3 py-1 rounded-lg bg-sky-500 text-white font-bold text-xs hover:bg-sky-400 disabled:opacity-50"
+                    >
+                      {selfAssigningId === r.id ? <Loader2 size={12} className="animate-spin" /> : 'Asignármela'}
+                    </button>
+                    <button onClick={() => setConfirmSelfAssignId(null)} className="px-3 py-1 rounded-lg bg-stone-800 text-stone-300 text-xs hover:bg-stone-700">
+                      Cancelar
+                    </button>
+                  </div>
+                )}
                 {confirmDeleteId === r.id && (
                   <div className="mt-3 flex items-center gap-2 text-sm border-t border-stone-800 pt-3">
                     <span className="text-stone-400 flex-1">¿Borrar esta plantilla?</span>
