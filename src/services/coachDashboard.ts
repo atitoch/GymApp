@@ -81,7 +81,8 @@ export interface MyCoachData {
   assigned_routine: { id: string; name: string; total_days?: number; is_cyclic: boolean } | null;
 }
 
-export const getMyCoachProfile = () => authenticatedGet<CoachProfile>('/coach/profile');
+export const getMyCoachProfile = () =>
+  authenticatedGet<{ coach: CoachProfile }>('/coach/profile').then(r => r.coach);
 export const updateMyCoachProfile = (data: Partial<CoachProfile>) => authenticatedPut<CoachProfile>('/coach/profile', data);
 
 export const getMyClients = async (): Promise<ClientRelationship[]> => {
