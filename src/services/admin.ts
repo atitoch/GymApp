@@ -69,6 +69,33 @@ export const approveApplication = (id: string) =>
   authenticatedPost<CoachApplication>(`/admin/applications/${id}/approve`, {});
 export const rejectApplication = (id: string, reason: string) =>
   authenticatedPost<CoachApplication>(`/admin/applications/${id}/reject`, { reason });
+// ── Documentos de certificación de coaches ────────────────────────────────────
+
+export interface AdminCoachDocument {
+  id: string;
+  application_id: string | null;
+  coach_id: string | null;
+  document_type: string;
+  file_url: string;
+  file_name?: string;
+  label?: string | null;
+  status: 'pending' | 'approved' | 'rejected';
+  rejection_reason?: string | null;
+  uploaded_at: string;
+  owner?: { id: string; first_name?: string; last_name?: string; email: string } | null;
+}
+
+export const getAdminDocuments = async (status: string = 'pending'): Promise<AdminCoachDocument[]> => {
+  const res = await authenticatedGet<{ documents: AdminCoachDocument[] }>(`/admin/documents?status=${status}`);
+  return res.documents ?? [];
+};
+
+export const approveDocument = (id: string) =>
+  authenticatedPost<{ document: AdminCoachDocument }>(`/admin/documents/${id}/approve`, {});
+
+export const rejectDocument = (id: string, reason: string) =>
+  authenticatedPost<{ document: AdminCoachDocument }>(`/admin/documents/${id}/reject`, { reason });
+
 export const getSystemHealth = () => authenticatedGet<SystemHealth>('/admin/health');
 export const getAuthEvents = (params?: { event_type?: string; email?: string; limit?: number; page?: number }) => {
   const qs = new URLSearchParams();

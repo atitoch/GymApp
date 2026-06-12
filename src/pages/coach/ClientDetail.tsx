@@ -3,17 +3,27 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft, Star, MessageSquare, Dumbbell, Pencil, Trash2,
   Loader2, X, Check, Send, UserMinus, Calendar, TrendingUp,
-  Lock, Plus, Clock, Activity,
+  Lock, Plus, Clock, Activity, DollarSign,
 } from 'lucide-react';
 import {
   getClientDetail, addComment, getClientComments, updateComment,
   deleteComment, disconnectClient, getMyRoutines, assignRoutine,
-  type CoachComment, type CoachRoutine,
+  getClientPayments, createPayment, updatePayment, deletePayment,
+  type CoachComment, type CoachRoutine, type CoachPayment, type PaymentStatus,
 } from '../../services/coachDashboard';
 
 const COMMENT_TYPES = ['general', 'nutrition', 'training', 'progress', 'motivation', 'technique'] as const;
 type CommentType = typeof COMMENT_TYPES[number];
-type Tab = 'actividad' | 'notas' | 'rutina';
+type Tab = 'actividad' | 'notas' | 'rutina' | 'pagos';
+
+const PAYMENT_STATUS_META: Record<PaymentStatus, { label: string; cls: string }> = {
+  pending:   { label: 'Pendiente',  cls: 'bg-yellow-400/10 text-yellow-400 border border-yellow-400/30' },
+  confirmed: { label: 'Confirmado', cls: 'bg-lime-400/10 text-lime-400 border border-lime-400/30' },
+  cancelled: { label: 'Cancelado',  cls: 'bg-red-400/10 text-red-400 border border-red-400/30' },
+};
+
+const fmtMoney = (amount: number, currency = 'MXN') =>
+  new Intl.NumberFormat('es-MX', { style: 'currency', currency }).format(amount);
 
 const TYPE_LABELS: Record<CommentType, string> = {
   general: 'General', nutrition: 'Nutrición', training: 'Entrenamiento',
@@ -79,16 +89,72 @@ export const ClientDetail: React.FC = () => {
   const [confirmDisconnect, setConfirmDisconnect] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
 
+  // Payments
+  const [payments, setPayments] = useState<CoachPayment[]>([]);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [payAmount, setPayAmount] = useState('');
+  const [payConcept, setPayConcept] = useState('');
+  const [payDate, setPayDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [payStatus, setPayStatus] = useState<PaymentStatus>('confirmed');
+  const [payNotes, setPayNotes] = useState('');
+  const [savingPayment, setSavingPayment] = useState(false);
+  const [paymentActingId, setPaymentActingId] = useState<string | null>(null);
+  const [confirmDeletePaymentId, setConfirmDeletePaymentId] = useState<string | null>(null);
+
   useEffect(() => {
     if (!userId) return;
-    Promise.all([getClientDetail(userId), getClientComments(userId), getMyRoutines()])
-      .then(([detail, c, r]) => {
+    Promise.all([
+      getClientDetail(userId),
+      getClientComments(userId),
+      getMyRoutines(),
+      getClientPayments(userId).catch(() => []),
+    ])
+      .then(([detail, c, r, p]) => {
         setClientData(detail);
         setComments(c ?? []);
         setRoutines(r ?? []);
+        setPayments(p ?? []);
       })
       .finally(() => setLoading(false));
   }, [userId]);
+
+  const handleAddPayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userId || !payAmount || Number(payAmount) <= 0) return;
+    setSavingPayment(true);
+    try {
+      const created = await createPayment(userId, {
+        amount: Number(payAmount),
+        status: payStatus,
+        concept: payConcept.trim() || undefined,
+        payment_date: payDate,
+        notes: payNotes.trim() || undefined,
+      });
+      setPayments(prev => [created, ...prev]);
+      setPayAmount('');
+      setPayConcept('');
+      setPayNotes('');
+      setPayStatus('confirmed');
+      setShowPaymentForm(false);
+    } catch {} finally { setSavingPayment(false); }
+  };
+
+  const handlePaymentStatus = async (id: string, status: PaymentStatus) => {
+    setPaymentActingId(id);
+    try {
+      const updated = await updatePayment(id, { status });
+      setPayments(prev => prev.map(p => p.id === id ? { ...p, ...updated } : p));
+    } catch {} finally { setPaymentActingId(null); }
+  };
+
+  const handleDeletePayment = async (id: string) => {
+    setPaymentActingId(id);
+    try {
+      await deletePayment(id);
+      setPayments(prev => prev.filter(p => p.id !== id));
+      setConfirmDeletePaymentId(null);
+    } catch {} finally { setPaymentActingId(null); }
+  };
 
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -175,7 +241,15 @@ export const ClientDetail: React.FC = () => {
     { id: 'actividad', label: 'Actividad',  icon: <Activity size={15} />,    count: workouts.length },
     { id: 'notas',     label: 'Notas',      icon: <MessageSquare size={15} />, count: comments.length },
     { id: 'rutina',    label: 'Rutina',     icon: <Dumbbell size={15} /> },
+    { id: 'pagos',     label: 'Pagos',      icon: <DollarSign size={15} />,  count: payments.length },
   ];
+
+  const confirmedTotal = payments
+    .filter(p => p.status === 'confirmed')
+    .reduce((acc, p) => acc + Number(p.amount), 0);
+  const pendingTotal = payments
+    .filter(p => p.status === 'pending')
+    .reduce((acc, p) => acc + Number(p.amount), 0);
 
   return (
     <div className="min-h-screen bg-stone-950 text-white">
@@ -549,6 +623,178 @@ export const ClientDetail: React.FC = () => {
                 </button>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* ── PAGOS ── */}
+        {activeTab === 'pagos' && (
+          <div className="space-y-5">
+            {/* Resumen */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-stone-900 border border-stone-800 rounded-2xl p-4">
+                <p className="text-xs text-stone-500 mb-1">Confirmado</p>
+                <p className="text-xl font-bold text-lime-400 tabular-nums">{fmtMoney(confirmedTotal)}</p>
+              </div>
+              <div className="bg-stone-900 border border-stone-800 rounded-2xl p-4">
+                <p className="text-xs text-stone-500 mb-1">Pendiente</p>
+                <p className="text-xl font-bold text-yellow-400 tabular-nums">{fmtMoney(pendingTotal)}</p>
+              </div>
+            </div>
+
+            {/* Registrar pago */}
+            {!showPaymentForm ? (
+              <button
+                onClick={() => setShowPaymentForm(true)}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border-2 border-dashed border-stone-700 text-stone-400 hover:border-(--color-accent-400)/50 hover:text-(--color-accent-400) transition-all text-sm font-medium"
+              >
+                <Plus size={16} />
+                Registrar pago
+              </button>
+            ) : (
+              <form onSubmit={handleAddPayment} className="bg-stone-900 border border-stone-800 rounded-2xl p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-stone-200">Nuevo pago</p>
+                  <button type="button" onClick={() => setShowPaymentForm(false)} className="p-1 text-stone-500 hover:text-white transition-colors">
+                    <X size={15} />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-xs text-stone-500 mb-1">Monto (MXN) *</p>
+                    <input
+                      type="number" min="1" step="0.01" required
+                      value={payAmount}
+                      onChange={e => setPayAmount(e.target.value)}
+                      placeholder="500"
+                      className="w-full bg-stone-800 border border-stone-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-(--color-accent-400) transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <p className="text-xs text-stone-500 mb-1">Fecha</p>
+                    <input
+                      type="date"
+                      value={payDate}
+                      onChange={e => setPayDate(e.target.value)}
+                      className="w-full bg-stone-800 border border-stone-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-(--color-accent-400) transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-xs text-stone-500 mb-1">Concepto</p>
+                  <input
+                    value={payConcept}
+                    onChange={e => setPayConcept(e.target.value)}
+                    placeholder="Ej. Mensualidad junio"
+                    className="w-full bg-stone-800 border border-stone-700 rounded-xl px-3 py-2 text-sm text-white placeholder-stone-600 focus:outline-none focus:border-(--color-accent-400) transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <p className="text-xs text-stone-500 mb-2">Estado</p>
+                  <div className="flex gap-2">
+                    {(Object.keys(PAYMENT_STATUS_META) as PaymentStatus[]).map(s => (
+                      <button
+                        key={s} type="button"
+                        onClick={() => setPayStatus(s)}
+                        className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
+                          payStatus === s ? PAYMENT_STATUS_META[s].cls : 'bg-stone-800 text-stone-500 hover:bg-stone-700'
+                        }`}
+                      >
+                        {PAYMENT_STATUS_META[s].label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <input
+                  value={payNotes}
+                  onChange={e => setPayNotes(e.target.value)}
+                  placeholder="Notas (opcional)"
+                  className="w-full bg-stone-800 border border-stone-700 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-600 focus:outline-none focus:border-(--color-accent-400) transition-colors"
+                />
+
+                <button
+                  type="submit"
+                  disabled={savingPayment || !payAmount || Number(payAmount) <= 0}
+                  className="w-full py-2.5 font-bold text-sm text-stone-950 rounded-xl disabled:opacity-40 transition-all hover:brightness-110"
+                  style={{ background: 'linear-gradient(135deg,var(--color-accent-400),var(--color-accent-500))' }}
+                >
+                  {savingPayment ? 'Guardando...' : 'Registrar pago'}
+                </button>
+              </form>
+            )}
+
+            {/* Historial */}
+            {payments.length === 0 ? (
+              <div className="bg-stone-900 border border-stone-800 rounded-2xl p-8 text-center">
+                <DollarSign size={28} className="text-stone-700 mx-auto mb-3" />
+                <p className="text-stone-400 text-sm">Sin pagos registrados todavía.</p>
+                <p className="text-stone-600 text-xs mt-1">Aquí solo se lleva el registro; los cobros se hacen fuera de la app.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <p className="text-xs font-semibold uppercase tracking-widest text-stone-500">
+                  {payments.length} pago{payments.length !== 1 ? 's' : ''}
+                </p>
+                {payments.map(p => (
+                  <div key={p.id} className="bg-stone-900 border border-stone-800 rounded-2xl p-4">
+                    <div className="flex items-center gap-2">
+                      <p className="font-bold text-white tabular-nums">{fmtMoney(Number(p.amount), p.currency)}</p>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${PAYMENT_STATUS_META[p.status]?.cls ?? ''}`}>
+                        {PAYMENT_STATUS_META[p.status]?.label ?? p.status}
+                      </span>
+                      <span className="text-xs text-stone-600 ml-auto">{fmtDate(p.payment_date)}</span>
+                      <button
+                        onClick={() => setConfirmDeletePaymentId(p.id)}
+                        className="p-1 rounded-lg text-stone-600 hover:text-red-400 transition-colors"
+                        title="Eliminar"
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
+                    {p.concept && <p className="text-sm text-stone-300 mt-1.5">{p.concept}</p>}
+                    {p.notes && <p className="text-xs text-stone-500 mt-1">{p.notes}</p>}
+
+                    {p.status === 'pending' && (
+                      <div className="mt-3 flex gap-2 pt-3 border-t border-stone-800">
+                        <button
+                          onClick={() => handlePaymentStatus(p.id, 'confirmed')}
+                          disabled={paymentActingId === p.id}
+                          className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-lime-400 text-stone-950 text-xs font-bold hover:bg-lime-300 disabled:opacity-50 transition-colors"
+                        >
+                          <Check size={12} /> Confirmar
+                        </button>
+                        <button
+                          onClick={() => handlePaymentStatus(p.id, 'cancelled')}
+                          disabled={paymentActingId === p.id}
+                          className="flex items-center gap-1.5 px-3 py-1 rounded-lg border border-red-400/40 text-red-400 text-xs font-medium hover:bg-red-400/10 disabled:opacity-50 transition-colors"
+                        >
+                          <X size={12} /> Cancelar
+                        </button>
+                      </div>
+                    )}
+
+                    {confirmDeletePaymentId === p.id && (
+                      <div className="mt-3 flex items-center gap-2 pt-3 border-t border-stone-800">
+                        <span className="text-xs text-stone-400 flex-1">¿Eliminar este registro de pago?</span>
+                        <button
+                          onClick={() => handleDeletePayment(p.id)}
+                          disabled={paymentActingId === p.id}
+                          className="px-3 py-1 bg-red-600 text-white rounded-lg text-xs font-bold hover:bg-red-500 disabled:opacity-50 transition-colors"
+                        >
+                          {paymentActingId === p.id ? <Loader2 size={11} className="animate-spin" /> : 'Eliminar'}
+                        </button>
+                        <button onClick={() => setConfirmDeletePaymentId(null)} className="px-3 py-1 bg-stone-700 text-stone-300 rounded-lg text-xs hover:bg-stone-600 transition-colors">
+                          Cancelar
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>

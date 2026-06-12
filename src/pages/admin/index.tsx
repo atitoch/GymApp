@@ -160,11 +160,12 @@ export const AdminDashboard: React.FC = () => {
         )}
 
         {/* Quick actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { label: 'Ver solicitudes', path: '/admin/applications' },
             { label: 'Ver usuarios', path: '/admin/users' },
             { label: 'Ver coaches', path: '/admin/coaches' },
+            { label: 'Revisar documentos', path: '/admin/documents' },
           ].map(({ label, path }) => (
             <button
               key={path}

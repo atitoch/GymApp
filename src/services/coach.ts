@@ -12,10 +12,14 @@ export interface CoachApplication {
 
 export interface CoachDocument {
   id: string;
-  application_id: string;
+  application_id: string | null;
+  coach_id?: string | null;
   document_type: 'certification' | 'id' | 'diploma' | 'other';
   file_url: string;
   file_name?: string;
+  label?: string | null;
+  status?: 'pending' | 'approved' | 'rejected';
+  rejection_reason?: string | null;
   uploaded_at: string;
 }
 
@@ -62,4 +66,33 @@ export const uploadFileToStorage = async (uploadUrl: string, file: File): Promis
     body: file,
   });
   if (!res.ok) throw new Error('Error al subir el archivo a Storage');
+};
+
+// ── Certificaciones del coach (post-aprobación, revisadas por admin) ─────────
+
+export const getMyDocuments = async (): Promise<CoachDocument[]> => {
+  const res = await authenticatedGet<{ documents: CoachDocument[] }>('/coach/documents');
+  return res.documents ?? [];
+};
+
+export const getCertificationUploadUrl = (data: { file_name: string; content_type: string }) =>
+  authenticatedPost<{ upload_url: string; token: string; path: string }>(
+    '/coach/documents/upload-url',
+    data,
+  );
+
+export const registerCertification = async (data: {
+  file_url: string;
+  file_name?: string;
+  label?: string;
+}): Promise<CoachDocument> => {
+  const res = await authenticatedPost<{ document: CoachDocument }>('/coach/certifications', data);
+  return res.document;
+};
+
+export const getMyDocumentSignedUrl = async (path: string): Promise<string> => {
+  const res = await authenticatedGet<{ url: string }>(
+    `/coach/documents/signed-url?path=${encodeURIComponent(path)}`,
+  );
+  return res.url;
 };
