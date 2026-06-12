@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Dumbbell, Users, Clock, CheckCircle, XCircle, ArrowLeft, Settings, Plus, Pencil, ChevronRight } from 'lucide-react';
+import { Dumbbell, Users, Clock, CheckCircle, XCircle, ArrowLeft, Settings, Plus, Pencil, ChevronRight, AlertCircle } from 'lucide-react';
 import {
   getMyClients,
   getPendingRequests,
   getMyRoutines,
+  getMyCoachProfile,
   acceptRequest,
   rejectRequest,
   type ClientRelationship,
   type CoachRoutine,
+  type CoachProfile,
 } from '../../services/coachDashboard';
 
 export const CoachDashboard: React.FC = () => {
@@ -16,25 +18,30 @@ export const CoachDashboard: React.FC = () => {
   const [clients, setClients] = useState<ClientRelationship[]>([]);
   const [pendingRequests, setPendingRequests] = useState<ClientRelationship[]>([]);
   const [routines, setRoutines] = useState<CoachRoutine[]>([]);
+  const [profile, setProfile] = useState<CoachProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const load = async () => {
     try {
-      const [c, p, r] = await Promise.all([
+      const [c, p, r, prof] = await Promise.all([
         getMyClients(),
         getPendingRequests(),
         getMyRoutines(),
+        getMyCoachProfile().catch(() => null),
       ]);
       setClients(c ?? []);
       setPendingRequests(p ?? []);
       setRoutines(r ?? []);
+      setProfile(prof);
     } catch (e: any) {
       setError(e?.message ?? 'Error al cargar datos');
     } finally {
       setLoading(false);
     }
   };
+
+  const profileIncomplete = profile !== null && (!profile.bio?.trim() || !profile.specialization?.trim());
 
   useEffect(() => { load(); }, []);
 
@@ -80,6 +87,26 @@ export const CoachDashboard: React.FC = () => {
           <Settings size={20} />
         </button>
       </div>
+
+      {profileIncomplete && (
+        <button
+          onClick={() => navigate('/coach/edit-profile')}
+          className="w-full mb-6 flex items-center gap-3 bg-amber-400/10 border border-amber-400/30 hover:border-amber-400/60 hover:bg-amber-400/15 rounded-xl p-4 text-left transition-all group"
+        >
+          <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-amber-300">Completa tu perfil para aparecer en el directorio</p>
+            <p className="text-xs text-amber-400/70 mt-0.5">
+              {!profile?.bio?.trim() && !profile?.specialization?.trim()
+                ? 'Falta tu bio y especialización'
+                : !profile?.bio?.trim()
+                ? 'Falta tu bio'
+                : 'Falta tu especialización'}
+            </p>
+          </div>
+          <ChevronRight className="w-4 h-4 text-amber-400/60 group-hover:text-amber-400 transition-colors shrink-0" />
+        </button>
+      )}
 
       {error && (
         <div className="bg-red-900/30 border border-red-700 rounded-xl p-4 mb-6 text-red-300">
