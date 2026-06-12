@@ -4,13 +4,13 @@ import { Header } from "../components/header";
 import { RoutineList } from "../components/routineList";
 import { fetchUserRoutines } from "../services/routine";
 import { getWeeklyStats } from "../services/workoutLog";
-import { getMyCoach, type MyCoachData } from "../services/coachDashboard";
+import { getMyCoach, getMyCoachProfile, type MyCoachData } from "../services/coachDashboard";
 import { EmptyRoutine } from "../components/emptyRoutine";
 import { useAuth } from "../contexts/useAuth";
 import type { CalculatedDayRoutine } from "../types/routineType";
 import { themeClasses, cn } from "../theme/constants";
 import { useColors } from "../theme";
-import { Dumbbell, Calendar, TrendingUp, Sparkles, ChevronRight, ChevronLeft, Users, Star, Flame } from "lucide-react";
+import { Dumbbell, Calendar, TrendingUp, Sparkles, ChevronRight, ChevronLeft, Users, Star, Flame, AlertCircle } from "lucide-react";
 import { DashboardSkeleton } from "../components/DashboardSkeleton";
 import { OnboardingModal } from "../components/OnboardingModal";
 
@@ -20,6 +20,7 @@ export const Dashboard: React.FC = () => {
   const colors = useColors();
   const [routines, setRoutines] = useState<CalculatedDayRoutine[]>([]);
   const [myCoachData, setMyCoachData] = useState<MyCoachData | null>(null);
+  const [coachProfileIncomplete, setCoachProfileIncomplete] = useState(false);
   const [currentDayNumber, setCurrentDayNumber] = useState<number | undefined>(undefined);
   const [weekOffset, setWeekOffset] = useState(0);
   const [weekLabel, setWeekLabel] = useState<string>('');
@@ -38,11 +39,18 @@ export const Dashboard: React.FC = () => {
 
     setLoading(true);
     try {
-      // Only load routines + stats (fast path — no coach endpoint here)
-      const [result, stats] = await Promise.allSettled([
+      const promises: Promise<any>[] = [
         fetchUserRoutines(user.id, 7, weekOffset),
         getWeeklyStats(),
-      ]);
+      ];
+      if (user.role === 'coach') promises.push(getMyCoachProfile().catch(() => null));
+
+      const [result, stats, coachProf] = await Promise.allSettled(promises);
+
+      if (user.role === 'coach') {
+        const prof = coachProf?.status === 'fulfilled' ? coachProf.value : null;
+        setCoachProfileIncomplete(!prof?.bio?.trim() || !prof?.specialization?.trim());
+      }
 
       if (result.status === 'fulfilled' && result.value?.routines?.length > 0) {
         setRoutines(result.value.routines);
@@ -163,6 +171,20 @@ export const Dashboard: React.FC = () => {
           handleBackToSelect={handleBackToDashboard}
           showBackButton={false}
         />
+
+        {coachProfileIncomplete && (
+          <button
+            onClick={() => navigate('/coach/edit-profile')}
+            className="w-full mb-6 flex items-center gap-3 bg-amber-400/10 border border-amber-400/30 hover:border-amber-400/60 hover:bg-amber-400/15 rounded-xl p-4 text-left transition-all group"
+          >
+            <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-amber-300">Completa tu perfil para aparecer en el directorio</p>
+              <p className="text-xs text-amber-400/70 mt-0.5">Agrega tu bio y especialización para que los usuarios puedan encontrarte</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-amber-400/60 group-hover:text-amber-400 transition-colors shrink-0" />
+          </button>
+        )}
 
         {/* Estadísticas de la semana */}
         <div className="gt-stagger grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
