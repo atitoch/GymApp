@@ -1,5 +1,5 @@
 import { authenticatedGet, authenticatedPost, authenticatedFetch, authenticatedDelete, getAuthToken } from '../utils/api';
-import { supabase } from '../config/supabase';
+import { supabaseRealtime } from '../config/supabase';
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
 export interface Message {
@@ -58,19 +58,19 @@ export const subscribeToMessages = (
   onNewMessage: (msg: Message) => void,
   onDeleteMessage: (id: string) => void,
 ) => {
-  let channel: ReturnType<typeof supabase.channel> | null = null;
+  let channel: ReturnType<typeof supabaseRealtime.channel> | null = null;
 
   try {
     // La sesión vive en localStorage (login vía backend REST), no en el
     // cliente supabase-js; sin el JWT en el socket, RLS bloquea todos los
     // eventos de postgres_changes (auth.uid() es null para anon).
     const token = getAuthToken();
-    if (token) supabase.realtime.setAuth(token);
+    if (token) supabaseRealtime.realtime.setAuth(token);
 
     // Nombre único por suscripción: el Header y el Chat se suscriben a la vez
     // y dos canales con el mismo topic en el mismo socket chocan (solo uno
     // recibe eventos).
-    channel = supabase
+    channel = supabaseRealtime
       .channel(`my-messages-${Math.random().toString(36).slice(2)}`)
       .on(
         'postgres_changes',
@@ -97,14 +97,15 @@ export const subscribeToMessages = (
           }
         },
       )
-      .subscribe((_status, err) => {
-        if (err) console.warn('[Realtime] subscription error:', err);
+      .subscribe((status, err) => {
+        // Log siempre: si algo falla en producción necesitamos verlo en consola
+        console.info(`[Realtime] estado: ${status}${err ? ` — ${err.message}` : ''}`);
       });
   } catch (e) {
     console.warn('[Realtime] WebSocket not available, realtime disabled:', e);
   }
 
   return () => {
-    if (channel) supabase.removeChannel(channel).catch(() => {});
+    if (channel) supabaseRealtime.removeChannel(channel).catch(() => {});
   };
 };

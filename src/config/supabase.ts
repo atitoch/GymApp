@@ -19,3 +19,20 @@ export const supabase = createClient(url, anonKey, {
     timeout: 10000,
   },
 });
+
+// Cliente dedicado SOLO para Realtime. La sesión de la app vive en
+// localStorage (login vía backend REST), no en supabase-js; el cliente
+// principal emite eventos de auth (sesiones OAuth persistidas, refresh)
+// que sobrescriben el token del socket con realtime.setAuth(). Este
+// cliente no gestiona sesión, así nada pisa el JWT que le pasamos.
+export const supabaseRealtime = createClient(url, anonKey, {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false,
+    detectSessionInUrl: false,
+  },
+  realtime: {
+    params: { eventsPerSecond: 10 },
+    timeout: 10000,
+  },
+});
