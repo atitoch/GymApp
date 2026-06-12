@@ -78,7 +78,7 @@ const tryRefreshToken = (): Promise<string | null> => {
  * Obtiene el token de autenticación del localStorage
  * Asegura que siempre se lea el valor más reciente
  */
-const getAuthToken = (): string | null => {
+export const getAuthToken = (): string | null => {
   try {
     return localStorage.getItem(TOKEN_KEY);
   } catch {

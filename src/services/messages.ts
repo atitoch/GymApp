@@ -1,4 +1,4 @@
-import { authenticatedGet, authenticatedPost, authenticatedFetch, authenticatedDelete } from '../utils/api';
+import { authenticatedGet, authenticatedPost, authenticatedFetch, authenticatedDelete, getAuthToken } from '../utils/api';
 import { supabase } from '../config/supabase';
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
@@ -61,6 +61,12 @@ export const subscribeToMessages = (
   let channel: ReturnType<typeof supabase.channel> | null = null;
 
   try {
+    // La sesión vive en localStorage (login vía backend REST), no en el
+    // cliente supabase-js; sin el JWT en el socket, RLS bloquea todos los
+    // eventos de postgres_changes (auth.uid() es null para anon).
+    const token = getAuthToken();
+    if (token) supabase.realtime.setAuth(token);
+
     // Nombre único por suscripción: el Header y el Chat se suscriben a la vez
     // y dos canales con el mismo topic en el mismo socket chocan (solo uno
     // recibe eventos).
