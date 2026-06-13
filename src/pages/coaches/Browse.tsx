@@ -1,15 +1,15 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, ChevronRight, Search } from 'lucide-react';
-import { listCoaches, requestConnection, getMyConnections } from '../../services/coachDashboard';
+import { Users, ChevronRight, Search, CreditCard } from 'lucide-react';
+import { listCoaches, getMyConnections } from '../../services/coachDashboard';
 import { PageHeader } from '../../components/PageHeader';
+import { fmtPlanPrice } from '../../utils/plans';
 
 export const BrowseCoaches: React.FC = () => {
   const navigate = useNavigate();
   const [coaches, setCoaches] = useState<any[]>([]);
   const [connections, setConnections] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [requesting, setRequesting] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [specFilter, setSpecFilter] = useState('');
 
@@ -41,17 +41,6 @@ export const BrowseCoaches: React.FC = () => {
     return rel?.status ?? null;
   };
 
-  const handleRequest = async (coachId: string) => {
-    setRequesting(coachId);
-    try {
-      await requestConnection(coachId);
-      const conn = await getMyConnections();
-      setConnections(conn ?? []);
-    } finally {
-      setRequesting(null);
-    }
-  };
-
   const STATUS_LABELS: Record<string, string> = {
     pending: 'Solicitud enviada',
     active: 'Conectado',
@@ -59,9 +48,9 @@ export const BrowseCoaches: React.FC = () => {
   };
 
   const STATUS_CLASSES: Record<string, string> = {
-    pending: 'bg-yellow-900 text-yellow-300',
-    active: 'bg-lime-900 text-lime-300',
-    rejected: 'bg-red-900 text-red-300',
+    pending: 'bg-yellow-400/10 text-yellow-400 border border-yellow-400/30',
+    active: 'bg-lime-400/10 text-lime-400 border border-lime-400/30',
+    rejected: 'bg-red-400/10 text-red-400 border border-red-400/30',
   };
 
   if (loading) return (
@@ -136,26 +125,40 @@ export const BrowseCoaches: React.FC = () => {
                 {coach.bio && (
                   <p className="text-stone-400 text-sm line-clamp-2">{coach.bio}</p>
                 )}
-                <div className="flex gap-4 text-sm text-stone-400">
+                <div className="flex flex-wrap gap-2 text-sm text-stone-400">
                   {coach.years_experience != null && (
                     <span>{coach.years_experience} años exp.</span>
                   )}
-                  {coach.hourly_rate != null && (
+                  {/* min_plan_price viene del backend cuando está disponible */}
+                  {coach.min_plan_price != null ? (
+                    <span className="flex items-center gap-1 text-lime-400 font-semibold">
+                      <CreditCard size={12} />
+                      desde {fmtPlanPrice(coach.min_plan_price, coach.currency ?? 'MXN')}
+                    </span>
+                  ) : coach.hourly_rate != null ? (
                     <span>${coach.hourly_rate}/hr</span>
-                  )}
+                  ) : null}
                 </div>
-                <div className="mt-auto" onClick={(e) => e.stopPropagation()}>
+                {/* Badge "Ver planes" si el backend informa que el coach tiene planes */}
+                {coach.plan_count > 0 && (
+                  <div className="flex items-center gap-1.5">
+                    <span className="inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full font-bold bg-lime-400/10 text-lime-400 border border-lime-400/20">
+                      <CreditCard size={10} />
+                      {coach.plan_count} {coach.plan_count === 1 ? 'plan' : 'planes'} disponibles
+                    </span>
+                  </div>
+                )}
+                <div className="mt-auto pt-1" onClick={(e) => e.stopPropagation()}>
                   {status ? (
                     <span className={`inline-block text-xs px-3 py-1 rounded-full font-medium ${STATUS_CLASSES[status] ?? 'bg-stone-700 text-stone-300'}`}>
                       {STATUS_LABELS[status] ?? status}
                     </span>
                   ) : (
                     <button
-                      onClick={() => handleRequest(coach.id)}
-                      disabled={requesting === coach.id}
-                      className="w-full px-4 py-2 bg-lime-400 text-black font-medium text-sm rounded-lg hover:bg-lime-300 disabled:opacity-50 transition-colors"
+                      onClick={() => navigate(`/coaches/${coach.id}`)}
+                      className="w-full px-4 py-2 bg-lime-400 text-black font-medium text-sm rounded-lg hover:bg-lime-300 transition-colors"
                     >
-                      {requesting === coach.id ? 'Enviando...' : 'Solicitar conexión'}
+                      Ver perfil y solicitar →
                     </button>
                   )}
                 </div>

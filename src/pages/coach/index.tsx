@@ -97,7 +97,7 @@ export const CoachDashboard: React.FC = () => {
       {profileIncomplete && (
         <button
           onClick={() => navigate('/coach/edit-profile')}
-          className="w-full mb-6 flex items-center gap-3 bg-amber-400/10 border border-amber-400/30 hover:border-amber-400/60 hover:bg-amber-400/15 rounded-xl p-4 text-left transition-all group"
+          className="w-full mb-3 flex items-center gap-3 bg-amber-400/10 border border-amber-400/30 hover:border-amber-400/60 hover:bg-amber-400/15 rounded-xl p-4 text-left transition-all group"
         >
           <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
           <div className="flex-1 min-w-0">
@@ -111,6 +111,20 @@ export const CoachDashboard: React.FC = () => {
             </p>
           </div>
           <ChevronRight className="w-4 h-4 text-amber-400/60 group-hover:text-amber-400 transition-colors shrink-0" />
+        </button>
+      )}
+
+      {plans.length === 0 && (
+        <button
+          onClick={() => navigate('/coach/plans')}
+          className="w-full mb-6 flex items-center gap-3 bg-lime-400/5 border border-lime-400/20 hover:border-lime-400/40 hover:bg-lime-400/10 rounded-xl p-4 text-left transition-all group"
+        >
+          <CreditCard className="w-5 h-5 text-lime-400 shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-lime-300">Agrega tus planes para que los clientes vean tu precio</p>
+            <p className="text-xs text-lime-400/60 mt-0.5">Los coaches con planes destacan en el directorio y reciben mejores solicitudes.</p>
+          </div>
+          <ChevronRight className="w-4 h-4 text-lime-400/40 group-hover:text-lime-400 transition-colors shrink-0" />
         </button>
       )}
 
