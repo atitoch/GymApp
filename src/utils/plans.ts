@@ -15,5 +15,5 @@ export const PLAN_INTERVAL_SUFFIX: Record<PlanInterval, string> = {
   one_time: '',
 };
 
-export const fmtPlanPrice = (price: number, currency = 'MXN') =>
-  new Intl.NumberFormat('es-MX', { style: 'currency', currency }).format(price);
+export const fmtPlanPrice = (price: number | string, currency = 'MXN') =>
+  new Intl.NumberFormat('es-MX', { style: 'currency', currency }).format(Number(price));

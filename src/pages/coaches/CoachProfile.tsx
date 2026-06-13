@@ -79,10 +79,21 @@ export const CoachProfile: React.FC = () => {
   const handleConnect = async () => {
     if (!id) return;
     setRequesting(true);
+    setError(null);
     try {
       await requestConnection(id, selectedPlanId ?? undefined);
       setConnectionStatus('pending');
     } catch (err) {
+      // Backend may process the request but return a non-2xx response.
+      // Re-check actual connection state before showing an error.
+      try {
+        const connections = await getMyConnections();
+        const rel = (connections as any[]).find((c) => c.coach_id === id || c.coaches?.id === id);
+        if (rel?.status === 'pending') {
+          setConnectionStatus('pending');
+          return;
+        }
+      } catch {}
       setError(err instanceof Error ? err.message : 'Error al enviar solicitud.');
     } finally {
       setRequesting(false);
