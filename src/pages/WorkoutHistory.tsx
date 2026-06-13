@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -13,8 +13,10 @@ import {
   Star,
   Zap,
   Download,
+  Trophy,
+  Loader2,
 } from 'lucide-react';
-import { getWorkoutHistory, getWeeklyStats } from '../services/workoutLog';
+import { getWorkoutHistory, getWeeklyStats, getExerciseHistory } from '../services/workoutLog';
 import type { WorkoutLog } from '../types/workoutLog';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -278,6 +280,215 @@ function exportCSV(sessions: SessionWithDayInfo[]) {
   URL.revokeObjectURL(url);
 }
 
+// ─── Exercise Progress Chart ──────────────────────────────────────────────────
+
+function ExerciseProgressChart() {
+  const [query, setQuery] = useState('');
+  const [committed, setCommitted] = useState('');
+  const [data, setData] = useState<{ date: string; maxKg: number }[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [searched, setSearched] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const search = useCallback(async (name: string) => {
+    const n = name.trim();
+    if (!n) return;
+    setCommitted(n);
+    setLoading(true);
+    setSearched(true);
+    try {
+      const history = await getExerciseHistory(n, 40);
+      const points = history
+        .map((entry) => {
+          const maxKg = Math.max(0, ...entry.sets.map((s) => Number(s.weight_kg ?? 0)));
+          return { date: entry.date, maxKg };
+        })
+        .filter((p) => p.maxKg > 0)
+        .sort((a, b) => a.date.localeCompare(b.date));
+      setData(points);
+    } catch {
+      setData([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const handleKey = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') search(query);
+  };
+
+  // ── SVG line chart ──────────────────────────────────────────────────────────
+  const renderChart = () => {
+    if (data.length < 2) return null;
+
+    const W = 400, H = 110;
+    const padL = 36, padR = 12, padT = 14, padB = 24;
+    const cW = W - padL - padR;
+    const cH = H - padT - padB;
+
+    const weights = data.map((d) => d.maxKg);
+    const minW = Math.min(...weights);
+    const maxW = Math.max(...weights);
+    const range = maxW - minW || 1;
+
+    const prIdx = weights.indexOf(maxW);
+
+    const pts = data.map((d, i) => ({
+      x: padL + (i / (data.length - 1)) * cW,
+      y: padT + cH - ((d.maxKg - minW) / range) * cH,
+      ...d,
+    }));
+
+    const polyline = pts.map((p) => `${p.x},${p.y}`).join(' ');
+    const area = `M${pts[0].x},${padT + cH} ` +
+      pts.map((p) => `L${p.x},${p.y}`).join(' ') +
+      ` L${pts[pts.length - 1].x},${padT + cH} Z`;
+
+    // Y axis labels
+    const yLabels = [minW, (minW + maxW) / 2, maxW].map((v, i) => ({
+      y: padT + cH - (i / 2) * cH,
+      label: `${Math.round(v)}`,
+    }));
+
+    // X axis labels: only first, middle, last
+    const xIdxs = [0, Math.floor((data.length - 1) / 2), data.length - 1];
+    const xLabels = xIdxs.map((i) => ({
+      x: pts[i].x,
+      label: new Date(pts[i].date + 'T12:00:00').toLocaleDateString('es-MX', { day: 'numeric', month: 'short' }),
+    }));
+
+    return (
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: 110 }}>
+        <defs>
+          <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#a3e635" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#a3e635" stopOpacity="0.02" />
+          </linearGradient>
+        </defs>
+
+        {/* Grid lines */}
+        {yLabels.map((yl, i) => (
+          <line key={i} x1={padL} x2={W - padR} y1={yl.y} y2={yl.y}
+            stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
+        ))}
+
+        {/* Y labels */}
+        {yLabels.map((yl, i) => (
+          <text key={i} x={padL - 4} y={yl.y + 4} textAnchor="end"
+            fontSize="9" fill="rgba(255,255,255,0.3)">{yl.label}</text>
+        ))}
+
+        {/* Area */}
+        <path d={area} fill="url(#pg)" />
+
+        {/* Line */}
+        <polyline points={polyline} fill="none" stroke="#a3e635" strokeWidth="2"
+          strokeLinejoin="round" strokeLinecap="round" />
+
+        {/* Dots */}
+        {pts.map((p, i) => (
+          <circle key={i} cx={p.x} cy={p.y} r={i === prIdx ? 5 : 3}
+            fill={i === prIdx ? '#a3e635' : '#1c1917'}
+            stroke={i === prIdx ? '#a3e635' : 'rgba(163,230,53,0.5)'}
+            strokeWidth="2" />
+        ))}
+
+        {/* PR label */}
+        <text x={pts[prIdx].x} y={pts[prIdx].y - 10} textAnchor="middle"
+          fontSize="10" fontWeight="bold" fill="#a3e635">
+          {maxW}kg ★
+        </text>
+
+        {/* X labels */}
+        {xLabels.map((xl, i) => (
+          <text key={i} x={xl.x} y={H - 4} textAnchor="middle"
+            fontSize="9" fill="rgba(255,255,255,0.3)">{xl.label}</text>
+        ))}
+      </svg>
+    );
+  };
+
+  return (
+    <div
+      className="rounded-2xl p-4 space-y-3"
+      style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}
+    >
+      <div className="flex items-center gap-2">
+        <TrendingUp size={14} className="text-lime-400 shrink-0" />
+        <p className="text-xs font-black uppercase tracking-widest text-stone-500 flex-1">
+          Progreso por ejercicio
+        </p>
+        {data.length >= 2 && (
+          <span className="text-xs font-bold text-lime-400 flex items-center gap-1">
+            <Trophy size={11} /> PR: {Math.max(...data.map((d) => d.maxKg))}kg
+          </span>
+        )}
+      </div>
+
+      <div
+        className="flex items-center gap-2 rounded-xl px-3 py-2"
+        style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}
+      >
+        <Search size={13} className="text-stone-500 shrink-0" />
+        <input
+          ref={inputRef}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKey}
+          placeholder="Ej. Press de banca, Sentadilla..."
+          className="flex-1 bg-transparent text-sm text-stone-300 placeholder-stone-600 outline-none"
+        />
+        {query && (
+          <button onClick={() => { setQuery(''); setData([]); setSearched(false); }} className="text-stone-600 hover:text-stone-400">
+            <XCircle size={13} />
+          </button>
+        )}
+        <button
+          onClick={() => search(query)}
+          disabled={!query.trim() || loading}
+          className="px-2.5 py-1 rounded-lg text-xs font-bold text-stone-950 disabled:opacity-40 transition-all"
+          style={{ background: 'linear-gradient(135deg,#a3e635,#84cc16)' }}
+        >
+          {loading ? <Loader2 size={12} className="animate-spin" /> : 'Ver'}
+        </button>
+      </div>
+
+      {loading && (
+        <div className="flex justify-center py-6">
+          <Loader2 size={20} className="text-lime-400 animate-spin" />
+        </div>
+      )}
+
+      {!loading && searched && data.length === 0 && (
+        <p className="text-center text-xs text-stone-600 py-4">
+          Sin datos para <strong className="text-stone-500">{committed}</strong> — verifica el nombre exacto del ejercicio.
+        </p>
+      )}
+
+      {!loading && data.length === 1 && (
+        <p className="text-center text-xs text-stone-600 py-4">
+          Solo hay 1 sesión registrada. Completa más entrenamientos para ver la evolución.
+        </p>
+      )}
+
+      {!loading && data.length >= 2 && (
+        <div>
+          {renderChart()}
+          <p className="text-[10px] text-stone-700 text-center mt-1">
+            {data.length} sesiones · peso máximo por sesión
+          </p>
+        </div>
+      )}
+
+      {!searched && (
+        <p className="text-[11px] text-stone-700 text-center pb-1">
+          Escribe el nombre de un ejercicio y toca <strong className="text-stone-600">Ver</strong>
+        </p>
+      )}
+    </div>
+  );
+}
+
 // ─── Weekly Bar Chart ─────────────────────────────────────────────────────────
 
 function WeeklyChart({ sessions }: { sessions: SessionWithDayInfo[] }) {
@@ -464,6 +675,7 @@ export default function WorkoutHistory() {
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-5">
         {!loading && <StatsSummary stats={weekStats} total={total} />}
         {!loading && sessions.length > 0 && <WeeklyChart sessions={sessions} />}
+        {!loading && sessions.length > 0 && <ExerciseProgressChart />}
 
         <div
           className="flex items-center gap-2 rounded-2xl px-4 py-3"
