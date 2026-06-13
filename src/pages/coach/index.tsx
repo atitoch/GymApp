@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Dumbbell, Users, Clock, CheckCircle, XCircle, ArrowLeft, Settings, Plus, Pencil, ChevronRight, AlertCircle, CreditCard, X } from 'lucide-react';
+import { Dumbbell, Users, Clock, CheckCircle, XCircle, ArrowLeft, Settings, Plus, Pencil, ChevronRight, AlertCircle, CreditCard, X, BookOpen } from 'lucide-react';
 import {
   getMyClients,
   getPendingRequests,
@@ -196,6 +196,15 @@ export const CoachDashboard: React.FC = () => {
           <div className="flex sm:flex-col items-baseline gap-2 sm:gap-0">
             <p className="text-2xl font-bold">{plans.length}</p>
             <p className="text-stone-400 text-sm">Mis planes</p>
+          </div>
+        </button>
+        <button
+          onClick={() => navigate('/coach/exercises')}
+          className="bg-stone-900 border border-stone-800 rounded-xl p-4 flex sm:flex-col items-center sm:text-center gap-3 sm:gap-0 hover:border-(--color-accent-400)/40 transition-colors w-full text-left sm:text-center"
+        >
+          <BookOpen className="w-6 h-6 text-(--color-accent-400) shrink-0 sm:mx-auto sm:mb-2" />
+          <div className="flex sm:flex-col items-baseline gap-2 sm:gap-0">
+            <p className="text-stone-400 text-sm sm:mt-1">Catálogo</p>
           </div>
         </button>
       </div>
