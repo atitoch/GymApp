@@ -16,8 +16,8 @@ import { getCoachPublicProfile, requestConnection, getMyConnections, getCoachPla
 import { PageHeader } from '../../components/PageHeader';
 import { PLAN_INTERVAL_SUFFIX, fmtPlanPrice } from '../../utils/plans';
 
-type ConnectionStatus = 'none' | 'pending' | 'active' | 'rejected';
-const KNOWN_STATUSES: ConnectionStatus[] = ['pending', 'active', 'rejected'];
+type ConnectionStatus = 'none' | 'pending' | 'active' | 'rejected' | 'ended';
+const KNOWN_STATUSES: ConnectionStatus[] = ['pending', 'active', 'rejected', 'ended'];
 const normalizeStatus = (s?: string): ConnectionStatus =>
   KNOWN_STATUSES.includes(s as ConnectionStatus) ? (s as ConnectionStatus) : 'none';
 
@@ -36,6 +36,11 @@ const STATUS_CONFIG: Record<ConnectionStatus, { label: string; className: string
   rejected: {
     label: 'Rechazado',
     className: 'bg-red-400/10 text-red-400 border border-red-400/30',
+    icon: <XCircle size={14} />,
+  },
+  ended: {
+    label: 'Vinculación finalizada',
+    className: 'bg-stone-800 text-stone-500 border border-stone-700',
     icon: <XCircle size={14} />,
   },
 };
