@@ -1,39 +1,45 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Dumbbell, Users, Clock, CheckCircle, XCircle, ArrowLeft, Settings, Plus, Pencil, ChevronRight, AlertCircle } from 'lucide-react';
+import { Dumbbell, Users, Clock, CheckCircle, XCircle, ArrowLeft, Settings, Plus, Pencil, ChevronRight, AlertCircle, CreditCard } from 'lucide-react';
 import {
   getMyClients,
   getPendingRequests,
   getMyRoutines,
   getMyCoachProfile,
+  getMyPlans,
   acceptRequest,
   rejectRequest,
   type ClientRelationship,
   type CoachRoutine,
   type CoachProfile,
+  type CoachPlan,
 } from '../../services/coachDashboard';
+import { fmtPlanPrice } from '../../utils/plans';
 
 export const CoachDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [clients, setClients] = useState<ClientRelationship[]>([]);
   const [pendingRequests, setPendingRequests] = useState<ClientRelationship[]>([]);
   const [routines, setRoutines] = useState<CoachRoutine[]>([]);
+  const [plans, setPlans] = useState<CoachPlan[]>([]);
   const [profile, setProfile] = useState<CoachProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const load = async () => {
     try {
-      const [c, p, r, prof] = await Promise.all([
+      const [c, p, r, prof, pl] = await Promise.all([
         getMyClients(),
         getPendingRequests(),
         getMyRoutines(),
         getMyCoachProfile().catch(() => null),
+        getMyPlans().catch(() => []),
       ]);
       setClients(c ?? []);
       setPendingRequests(p ?? []);
       setRoutines(r ?? []);
       setProfile(prof);
+      setPlans(pl ?? []);
     } catch (e: any) {
       setError(e?.message ?? 'Error al cargar datos');
     } finally {
@@ -115,7 +121,7 @@ export const CoachDashboard: React.FC = () => {
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <button
           onClick={() => navigate('/coach/clients')}
           className="bg-stone-900 border border-stone-800 rounded-xl p-4 flex sm:flex-col items-center sm:text-center gap-3 sm:gap-0 hover:border-(--color-accent-400)/40 transition-colors w-full text-left sm:text-center"
@@ -144,6 +150,16 @@ export const CoachDashboard: React.FC = () => {
           <div className="flex sm:flex-col items-baseline gap-2 sm:gap-0">
             <p className="text-2xl font-bold">{routines.length}</p>
             <p className="text-stone-400 text-sm">Mis rutinas</p>
+          </div>
+        </button>
+        <button
+          onClick={() => navigate('/coach/plans')}
+          className="bg-stone-900 border border-stone-800 rounded-xl p-4 flex sm:flex-col items-center sm:text-center gap-3 sm:gap-0 hover:border-(--color-accent-400)/40 transition-colors w-full text-left sm:text-center"
+        >
+          <CreditCard className="w-6 h-6 text-(--color-accent-400) shrink-0 sm:mx-auto sm:mb-2" />
+          <div className="flex sm:flex-col items-baseline gap-2 sm:gap-0">
+            <p className="text-2xl font-bold">{plans.length}</p>
+            <p className="text-stone-400 text-sm">Mis planes</p>
           </div>
         </button>
       </div>
@@ -227,6 +243,11 @@ export const CoachDashboard: React.FC = () => {
                 <div className="min-w-0">
                   <p className="font-medium truncate">{fullName(req)}</p>
                   <p className="text-stone-400 text-sm truncate">{req.users?.email}</p>
+                  {req.plan && (
+                    <p className="text-xs text-lime-400 font-semibold mt-0.5 truncate">
+                      {req.plan.name} · {fmtPlanPrice(req.plan.price, req.plan.currency)}
+                    </p>
+                  )}
                 </div>
                 <div className="flex gap-2 shrink-0">
                   <button

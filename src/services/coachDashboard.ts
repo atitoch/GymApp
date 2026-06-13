@@ -16,6 +16,33 @@ export interface ClientRelationship {
   status: string;
   started_at?: string;
   users?: { id: string; first_name?: string; last_name?: string; email: string };
+  plan_id?: string | null;
+  plan?: Pick<CoachPlan, 'id' | 'name' | 'price' | 'currency' | 'interval'> | null;
+}
+
+// ── Planes de entrenamiento (precio que el cliente ve al solicitar) ──────────
+
+export type PlanInterval = 'weekly' | 'monthly' | 'quarterly' | 'one_time';
+
+export interface CoachPlan {
+  id: string;
+  coach_id: string;
+  name: string;
+  description?: string | null;
+  price: number;
+  currency: string;
+  interval: PlanInterval;
+  is_active: boolean;
+  created_at?: string;
+}
+
+export interface CoachPlanInput {
+  name: string;
+  description?: string;
+  price: number;
+  currency?: string;
+  interval: PlanInterval;
+  is_active?: boolean;
 }
 
 export interface CoachComment {
@@ -101,7 +128,9 @@ export const getPendingRequests = async (): Promise<ClientRelationship[]> => {
   return res.requests ?? [];
 };
 
-export const acceptRequest = (id: string) => authenticatedPost(`/coach/connections/${id}/accept`, {});
+/** payment_received=true le pide al backend registrar el pago del plan como confirmado al aceptar */
+export const acceptRequest = (id: string, opts?: { payment_received?: boolean }) =>
+  authenticatedPost(`/coach/connections/${id}/accept`, opts ?? {});
 export const rejectRequest = (id: string) => authenticatedPost(`/coach/connections/${id}/reject`, {});
 export const getClientDetail = (userId: string) => authenticatedGet<any>(`/coach/clients/${userId}`);
 
@@ -219,7 +248,35 @@ export const listCoaches = async (): Promise<any[]> => {
 export const getCoachPublicProfile = (coachId: string) =>
   authenticatedGet<{ coach: CoachProfile & { users?: { first_name?: string; last_name?: string } } }>(`/coaches/${coachId}`);
 
-export const requestConnection = (coachId: string) => authenticatedPost(`/coaches/${coachId}/connect`, {});
+export const requestConnection = (coachId: string, planId?: string) =>
+  authenticatedPost(`/coaches/${coachId}/connect`, planId ? { plan_id: planId } : {});
+
+// ── CRUD de planes (coach) + listado público ────────────────────────────────
+
+export const getMyPlans = async (): Promise<CoachPlan[]> => {
+  const res = await authenticatedGet<{ plans: CoachPlan[] }>('/coach/plans');
+  return res.plans ?? [];
+};
+
+export const createPlan = async (data: CoachPlanInput): Promise<CoachPlan> => {
+  const res = await authenticatedPost<{ plan: CoachPlan }>('/coach/plans', data);
+  return res.plan;
+};
+
+export const updatePlan = async (planId: string, data: Partial<CoachPlanInput>): Promise<CoachPlan> => {
+  const res = await authenticatedPut<{ plan: CoachPlan }>(`/coach/plans/${planId}`, data);
+  return res.plan;
+};
+
+export const deletePlan = async (planId: string): Promise<void> => {
+  await authenticatedDelete(`/coach/plans/${planId}`);
+};
+
+/** Planes activos de un coach, visibles para cualquier usuario autenticado */
+export const getCoachPlans = async (coachId: string): Promise<CoachPlan[]> => {
+  const res = await authenticatedGet<{ plans: CoachPlan[] }>(`/coaches/${coachId}/plans`);
+  return res.plans ?? [];
+};
 
 export const getMyConnections = async (): Promise<any[]> => {
   const res = await authenticatedGet<{ connections: any[] }>('/coaches/my-connections');

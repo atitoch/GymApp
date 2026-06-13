@@ -1,27 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Clock, Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, Clock, Loader2, CheckCircle, XCircle, CreditCard, DollarSign } from 'lucide-react';
 import { getPendingRequests, acceptRequest, rejectRequest, type ClientRelationship } from '../../services/coachDashboard';
+import { PLAN_INTERVAL_SUFFIX, fmtPlanPrice } from '../../utils/plans';
 
 export const CoachRequests: React.FC = () => {
   const navigate = useNavigate();
   const [requests, setRequests] = useState<ClientRelationship[]>([]);
   const [loading, setLoading] = useState(true);
   const [actingId, setActingId] = useState<string | null>(null);
+  // Solicitud con plan: al aceptar se pregunta si el pago ya se recibió
+  const [confirmAcceptId, setConfirmAcceptId] = useState<string | null>(null);
 
   const load = () =>
     getPendingRequests().then(setRequests).catch(() => {}).finally(() => setLoading(false));
 
   useEffect(() => { load(); }, []);
 
-  const handleAction = async (id: string, action: 'accept' | 'reject') => {
+  const doAccept = async (id: string, paymentReceived?: boolean) => {
     setActingId(id);
     try {
-      await (action === 'accept' ? acceptRequest(id) : rejectRequest(id));
+      await acceptRequest(id, paymentReceived != null ? { payment_received: paymentReceived } : undefined);
+      setRequests((prev) => prev.filter((r) => r.id !== id));
+      setConfirmAcceptId(null);
+    } catch {} finally {
+      setActingId(null);
+    }
+  };
+
+  const handleReject = async (id: string) => {
+    setActingId(id);
+    try {
+      await rejectRequest(id);
       setRequests((prev) => prev.filter((r) => r.id !== id));
     } catch {} finally {
       setActingId(null);
     }
+  };
+
+  const handleAcceptClick = (req: ClientRelationship) => {
+    // Sin plan elegido: aceptar directo, como siempre
+    if (!req.plan) return doAccept(req.id);
+    setConfirmAcceptId(confirmAcceptId === req.id ? null : req.id);
   };
 
   const fullName = (rel: ClientRelationship) => {
@@ -60,29 +80,74 @@ export const CoachRequests: React.FC = () => {
         ) : (
           <div className="space-y-3">
             {requests.map((req) => (
-              <div key={req.id} className="bg-stone-900 border border-stone-800 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
-                <div className="min-w-0">
-                  <p className="font-medium truncate">{fullName(req)}</p>
-                  <p className="text-stone-400 text-sm truncate">{req.users?.email}</p>
+              <div key={req.id} className="bg-stone-900 border border-stone-800 rounded-xl p-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
+                  <div className="min-w-0">
+                    <p className="font-medium truncate">{fullName(req)}</p>
+                    <p className="text-stone-400 text-sm truncate">{req.users?.email}</p>
+                    {req.plan && (
+                      <div className="mt-1.5 inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-lime-400/10 border border-lime-400/30">
+                        <CreditCard size={12} className="text-lime-400" />
+                        <span className="text-xs font-bold text-lime-400">
+                          {req.plan.name} · {fmtPlanPrice(req.plan.price, req.plan.currency)}
+                          {req.plan.interval ? PLAN_INTERVAL_SUFFIX[req.plan.interval] : ''}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex gap-2 shrink-0">
+                    <button
+                      onClick={() => handleAcceptClick(req)}
+                      disabled={actingId === req.id}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-lime-400 text-black font-medium text-sm hover:bg-lime-300 transition-colors disabled:opacity-50"
+                    >
+                      <CheckCircle className="w-4 h-4" />
+                      Aceptar
+                    </button>
+                    <button
+                      onClick={() => handleReject(req.id)}
+                      disabled={actingId === req.id}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-400/40 text-red-400 font-medium text-sm hover:bg-red-400/10 transition-colors disabled:opacity-50"
+                    >
+                      <XCircle className="w-4 h-4" />
+                      Rechazar
+                    </button>
+                  </div>
                 </div>
-                <div className="flex gap-2 shrink-0">
-                  <button
-                    onClick={() => handleAction(req.id, 'accept')}
-                    disabled={actingId === req.id}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-lime-400 text-black font-medium text-sm hover:bg-lime-300 transition-colors disabled:opacity-50"
-                  >
-                    <CheckCircle className="w-4 h-4" />
-                    Aceptar
-                  </button>
-                  <button
-                    onClick={() => handleAction(req.id, 'reject')}
-                    disabled={actingId === req.id}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-400/40 text-red-400 font-medium text-sm hover:bg-red-400/10 transition-colors disabled:opacity-50"
-                  >
-                    <XCircle className="w-4 h-4" />
-                    Rechazar
-                  </button>
-                </div>
+
+                {confirmAcceptId === req.id && req.plan && (
+                  <div className="mt-3 border-t border-stone-800 pt-3 space-y-2.5">
+                    <p className="text-sm text-stone-300">
+                      ¿Ya recibiste el pago de <strong className="text-white">{fmtPlanPrice(req.plan.price, req.plan.currency)}</strong> por el plan <strong className="text-white">{req.plan.name}</strong>?
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <button
+                        onClick={() => doAccept(req.id, true)}
+                        disabled={actingId === req.id}
+                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-lime-400 text-black font-bold text-xs hover:bg-lime-300 transition-colors disabled:opacity-50"
+                      >
+                        {actingId === req.id ? <Loader2 size={13} className="animate-spin" /> : <DollarSign size={13} />}
+                        Sí, registrar pago y aceptar
+                      </button>
+                      <button
+                        onClick={() => doAccept(req.id, false)}
+                        disabled={actingId === req.id}
+                        className="flex-1 px-3 py-2 rounded-lg border border-stone-700 text-stone-300 font-medium text-xs hover:bg-stone-800 transition-colors disabled:opacity-50"
+                      >
+                        Aceptar y dejar pago pendiente
+                      </button>
+                      <button
+                        onClick={() => setConfirmAcceptId(null)}
+                        className="px-3 py-2 rounded-lg text-stone-500 text-xs hover:text-stone-300 transition-colors"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                    <p className="text-[11px] text-stone-600">
+                      "Registrar pago" crea el registro confirmado en la pestaña Pagos del cliente. "Pendiente" lo crea por confirmar.
+                    </p>
+                  </div>
+                )}
               </div>
             ))}
           </div>

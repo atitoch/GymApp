@@ -20,6 +20,7 @@ import { ClientDetail } from './pages/coach/ClientDetail';
 import { CoachClients } from './pages/coach/Clients';
 import { CoachRequests } from './pages/coach/Requests';
 import { CoachRoutines } from './pages/coach/Routines';
+import { CoachPlans } from './pages/coach/Plans';
 import { RoutineEditor } from './pages/coach/RoutineEditor';
 import { CoachProfileEditor } from './pages/coach/ProfileEditor';
 import { BrowseCoaches } from './pages/coaches/Browse';
@@ -100,6 +101,7 @@ const App = () => {
         <Route path="/coach/requests" element={<CoachRoute><CoachRequests /></CoachRoute>} />
         <Route path="/coach/clients/:userId" element={<CoachRoute><ClientDetail /></CoachRoute>} />
         <Route path="/coach/edit-profile" element={<CoachRoute><CoachProfileEditor /></CoachRoute>} />
+        <Route path="/coach/plans" element={<CoachRoute><CoachPlans /></CoachRoute>} />
         <Route path="/coach/routines" element={<CoachRoute><CoachRoutines /></CoachRoute>} />
         <Route path="/coach/routines/new" element={<CoachRoute><RoutineEditor /></CoachRoute>} />
         <Route path="/coach/routines/:routineId/edit" element={<CoachRoute><RoutineEditor /></CoachRoute>} />

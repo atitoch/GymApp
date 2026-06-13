@@ -10,9 +10,11 @@ import {
   CheckCircle,
   XCircle,
   BadgeCheck,
+  CreditCard,
 } from 'lucide-react';
-import { getCoachPublicProfile, requestConnection, getMyConnections } from '../../services/coachDashboard';
+import { getCoachPublicProfile, requestConnection, getMyConnections, getCoachPlans, type CoachPlan } from '../../services/coachDashboard';
 import { PageHeader } from '../../components/PageHeader';
+import { PLAN_INTERVAL_SUFFIX, fmtPlanPrice } from '../../utils/plans';
 
 type ConnectionStatus = 'none' | 'pending' | 'active' | 'rejected';
 
@@ -39,6 +41,8 @@ export const CoachProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
   const [coach, setCoach] = useState<any | null>(null);
+  const [plans, setPlans] = useState<CoachPlan[]>([]);
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('none');
   const [loading, setLoading] = useState(true);
   const [requesting, setRequesting] = useState(false);
@@ -46,9 +50,14 @@ export const CoachProfile: React.FC = () => {
 
   useEffect(() => {
     if (!id) return;
-    Promise.all([getCoachPublicProfile(id), getMyConnections()])
-      .then(([profileData, connections]) => {
+    Promise.all([
+      getCoachPublicProfile(id),
+      getMyConnections(),
+      getCoachPlans(id).catch(() => []),
+    ])
+      .then(([profileData, connections, coachPlans]) => {
         setCoach(profileData.coach);
+        setPlans(coachPlans);
         const rel = (connections as any[]).find(
           (c) => c.coach_id === id || c.coaches?.id === id,
         );
@@ -62,7 +71,7 @@ export const CoachProfile: React.FC = () => {
     if (!id) return;
     setRequesting(true);
     try {
-      await requestConnection(id);
+      await requestConnection(id, selectedPlanId ?? undefined);
       setConnectionStatus('pending');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al enviar solicitud.');
@@ -70,6 +79,10 @@ export const CoachProfile: React.FC = () => {
       setRequesting(false);
     }
   };
+
+  const selectedPlan = plans.find(p => p.id === selectedPlanId);
+  // Si el coach publicó planes, el cliente debe elegir uno para solicitar
+  const needsPlanSelection = plans.length > 0 && !selectedPlanId;
 
   const coachName = coach
     ? [coach.users?.first_name, coach.users?.last_name].filter(Boolean).join(' ') || 'Entrenador'
@@ -148,12 +161,67 @@ export const CoachProfile: React.FC = () => {
               )}
             </div>
 
+            {/* Planes */}
+            {plans.length > 0 && (
+              <div className="bg-stone-900 rounded-2xl p-4 border border-stone-800 space-y-3">
+                <p className="text-xs font-bold uppercase tracking-widest text-stone-500 flex items-center gap-1.5">
+                  <CreditCard size={12} />
+                  Planes de entrenamiento
+                </p>
+                <div className="space-y-2">
+                  {plans.map(plan => {
+                    const selectable = connectionStatus === 'none';
+                    const selected = selectedPlanId === plan.id;
+                    return (
+                      <button
+                        key={plan.id}
+                        onClick={() => selectable && setSelectedPlanId(selected ? null : plan.id)}
+                        disabled={!selectable}
+                        className={`w-full text-left rounded-xl border p-3.5 transition-all ${
+                          selected
+                            ? 'border-lime-400 bg-lime-400/5'
+                            : 'border-stone-700 hover:border-stone-500'
+                        } ${!selectable ? 'cursor-default opacity-80' : ''}`}
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-white text-sm truncate">{plan.name}</p>
+                            {plan.description && (
+                              <p className="text-xs text-stone-400 mt-1 leading-relaxed">{plan.description}</p>
+                            )}
+                          </div>
+                          <div className="shrink-0 text-right">
+                            <p className="text-lime-400 font-black">
+                              {fmtPlanPrice(plan.price, plan.currency)}
+                              <span className="text-[10px] font-medium text-stone-500">{PLAN_INTERVAL_SUFFIX[plan.interval]}</span>
+                            </p>
+                            {selectable && (
+                              <div className={`mt-1.5 ml-auto w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
+                                selected ? 'border-lime-400 bg-lime-400' : 'border-stone-600'
+                              }`}>
+                                {selected && <CheckCircle size={10} className="text-stone-950" />}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+                {connectionStatus === 'none' && (
+                  <p className="text-[11px] text-stone-500">
+                    Elige un plan para enviar tu solicitud. El pago se acuerda directamente con el coach.
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* CTA */}
             <div className="bg-stone-900 rounded-2xl p-4 border border-stone-800">
               {connectionStatus === 'none' ? (
                 <button
                   onClick={handleConnect}
-                  disabled={requesting}
+                  disabled={requesting || needsPlanSelection}
                   className="w-full py-3 rounded-xl text-sm font-bold text-stone-950 transition-all disabled:opacity-60 flex items-center justify-center gap-2"
                   style={{ background: 'linear-gradient(135deg,#a3e635,#84cc16)' }}
                 >
@@ -162,10 +230,17 @@ export const CoachProfile: React.FC = () => {
                       <Loader2 size={16} className="animate-spin" />
                       Enviando...
                     </>
+                  ) : needsPlanSelection ? (
+                    <>
+                      <UserPlus size={16} />
+                      Elige un plan para solicitar
+                    </>
                   ) : (
                     <>
                       <UserPlus size={16} />
-                      Solicitar entrenamiento
+                      {selectedPlan
+                        ? `Solicitar · ${selectedPlan.name} (${fmtPlanPrice(selectedPlan.price, selectedPlan.currency)}${PLAN_INTERVAL_SUFFIX[selectedPlan.interval]})`
+                        : 'Solicitar entrenamiento'}
                     </>
                   )}
                 </button>
