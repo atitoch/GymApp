@@ -22,7 +22,14 @@ const enrichUserWithRole = async (token: string, baseUser: User): Promise<User> 
     if (!response.ok) return baseUser;
     const data = await response.json();
     const profile = data.data ?? data;
-    return { ...baseUser, role: profile.role ?? 'user', coachStatus: profile.coach_status ?? null };
+    const fullName = [profile.first_name, profile.last_name].filter(Boolean).join(' ');
+    return {
+      ...baseUser,
+      role: profile.role ?? 'user',
+      coachStatus: profile.coach_status ?? null,
+      name: fullName || baseUser.name,
+      avatar_url: profile.avatar_url ?? baseUser.avatar_url,
+    };
   } catch {
     return baseUser;
   }
