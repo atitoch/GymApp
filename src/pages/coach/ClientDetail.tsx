@@ -17,7 +17,7 @@ type CommentType = typeof COMMENT_TYPES[number];
 type Tab = 'actividad' | 'notas' | 'rutina' | 'pagos';
 
 const PAYMENT_STATUS_META: Record<PaymentStatus, { label: string; cls: string }> = {
-  pending:   { label: 'Pendiente',  cls: 'bg-yellow-400/10 text-yellow-400 border border-yellow-400/30' },
+  pending:   { label: 'Por confirmar', cls: 'bg-yellow-400/10 text-yellow-400 border border-yellow-400/30' },
   confirmed: { label: 'Confirmado', cls: 'bg-lime-400/10 text-lime-400 border border-lime-400/30' },
   cancelled: { label: 'Cancelado',  cls: 'bg-red-400/10 text-red-400 border border-red-400/30' },
 };
@@ -636,7 +636,7 @@ export const ClientDetail: React.FC = () => {
                 <p className="text-xl font-bold text-lime-400 tabular-nums">{fmtMoney(confirmedTotal)}</p>
               </div>
               <div className="bg-stone-900 border border-stone-800 rounded-2xl p-4">
-                <p className="text-xs text-stone-500 mb-1">Pendiente</p>
+                <p className="text-xs text-stone-500 mb-1">Por confirmar</p>
                 <p className="text-xl font-bold text-yellow-400 tabular-nums">{fmtMoney(pendingTotal)}</p>
               </div>
             </div>
@@ -816,7 +816,8 @@ export const ClientDetail: React.FC = () => {
               <p className="text-sm text-stone-400 leading-relaxed">
                 Esto finalizará la relación con este cliente y{' '}
                 <strong className="text-stone-200">perderá la rutina asignada</strong>.
-                No podrás deshacer esta acción.
+                Sus pagos, notas e historial de entrenamientos se conservan,
+                y podrá volver a solicitarte cuando quiera.
               </p>
               <div className="flex gap-3 pt-1">
                 <button onClick={() => setConfirmDisconnect(false)} disabled={disconnecting}

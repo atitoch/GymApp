@@ -233,7 +233,8 @@ export const MyCoach: React.FC = () => {
                     <p className="text-sm text-stone-400 leading-relaxed">
                       Esto finalizará la relación con tu coach y{' '}
                       <strong className="text-stone-200">perderás la rutina asignada</strong>.
-                      No podrás deshacer esta acción.
+                      Tu historial de entrenamientos se conserva, y podrás
+                      volver a solicitarlo cuando quieras.
                     </p>
                     <div className="flex gap-3 pt-1">
                       <button

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, Plus, Pencil, Trash2, Loader2, X, Check,
-  CreditCard, EyeOff,
+  CreditCard, Eye, EyeOff,
 } from 'lucide-react';
 import {
   getMyPlans, createPlan, updatePlan, deletePlan,
@@ -217,6 +217,15 @@ export const CoachPlans: React.FC = () => {
               {saving ? <Loader2 size={15} className="animate-spin" /> : <Check size={15} />}
               {editingId ? 'Guardar cambios' : 'Crear plan'}
             </button>
+            {!canSave && (
+              <p className="text-xs text-stone-500 text-center">
+                {!form.name.trim() && !(parseFloat(form.price) > 0)
+                  ? 'Falta el nombre y un precio mayor a 0.'
+                  : !form.name.trim()
+                  ? 'Falta el nombre del plan.'
+                  : 'El precio debe ser mayor a 0.'}
+              </p>
+            )}
           </div>
         )}
 
@@ -267,7 +276,9 @@ export const CoachPlans: React.FC = () => {
                       className="p-2 rounded-lg text-stone-400 hover:text-yellow-400 hover:bg-stone-800 transition-all disabled:opacity-50"
                       title={plan.is_active ? 'Ocultar del perfil' : 'Mostrar en el perfil'}
                     >
-                      {togglingId === plan.id ? <Loader2 size={15} className="animate-spin" /> : <EyeOff size={15} />}
+                      {togglingId === plan.id
+                        ? <Loader2 size={15} className="animate-spin" />
+                        : plan.is_active ? <EyeOff size={15} /> : <Eye size={15} />}
                     </button>
                     <button
                       onClick={() => openEdit(plan)}

@@ -101,13 +101,16 @@ export const CoachProfileEditor: React.FC = () => {
     try {
       // null (no undefined): undefined se omite del JSON y el backend nunca
       // recibe el borrado — por eso "borrar la bio" no persistía.
+      const cleanCerts = certifications.map(c => c.trim()).filter(Boolean);
       await updateMyCoachProfile({
         bio: bio.trim() || null,
         specialization: specialization.trim() || null,
         years_experience: yearsExperience ? Number(yearsExperience) : null,
         hourly_rate: hourlyRate ? Number(hourlyRate) : null,
-        certifications: certifications.filter(Boolean),
+        certifications: cleanCerts,
       });
+      // Refleja en la UI lo que realmente se guardó (las vacías se descartan)
+      setCertifications(cleanCerts);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } catch (e: any) {
@@ -159,7 +162,9 @@ export const CoachProfileEditor: React.FC = () => {
         {/* Especialización */}
         <div className="bg-stone-900 border border-stone-800 rounded-2xl p-4 space-y-4">
           <div>
-            <label className="text-xs font-bold uppercase tracking-widest text-stone-500 block mb-1.5">Especialización</label>
+            <label className="text-xs font-bold uppercase tracking-widest text-stone-500 block mb-1.5">
+              Especialización <span className="text-lime-400 normal-case font-medium">· requerida para aparecer en el directorio</span>
+            </label>
             <input
               value={specialization}
               onChange={(e) => setSpecialization(e.target.value)}
@@ -197,7 +202,9 @@ export const CoachProfileEditor: React.FC = () => {
 
         {/* Bio */}
         <div className="bg-stone-900 border border-stone-800 rounded-2xl p-4">
-          <label className="text-xs font-bold uppercase tracking-widest text-stone-500 block mb-1.5">Biografía</label>
+          <label className="text-xs font-bold uppercase tracking-widest text-stone-500 block mb-1.5">
+            Biografía <span className="text-lime-400 normal-case font-medium">· requerida para aparecer en el directorio</span>
+          </label>
           <textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
@@ -212,12 +219,15 @@ export const CoachProfileEditor: React.FC = () => {
           <div className="flex items-center justify-between">
             <label className="text-xs font-bold uppercase tracking-widest text-stone-500">Certificaciones</label>
             <button
-              onClick={() => setCertifications((prev) => [...prev, ''])}
+              onClick={() => setCertifications((prev) => prev.some(c => !c.trim()) ? prev : [...prev, ''])}
               className="flex items-center gap-1 text-xs text-stone-500 hover:text-lime-400 transition-colors"
             >
               <Plus size={13} /> Agregar
             </button>
           </div>
+          <p className="text-xs text-stone-600 -mt-1">
+            Lista que se muestra en tu perfil público. Para validarlas oficialmente, sube el documento en la sección de abajo.
+          </p>
           {certifications.length === 0 && (
             <p className="text-xs text-stone-600 italic">Sin certificaciones agregadas</p>
           )}

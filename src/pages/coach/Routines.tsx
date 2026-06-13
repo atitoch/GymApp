@@ -141,7 +141,7 @@ export const CoachRoutines: React.FC = () => {
                 )}
                 {confirmDeleteId === r.id && (
                   <div className="mt-3 flex items-center gap-2 text-sm border-t border-stone-800 pt-3">
-                    <span className="text-stone-400 flex-1">¿Borrar esta plantilla?</span>
+                    <span className="text-stone-400 flex-1">¿Borrar esta plantilla? Ya no podrás asignarla a más clientes.</span>
                     <button
                       onClick={() => handleDelete(r.id)}
                       disabled={deletingId === r.id}
