@@ -225,33 +225,45 @@ export const CoachProfile: React.FC = () => {
             )}
 
             {/* CTA */}
-            <div className="bg-stone-900 rounded-2xl p-4 border border-stone-800">
-              {connectionStatus === 'none' ? (
-                <button
-                  onClick={handleConnect}
-                  disabled={requesting || needsPlanSelection}
-                  className="w-full py-3 rounded-xl text-sm font-bold text-stone-950 transition-all disabled:opacity-60 flex items-center justify-center gap-2"
-                  style={{ background: 'linear-gradient(135deg,#a3e635,#84cc16)' }}
-                >
-                  {requesting ? (
-                    <>
-                      <Loader2 size={16} className="animate-spin" />
-                      Enviando...
-                    </>
-                  ) : needsPlanSelection ? (
-                    <>
-                      <UserPlus size={16} />
-                      Elige un plan para solicitar
-                    </>
-                  ) : (
-                    <>
-                      <UserPlus size={16} />
-                      {selectedPlan
-                        ? `Solicitar · ${selectedPlan.name} (${fmtPlanPrice(selectedPlan.price, selectedPlan.currency)}${PLAN_INTERVAL_SUFFIX[selectedPlan.interval]})`
-                        : 'Solicitar entrenamiento'}
-                    </>
+            <div className="bg-stone-900 rounded-2xl p-4 border border-stone-800 space-y-3">
+              {(connectionStatus === 'none' || connectionStatus === 'ended') ? (
+                <>
+                  {connectionStatus === 'ended' && (
+                    <div className={`w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 ${STATUS_CONFIG.ended.className}`}>
+                      {STATUS_CONFIG.ended.icon}
+                      {STATUS_CONFIG.ended.label}
+                    </div>
                   )}
-                </button>
+                  <button
+                    onClick={handleConnect}
+                    disabled={requesting || needsPlanSelection}
+                    className="w-full py-3 rounded-xl text-sm font-bold text-stone-950 transition-all disabled:opacity-60 flex items-center justify-center gap-2"
+                    style={{ background: 'linear-gradient(135deg,#a3e635,#84cc16)' }}
+                  >
+                    {requesting ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" />
+                        Enviando...
+                      </>
+                    ) : needsPlanSelection ? (
+                      <>
+                        <UserPlus size={16} />
+                        Elige un plan para solicitar
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus size={16} />
+                        {connectionStatus === 'ended'
+                          ? selectedPlan
+                            ? `Reconectar · ${selectedPlan.name} (${fmtPlanPrice(selectedPlan.price, selectedPlan.currency)}${PLAN_INTERVAL_SUFFIX[selectedPlan.interval]})`
+                            : 'Solicitar de nuevo'
+                          : selectedPlan
+                            ? `Solicitar · ${selectedPlan.name} (${fmtPlanPrice(selectedPlan.price, selectedPlan.currency)}${PLAN_INTERVAL_SUFFIX[selectedPlan.interval]})`
+                            : 'Solicitar entrenamiento'}
+                      </>
+                    )}
+                  </button>
+                </>
               ) : (
                 <div
                   className={`w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 ${STATUS_CONFIG[connectionStatus].className}`}
