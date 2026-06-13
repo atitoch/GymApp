@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Plus, Trash2, Loader2, ChevronDown, ChevronUp, GripVertical, Moon, ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Loader2, ChevronDown, ChevronUp, Moon, ArrowUp, ArrowDown, Info } from 'lucide-react';
 import {
   createRoutineTemplate,
   updateRoutineTemplate,
@@ -9,13 +9,13 @@ import {
   type ExerciseInput,
   type SectionInput,
 } from '../../services/coachDashboard';
+import { EXERCISE_NAMES } from '../../data/exerciseNames';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 const emptyExercise = (): ExerciseInput => ({ name: '', sets: '3', reps: '10', rpe: '7', rest: '60s', notes: '' });
-const emptySection = (): SectionInput => ({ title: 'Serie', exercises: [emptyExercise()] });
+const emptySection = (): SectionInput => ({ title: '', exercises: [emptyExercise()] });
 const emptyDay = (): DayRoutineInput => ({ dayName: 'DÍA', title: 'Entrenamiento', warmup: [], sections: [emptySection()], cooldown: [] });
-// El backend marca is_rest_day cuando dayName incluye "descanso"
 const restDay = (): DayRoutineInput => ({ dayName: 'DESCANSO', title: 'Descanso', warmup: [], sections: [], cooldown: [] });
 const isRestDay = (d: DayRoutineInput) => d.dayName.toLowerCase().includes('descanso') || d.dayName.toLowerCase().includes('rest');
 
@@ -25,46 +25,158 @@ function ExerciseRow({
   ex,
   onChange,
   onRemove,
+  onMoveUp,
+  onMoveDown,
+  isFirst,
+  isLast,
 }: {
   ex: ExerciseInput;
   onChange: (updated: ExerciseInput) => void;
   onRemove: () => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  isFirst: boolean;
+  isLast: boolean;
 }) {
-  const field = (key: keyof ExerciseInput) => (
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [rpeHint, setRpeHint] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const handleNameChange = (val: string) => {
+    onChange({ ...ex, name: val });
+    if (val.trim().length >= 2) {
+      const matches = EXERCISE_NAMES.filter((n) =>
+        n.toLowerCase().includes(val.toLowerCase())
+      ).slice(0, 6);
+      setSuggestions(matches);
+      setShowSuggestions(matches.length > 0);
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  const selectSuggestion = (name: string) => {
+    onChange({ ...ex, name });
+    setSuggestions([]);
+    setShowSuggestions(false);
+  };
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const smallField = (key: keyof ExerciseInput, placeholder?: string) => (
     <input
       value={ex[key] ?? ''}
       onChange={(e) => onChange({ ...ex, [key]: e.target.value })}
-      className="w-full min-w-0 bg-stone-800 border border-stone-700 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-lime-400"
+      placeholder={placeholder}
+      className="w-full min-w-0 bg-stone-800 border border-stone-700 rounded-lg px-2 py-2 text-xs text-white focus:outline-none focus:border-lime-400 placeholder-stone-600"
     />
   );
 
   return (
-    <div className="grid gap-1.5 border border-stone-700 rounded-xl p-3 bg-stone-900/50">
-      <div className="flex items-center gap-2">
-        <input
-          value={ex.name}
-          onChange={(e) => onChange({ ...ex, name: e.target.value })}
-          placeholder="Nombre del ejercicio"
-          className="flex-1 bg-stone-800 border border-stone-700 rounded-lg px-2.5 py-1.5 text-sm text-white focus:outline-none focus:border-lime-400"
-        />
-        <button onClick={onRemove} className="p-1.5 text-stone-500 hover:text-red-400 transition-colors shrink-0">
+    <div className="border border-stone-700 rounded-xl p-3 bg-stone-900/50 space-y-2.5">
+      {/* Name row */}
+      <div className="flex items-start gap-2">
+        <div className="flex flex-col gap-0.5 pt-1.5 shrink-0">
+          <button
+            onClick={onMoveUp}
+            disabled={isFirst}
+            className="p-0.5 rounded text-stone-600 hover:text-stone-300 disabled:opacity-20 disabled:cursor-default transition-colors"
+          >
+            <ArrowUp size={11} />
+          </button>
+          <button
+            onClick={onMoveDown}
+            disabled={isLast}
+            className="p-0.5 rounded text-stone-600 hover:text-stone-300 disabled:opacity-20 disabled:cursor-default transition-colors"
+          >
+            <ArrowDown size={11} />
+          </button>
+        </div>
+
+        <div ref={wrapperRef} className="relative flex-1 min-w-0">
+          <input
+            value={ex.name}
+            onChange={(e) => handleNameChange(e.target.value)}
+            onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+            onKeyDown={(e) => { if (e.key === 'Escape') setShowSuggestions(false); }}
+            placeholder="Nombre del ejercicio"
+            className="w-full bg-stone-800 border border-stone-700 rounded-lg px-2.5 py-2 text-sm text-white focus:outline-none focus:border-lime-400"
+          />
+          {showSuggestions && (
+            <div className="absolute top-full left-0 right-0 z-30 mt-0.5 bg-stone-800 border border-stone-600 rounded-lg overflow-hidden shadow-xl">
+              {suggestions.map((s) => (
+                <button
+                  key={s}
+                  onMouseDown={(e) => { e.preventDefault(); selectSuggestion(s); }}
+                  className="w-full text-left px-3 py-2 text-sm text-stone-200 hover:bg-lime-400/10 hover:text-lime-300 transition-colors"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <button onClick={onRemove} className="p-1.5 text-stone-500 hover:text-red-400 transition-colors shrink-0 pt-1.5">
           <Trash2 size={13} />
         </button>
       </div>
-      <div className="grid grid-cols-4 gap-1.5">
-        {(['sets', 'reps', 'rpe', 'rest'] as const).map((k) => (
-          <div key={k} className="min-w-0">
-            <p className="text-[10px] text-stone-500 mb-0.5 uppercase tracking-wider truncate">{k === 'rest' ? 'Descanso' : k.toUpperCase()}</p>
-            {field(k)}
+
+      {/* 2×2 fields */}
+      <div className="grid grid-cols-2 gap-2">
+        <div>
+          <p className="text-[10px] text-stone-500 mb-1 uppercase tracking-wider">Series</p>
+          {smallField('sets')}
+        </div>
+        <div>
+          <p className="text-[10px] text-stone-500 mb-1 uppercase tracking-wider">Reps</p>
+          {smallField('reps')}
+        </div>
+        <div>
+          <div className="flex items-center gap-1 mb-1">
+            <p className="text-[10px] text-stone-500 uppercase tracking-wider">RPE</p>
+            <button
+              type="button"
+              onClick={() => setRpeHint((v) => !v)}
+              className="text-stone-600 hover:text-stone-400 transition-colors"
+              title="¿Qué es RPE?"
+            >
+              <Info size={10} />
+            </button>
           </div>
-        ))}
+          {rpeHint && (
+            <p className="text-[10px] text-stone-500 mb-1 leading-snug">
+              Esfuerzo 1–10: 7 = moderado · 8 = difícil · 10 = fallo
+            </p>
+          )}
+          {smallField('rpe', '1–10')}
+        </div>
+        <div>
+          <p className="text-[10px] text-stone-500 mb-1 uppercase tracking-wider">Descanso</p>
+          {smallField('rest', 'Ej. 60s, 2min')}
+        </div>
       </div>
-      <input
-        value={ex.notes ?? ''}
-        onChange={(e) => onChange({ ...ex, notes: e.target.value })}
-        placeholder="Notas (opcional)"
-        className="w-full bg-stone-800 border border-stone-700 rounded-lg px-2.5 py-1 text-xs text-white placeholder-stone-600 focus:outline-none focus:border-lime-400"
-      />
+
+      {/* Notes */}
+      <div>
+        <p className="text-[10px] text-stone-500 mb-1 uppercase tracking-wider">Notas</p>
+        <input
+          value={ex.notes ?? ''}
+          onChange={(e) => onChange({ ...ex, notes: e.target.value })}
+          placeholder="Técnica, variación, indicaciones..."
+          className="w-full bg-stone-800 border border-stone-700 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-stone-600 focus:outline-none focus:border-lime-400"
+        />
+      </div>
     </div>
   );
 }
@@ -73,17 +185,31 @@ function SectionBlock({
   section,
   onChange,
   onRemove,
+  onMoveUp,
+  onMoveDown,
+  isFirst,
+  isLast,
 }: {
   section: SectionInput;
   onChange: (s: SectionInput) => void;
   onRemove: () => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  isFirst: boolean;
+  isLast: boolean;
 }) {
   const updateExercise = (i: number, ex: ExerciseInput) => {
     const exercises = section.exercises.map((e, idx) => idx === i ? ex : e);
     onChange({ ...section, exercises });
   };
   const removeExercise = (i: number) => {
-    const exercises = section.exercises.filter((_, idx) => idx !== i);
+    onChange({ ...section, exercises: section.exercises.filter((_, idx) => idx !== i) });
+  };
+  const moveExercise = (i: number, dir: -1 | 1) => {
+    const exercises = [...section.exercises];
+    const j = i + dir;
+    if (j < 0 || j >= exercises.length) return;
+    [exercises[i], exercises[j]] = [exercises[j], exercises[i]];
     onChange({ ...section, exercises });
   };
   const addExercise = () => onChange({ ...section, exercises: [...section.exercises, emptyExercise()] });
@@ -91,26 +217,51 @@ function SectionBlock({
   return (
     <div className="border border-stone-700 rounded-2xl p-4 space-y-3 bg-stone-900/30">
       <div className="flex items-center gap-2">
-        <GripVertical size={14} className="text-stone-600 shrink-0" />
+        <div className="flex flex-col gap-0.5 shrink-0">
+          <button
+            onClick={onMoveUp}
+            disabled={isFirst}
+            className="p-0.5 rounded text-stone-600 hover:text-stone-300 disabled:opacity-20 disabled:cursor-default transition-colors"
+          >
+            <ArrowUp size={11} />
+          </button>
+          <button
+            onClick={onMoveDown}
+            disabled={isLast}
+            className="p-0.5 rounded text-stone-600 hover:text-stone-300 disabled:opacity-20 disabled:cursor-default transition-colors"
+          >
+            <ArrowDown size={11} />
+          </button>
+        </div>
         <input
           value={section.title}
           onChange={(e) => onChange({ ...section, title: e.target.value })}
-          placeholder="Nombre de la sección"
-          className="flex-1 bg-stone-800 border border-stone-700 rounded-lg px-2.5 py-1.5 text-sm font-bold text-white focus:outline-none focus:border-lime-400"
+          placeholder="Bloque A · Circuito · Superset..."
+          className="flex-1 bg-stone-800 border border-stone-700 rounded-lg px-2.5 py-1.5 text-sm font-bold text-white focus:outline-none focus:border-lime-400 placeholder-stone-600"
         />
         <button onClick={onRemove} className="p-1.5 text-stone-500 hover:text-red-400 transition-colors shrink-0">
           <Trash2 size={13} />
         </button>
       </div>
-      <div className="space-y-2 pl-5">
+
+      <div className="space-y-2">
         {section.exercises.map((ex, i) => (
-          <ExerciseRow key={i} ex={ex} onChange={(e) => updateExercise(i, e)} onRemove={() => removeExercise(i)} />
+          <ExerciseRow
+            key={i}
+            ex={ex}
+            onChange={(e) => updateExercise(i, e)}
+            onRemove={() => removeExercise(i)}
+            onMoveUp={() => moveExercise(i, -1)}
+            onMoveDown={() => moveExercise(i, 1)}
+            isFirst={i === 0}
+            isLast={i === section.exercises.length - 1}
+          />
         ))}
         <button
           onClick={addExercise}
-          className="flex items-center gap-1.5 text-xs text-stone-500 hover:text-lime-400 transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-dashed border-stone-700 text-sm font-medium text-stone-500 hover:text-lime-400 hover:border-lime-400/40 hover:bg-lime-400/5 active:scale-[0.98] transition-all"
         >
-          <Plus size={12} /> Agregar ejercicio
+          <Plus size={14} /> Agregar ejercicio
         </button>
       </div>
     </div>
@@ -180,7 +331,6 @@ function DayEditor({
   isNew?: boolean;
 }) {
   const [open, setOpen] = useState(index === 0);
-
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   const updateSection = (i: number, s: SectionInput) => {
@@ -188,6 +338,13 @@ function DayEditor({
     onChange({ ...day, sections });
   };
   const removeSection = (i: number) => onChange({ ...day, sections: day.sections.filter((_, idx) => idx !== i) });
+  const moveSection = (i: number, dir: -1 | 1) => {
+    const sections = [...day.sections];
+    const j = i + dir;
+    if (j < 0 || j >= sections.length) return;
+    [sections[i], sections[j]] = [sections[j], sections[i]];
+    onChange({ ...day, sections });
+  };
   const addSection = () => onChange({ ...day, sections: [...day.sections, emptySection()] });
 
   return (
@@ -281,7 +438,6 @@ function DayEditor({
 
       {open && !isRestDay(day) && (
         <div className="p-4 space-y-4 bg-stone-950/50">
-          {/* Calentamiento */}
           <StringListEditor
             label="Calentamiento"
             items={day.warmup ?? []}
@@ -289,9 +445,17 @@ function DayEditor({
             placeholder="Ej. 5 min bicicleta estática"
           />
 
-          {/* Secciones */}
           {day.sections.map((s, i) => (
-            <SectionBlock key={i} section={s} onChange={(upd) => updateSection(i, upd)} onRemove={() => removeSection(i)} />
+            <SectionBlock
+              key={i}
+              section={s}
+              onChange={(upd) => updateSection(i, upd)}
+              onRemove={() => removeSection(i)}
+              onMoveUp={() => moveSection(i, -1)}
+              onMoveDown={() => moveSection(i, 1)}
+              isFirst={i === 0}
+              isLast={i === day.sections.length - 1}
+            />
           ))}
           <button
             onClick={addSection}
@@ -300,7 +464,6 @@ function DayEditor({
             <Plus size={12} /> Agregar sección
           </button>
 
-          {/* Enfriamiento */}
           <StringListEditor
             label="Enfriamiento"
             items={day.cooldown ?? []}
@@ -365,7 +528,6 @@ export const RoutineEditor: React.FC = () => {
     setDays((prev) => {
       const next = [...prev, factory()];
       const idx = next.length - 1;
-      // Scroll and flash after render
       setTimeout(() => {
         dayRefs.current[idx]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         setNewDayIndex(idx);
