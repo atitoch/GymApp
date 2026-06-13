@@ -263,8 +263,11 @@ export const ClientDetail: React.FC = () => {
           <button onClick={() => navigate('/coach')} className="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-all shrink-0">
             <ArrowLeft size={18} />
           </button>
-          <div className="w-9 h-9 rounded-full bg-(--color-accent-400)/20 flex items-center justify-center text-(--color-accent-400) font-bold text-sm shrink-0">
-            {displayName[0]?.toUpperCase()}
+          <div className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center font-bold text-sm shrink-0"
+            style={user?.avatar_url ? undefined : { background: 'color-mix(in srgb, var(--color-accent-400) 20%, transparent)', color: 'var(--color-accent-400)' }}>
+            {user?.avatar_url
+              ? <img src={user.avatar_url} alt={displayName} className="w-full h-full object-cover" />
+              : displayName[0]?.toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-bold text-white truncate leading-tight">{displayName}</p>
