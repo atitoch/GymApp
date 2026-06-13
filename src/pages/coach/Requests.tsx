@@ -86,13 +86,16 @@ export const CoachRequests: React.FC = () => {
                     <p className="font-medium truncate">{fullName(req)}</p>
                     <p className="text-stone-400 text-sm truncate">{req.users?.email}</p>
                     {req.plan && (
-                      <div className="mt-1.5 inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-lime-400/10 border border-lime-400/30">
-                        <CreditCard size={12} className="text-lime-400" />
-                        <span className="text-xs font-bold text-lime-400">
-                          {req.plan.name} · {fmtPlanPrice(req.plan.price, req.plan.currency)}
-                          {req.plan.interval ? PLAN_INTERVAL_SUFFIX[req.plan.interval] : ''}
-                        </span>
-                      </div>
+                      <>
+                        <div className="mt-1.5 inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-lime-400/10 border border-lime-400/30">
+                          <CreditCard size={12} className="text-lime-400" />
+                          <span className="text-xs font-bold text-lime-400">
+                            {req.plan.name} · {fmtPlanPrice(req.plan.price, req.plan.currency)}
+                            {req.plan.interval ? PLAN_INTERVAL_SUFFIX[req.plan.interval] : ''}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-stone-500 mt-1">Al aceptar podrás registrar el pago de este plan.</p>
+                      </>
                     )}
                   </div>
                   <div className="flex gap-2 shrink-0">
@@ -118,8 +121,9 @@ export const CoachRequests: React.FC = () => {
                 {confirmAcceptId === req.id && req.plan && (
                   <div className="mt-3 border-t border-stone-800 pt-3 space-y-2.5">
                     <p className="text-sm text-stone-300">
-                      ¿Ya recibiste el pago de <strong className="text-white">{fmtPlanPrice(req.plan.price, req.plan.currency)}</strong> por el plan <strong className="text-white">{req.plan.name}</strong>?
+                      Al aceptar se crea el registro del pago de <strong className="text-white">{fmtPlanPrice(req.plan.price, req.plan.currency)}</strong> ({req.plan.name}) en la pestaña Pagos del cliente.
                     </p>
+                    <p className="text-sm font-semibold text-white">¿Ya recibiste ese pago?</p>
                     <div className="flex flex-col sm:flex-row gap-2">
                       <button
                         onClick={() => doAccept(req.id, true)}
@@ -127,14 +131,14 @@ export const CoachRequests: React.FC = () => {
                         className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-lime-400 text-black font-bold text-xs hover:bg-lime-300 transition-colors disabled:opacity-50"
                       >
                         {actingId === req.id ? <Loader2 size={13} className="animate-spin" /> : <DollarSign size={13} />}
-                        Sí, registrar pago y aceptar
+                        Sí, ya lo recibí
                       </button>
                       <button
                         onClick={() => doAccept(req.id, false)}
                         disabled={actingId === req.id}
                         className="flex-1 px-3 py-2 rounded-lg border border-stone-700 text-stone-300 font-medium text-xs hover:bg-stone-800 transition-colors disabled:opacity-50"
                       >
-                        Aceptar y dejar pago pendiente
+                        Aún no — dejarlo por confirmar
                       </button>
                       <button
                         onClick={() => setConfirmAcceptId(null)}
@@ -143,9 +147,6 @@ export const CoachRequests: React.FC = () => {
                         Cancelar
                       </button>
                     </div>
-                    <p className="text-[11px] text-stone-600">
-                      "Registrar pago" crea el registro confirmado en la pestaña Pagos del cliente. "Pendiente" lo crea por confirmar.
-                    </p>
                   </div>
                 )}
               </div>

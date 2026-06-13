@@ -203,7 +203,7 @@ export const ClientDetail: React.FC = () => {
     setDisconnecting(true);
     try {
       await disconnectClient(userId);
-      navigate('/coach');
+      navigate('/coach', { state: { notice: `Terminaste la vinculación con ${displayName}. Sus pagos y notas quedan guardados.` } });
     } catch {} finally { setDisconnecting(false); }
   };
 

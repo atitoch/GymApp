@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, MessageSquare, Loader2, Circle } from 'lucide-react';
+import { ArrowLeft, MessageSquare, Loader2, Circle, AlertCircle } from 'lucide-react';
 import { getConversations, type Conversation } from '../services/messages';
 
 const formatTime = (iso: string) => {
@@ -16,13 +16,18 @@ export const Messages: React.FC = () => {
   const navigate = useNavigate();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  useEffect(() => {
+  const load = () => {
+    setLoading(true);
+    setError(false);
     getConversations()
       .then(setConversations)
-      .catch(() => {})
+      .catch(() => setError(true))
       .finally(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => { load(); }, []);
 
   return (
     <div className="flex flex-col bg-stone-950" style={{ height: '100dvh', minHeight: '100vh' }}>
@@ -51,6 +56,19 @@ export const Messages: React.FC = () => {
         {loading ? (
           <div className="flex justify-center py-16">
             <Loader2 size={28} className="text-lime-400 animate-spin" />
+          </div>
+        ) : error ? (
+          <div className="bg-stone-900 rounded-2xl p-8 border border-stone-800 text-center">
+            <AlertCircle size={32} className="text-red-400 mx-auto mb-3" />
+            <p className="text-white font-bold">No se pudieron cargar los mensajes</p>
+            <p className="text-sm text-stone-400 mt-1">Revisa tu conexión e intenta de nuevo.</p>
+            <button
+              onClick={load}
+              className="mt-4 px-5 py-2.5 rounded-xl text-sm font-bold text-stone-950"
+              style={{ background: 'linear-gradient(135deg,#a3e635,#84cc16)' }}
+            >
+              Reintentar
+            </button>
           </div>
         ) : conversations.length === 0 ? (
           <div className="bg-stone-900 rounded-2xl p-8 border border-stone-800 text-center">

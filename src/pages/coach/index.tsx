@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Dumbbell, Users, Clock, CheckCircle, XCircle, ArrowLeft, Settings, Plus, Pencil, ChevronRight, AlertCircle, CreditCard } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Dumbbell, Users, Clock, CheckCircle, XCircle, ArrowLeft, Settings, Plus, Pencil, ChevronRight, AlertCircle, CreditCard, X } from 'lucide-react';
 import {
   getMyClients,
   getPendingRequests,
@@ -18,6 +18,9 @@ import { fmtPlanPrice } from '../../utils/plans';
 
 export const CoachDashboard: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  // Aviso de una sola vez que llega vía navigate state (ej. tras desvincular un cliente)
+  const [notice, setNotice] = useState<string | null>(location.state?.notice ?? null);
   const [clients, setClients] = useState<ClientRelationship[]>([]);
   const [pendingRequests, setPendingRequests] = useState<ClientRelationship[]>([]);
   const [routines, setRoutines] = useState<CoachRoutine[]>([]);
@@ -50,6 +53,14 @@ export const CoachDashboard: React.FC = () => {
   const profileIncomplete = profile !== null && (!profile.bio?.trim() || !profile.specialization?.trim());
 
   useEffect(() => { load(); }, []);
+
+  // Limpia el state de navegación para que el aviso no reaparezca al recargar
+  useEffect(() => {
+    if (location.state?.notice) {
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleAccept = async (id: string) => {
     await acceptRequest(id);
@@ -93,6 +104,16 @@ export const CoachDashboard: React.FC = () => {
           <Settings size={20} />
         </button>
       </div>
+
+      {notice && (
+        <div className="w-full mb-3 flex items-center gap-3 bg-lime-400/10 border border-lime-400/30 rounded-xl p-4">
+          <CheckCircle className="w-5 h-5 text-lime-400 shrink-0" />
+          <p className="flex-1 text-sm text-lime-300">{notice}</p>
+          <button onClick={() => setNotice(null)} className="p-1 rounded-lg text-lime-400/60 hover:text-lime-300 transition-colors shrink-0">
+            <X size={16} />
+          </button>
+        </div>
+      )}
 
       {profileIncomplete && (
         <button

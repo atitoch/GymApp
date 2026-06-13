@@ -25,6 +25,7 @@ export const Dashboard: React.FC = () => {
   const [weekOffset, setWeekOffset] = useState(0);
   const [weekLabel, setWeekLabel] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   const [weekStats, setWeekStats] = useState<{
@@ -38,11 +39,17 @@ export const Dashboard: React.FC = () => {
     if (!user?.id) return;
 
     setLoading(true);
+    setLoadError(false);
     try {
       const [result, stats] = await Promise.allSettled([
         fetchUserRoutines(user.id, 7, weekOffset),
         getWeeklyStats(),
       ]);
+
+      // Distinguir "sin rutinas" de "falló la carga" para no mostrar un vacío engañoso
+      if (result.status === 'rejected') {
+        setLoadError(true);
+      }
 
       if (result.status === 'fulfilled' && result.value?.routines?.length > 0) {
         setRoutines(result.value.routines);
@@ -147,11 +154,26 @@ export const Dashboard: React.FC = () => {
           />
           {coachProfileBanner}
           <div className="flex-1 flex items-center justify-center">
-            <EmptyRoutine
-              handleBackToSelect={handleBackToDashboard}
-              hasCoach={!!myCoachData?.coach}
-              coachId={myCoachData?.coach?.users?.id}
-            />
+            {loadError ? (
+              <div className="bg-stone-900 border border-stone-800 rounded-2xl p-8 text-center max-w-sm">
+                <AlertCircle className="w-8 h-8 text-red-400 mx-auto mb-3" />
+                <p className="text-white font-bold">No se pudo cargar tu rutina</p>
+                <p className="text-sm text-stone-400 mt-1">Revisa tu conexión e intenta de nuevo.</p>
+                <button
+                  onClick={loadRoutines}
+                  className="mt-4 px-5 py-2.5 rounded-xl text-sm font-bold text-stone-950"
+                  style={{ background: 'linear-gradient(135deg,#a3e635,#84cc16)' }}
+                >
+                  Reintentar
+                </button>
+              </div>
+            ) : (
+              <EmptyRoutine
+                handleBackToSelect={handleBackToDashboard}
+                hasCoach={!!myCoachData?.coach}
+                coachId={myCoachData?.coach?.users?.id}
+              />
+            )}
           </div>
         </div>
       </div>

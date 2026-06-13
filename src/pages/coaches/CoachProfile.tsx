@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   Dumbbell,
   Clock,
@@ -47,6 +47,7 @@ const STATUS_CONFIG: Record<ConnectionStatus, { label: string; className: string
 
 export const CoachProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
   const [coach, setCoach] = useState<any | null>(null);
   const [plans, setPlans] = useState<CoachPlan[]>([]);
@@ -265,12 +266,44 @@ export const CoachProfile: React.FC = () => {
                   </button>
                 </>
               ) : (
-                <div
-                  className={`w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 ${STATUS_CONFIG[connectionStatus].className}`}
-                >
-                  {STATUS_CONFIG[connectionStatus].icon}
-                  {STATUS_CONFIG[connectionStatus].label}
-                </div>
+                <>
+                  <div
+                    className={`w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 ${STATUS_CONFIG[connectionStatus].className}`}
+                  >
+                    {STATUS_CONFIG[connectionStatus].icon}
+                    {STATUS_CONFIG[connectionStatus].label}
+                  </div>
+                  {connectionStatus === 'pending' && (
+                    <>
+                      <p className="text-xs text-stone-500 text-center">
+                        {coachName} revisará tu solicitud. Te avisaremos por mensaje cuando la acepte.
+                      </p>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => navigate('/coaches')}
+                          className="flex-1 py-2.5 rounded-xl text-sm font-medium text-stone-300 border border-stone-700 hover:bg-stone-800 transition-colors"
+                        >
+                          Ver más coaches
+                        </button>
+                        <button
+                          onClick={() => navigate('/dashboard')}
+                          className="flex-1 py-2.5 rounded-xl text-sm font-medium text-stone-300 border border-stone-700 hover:bg-stone-800 transition-colors"
+                        >
+                          Ir a mi inicio
+                        </button>
+                      </div>
+                    </>
+                  )}
+                  {connectionStatus === 'active' && (
+                    <button
+                      onClick={() => navigate('/my-coach')}
+                      className="w-full py-2.5 rounded-xl text-sm font-bold text-stone-950 transition-all hover:brightness-110"
+                      style={{ background: 'linear-gradient(135deg,#a3e635,#84cc16)' }}
+                    >
+                      Ir a Mi coach →
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </>
