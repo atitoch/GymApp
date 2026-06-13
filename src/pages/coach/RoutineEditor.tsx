@@ -181,6 +181,8 @@ function DayEditor({
 }) {
   const [open, setOpen] = useState(index === 0);
 
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
   const updateSection = (i: number, s: SectionInput) => {
     const sections = day.sections.map((sec, idx) => idx === i ? s : sec);
     onChange({ ...day, sections });
@@ -238,7 +240,7 @@ function DayEditor({
         </div>
         <div className="flex items-center gap-1.5 shrink-0 ml-1">
           <button
-            onClick={(e) => { e.stopPropagation(); onRemove(); }}
+            onClick={(e) => { e.stopPropagation(); setConfirmDelete(true); setOpen(false); }}
             className="p-1.5 text-stone-500 hover:text-red-400 transition-colors"
           >
             <Trash2 size={13} />
@@ -246,6 +248,29 @@ function DayEditor({
           {open ? <ChevronUp size={16} className="text-stone-500" /> : <ChevronDown size={16} className="text-stone-500" />}
         </div>
       </div>
+
+      {confirmDelete && (
+        <div className="px-4 py-3 bg-red-950/40 border-t border-red-400/20 flex items-center justify-between gap-3">
+          <p className="text-sm text-red-300 flex-1">
+            ¿Eliminar <strong className="text-white">Día {index + 1}</strong>
+            {day.dayName ? ` — ${day.dayName}` : ''}?
+          </p>
+          <div className="flex gap-2 shrink-0">
+            <button
+              onClick={() => setConfirmDelete(false)}
+              className="px-3 py-1.5 rounded-lg text-xs font-medium text-stone-400 hover:text-white hover:bg-white/10 transition-all"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={onRemove}
+              className="px-3 py-1.5 rounded-lg text-xs font-bold bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30 transition-all"
+            >
+              Eliminar
+            </button>
+          </div>
+        </div>
+      )}
 
       {open && isRestDay(day) && (
         <div className="p-4 bg-stone-950/50 flex items-center gap-3 text-sm text-stone-400">
