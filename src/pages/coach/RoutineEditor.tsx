@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Plus, Trash2, Loader2, ChevronDown, ChevronUp, GripVertical, Moon } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Loader2, ChevronDown, ChevronUp, GripVertical, Moon, ArrowUp, ArrowDown } from 'lucide-react';
 import {
   createRoutineTemplate,
   updateRoutineTemplate,
@@ -163,13 +163,21 @@ function StringListEditor({
 function DayEditor({
   day,
   index,
+  total,
   onChange,
   onRemove,
+  onMoveUp,
+  onMoveDown,
+  isNew,
 }: {
   day: DayRoutineInput;
   index: number;
+  total: number;
   onChange: (d: DayRoutineInput) => void;
   onRemove: () => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  isNew?: boolean;
 }) {
   const [open, setOpen] = useState(index === 0);
 
@@ -181,30 +189,54 @@ function DayEditor({
   const addSection = () => onChange({ ...day, sections: [...day.sections, emptySection()] });
 
   return (
-    <div className="border border-stone-700 rounded-2xl overflow-hidden">
+    <div
+      className="border rounded-2xl overflow-hidden transition-all duration-300"
+      style={{
+        borderColor: isNew ? 'rgba(163,230,53,0.5)' : 'rgba(68,64,60,1)',
+        boxShadow: isNew ? '0 0 0 2px rgba(163,230,53,0.15)' : undefined,
+      }}
+    >
       <div
-        className="flex items-center justify-between px-4 py-3 bg-stone-900 cursor-pointer"
+        className="flex items-center justify-between px-3 py-3 bg-stone-900 cursor-pointer"
         onClick={() => setOpen((v) => !v)}
       >
-        <div className="flex items-center gap-3 flex-1 min-w-0">
-          <span className="text-xs font-bold text-stone-500">Día {index + 1}</span>
+        {/* Move buttons */}
+        <div className="flex flex-col gap-0.5 shrink-0 mr-2" onClick={(e) => e.stopPropagation()}>
+          <button
+            onClick={onMoveUp}
+            disabled={index === 0}
+            className="p-0.5 rounded text-stone-600 hover:text-stone-300 disabled:opacity-20 disabled:cursor-default transition-colors"
+          >
+            <ArrowUp size={12} />
+          </button>
+          <button
+            onClick={onMoveDown}
+            disabled={index === total - 1}
+            className="p-0.5 rounded text-stone-600 hover:text-stone-300 disabled:opacity-20 disabled:cursor-default transition-colors"
+          >
+            <ArrowDown size={12} />
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          <span className="text-xs font-bold text-stone-500 shrink-0">Día {index + 1}</span>
           {isRestDay(day) && <Moon size={13} className="text-sky-400 shrink-0" />}
           <input
             value={day.dayName}
             onClick={(e) => e.stopPropagation()}
             onChange={(e) => onChange({ ...day, dayName: e.target.value })}
             placeholder="PUSH / PULL / DESCANSO..."
-            className="bg-transparent border-b border-stone-700 text-sm font-bold text-white focus:outline-none focus:border-lime-400 w-32"
+            className="bg-transparent border-b border-stone-700 text-sm font-bold text-white focus:outline-none focus:border-lime-400 w-28 min-w-0"
           />
           <input
             value={day.title}
             onClick={(e) => e.stopPropagation()}
             onChange={(e) => onChange({ ...day, title: e.target.value })}
-            placeholder="Título del día"
+            placeholder="Título"
             className="bg-transparent border-b border-stone-700 text-sm text-stone-300 focus:outline-none focus:border-lime-400 flex-1 min-w-0"
           />
         </div>
-        <div className="flex items-center gap-2 shrink-0 ml-2">
+        <div className="flex items-center gap-1.5 shrink-0 ml-1">
           <button
             onClick={(e) => { e.stopPropagation(); onRemove(); }}
             className="p-1.5 text-stone-500 hover:text-red-400 transition-colors"
@@ -270,6 +302,8 @@ export const RoutineEditor: React.FC = () => {
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [newDayIndex, setNewDayIndex] = useState<number | null>(null);
+  const dayRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     if (isNew) return;
@@ -291,6 +325,30 @@ export const RoutineEditor: React.FC = () => {
   const removeDay = useCallback((i: number) => {
     setDays((prev) => prev.filter((_, idx) => idx !== i));
   }, []);
+
+  const moveDay = useCallback((i: number, dir: -1 | 1) => {
+    setDays((prev) => {
+      const next = [...prev];
+      const j = i + dir;
+      if (j < 0 || j >= next.length) return prev;
+      [next[i], next[j]] = [next[j], next[i]];
+      return next;
+    });
+  }, []);
+
+  const addDay = (factory: () => DayRoutineInput) => {
+    setDays((prev) => {
+      const next = [...prev, factory()];
+      const idx = next.length - 1;
+      // Scroll and flash after render
+      setTimeout(() => {
+        dayRefs.current[idx]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setNewDayIndex(idx);
+        setTimeout(() => setNewDayIndex(null), 1200);
+      }, 50);
+      return next;
+    });
+  };
 
   const handleSave = async () => {
     if (!name.trim()) { setError('El nombre es requerido.'); return; }
@@ -393,27 +451,32 @@ export const RoutineEditor: React.FC = () => {
             <p className="text-xs font-bold uppercase tracking-widest text-stone-500">Días ({days.length})</p>
             <div className="flex items-center gap-3">
               <button
-                onClick={() => setDays((prev) => [...prev, restDay()])}
-                className="flex items-center gap-1.5 text-xs text-stone-500 hover:text-sky-400 transition-colors"
+                onClick={() => addDay(restDay)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-stone-400 hover:text-sky-400 hover:bg-sky-400/10 active:scale-95 transition-all"
               >
                 <Moon size={13} /> Agregar descanso
               </button>
               <button
-                onClick={() => setDays((prev) => [...prev, emptyDay()])}
-                className="flex items-center gap-1.5 text-xs text-stone-500 hover:text-lime-400 transition-colors"
+                onClick={() => addDay(emptyDay)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-stone-400 hover:text-lime-400 hover:bg-lime-400/10 active:scale-95 transition-all"
               >
                 <Plus size={13} /> Agregar día
               </button>
             </div>
           </div>
           {days.map((day, i) => (
-            <DayEditor
-              key={i}
-              day={day}
-              index={i}
-              onChange={(d) => updateDay(i, d)}
-              onRemove={() => removeDay(i)}
-            />
+            <div key={i} ref={(el) => { dayRefs.current[i] = el; }}>
+              <DayEditor
+                day={day}
+                index={i}
+                total={days.length}
+                onChange={(d) => updateDay(i, d)}
+                onRemove={() => removeDay(i)}
+                onMoveUp={() => moveDay(i, -1)}
+                onMoveDown={() => moveDay(i, 1)}
+                isNew={newDayIndex === i}
+              />
+            </div>
           ))}
         </div>
       </div>
