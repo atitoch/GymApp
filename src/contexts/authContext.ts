@@ -9,6 +9,7 @@ export interface User {
   id: string;
   email: string;
   name?: string;
+  avatar_url?: string | null;
   role?: 'user' | 'coach' | 'admin';
   coachStatus?: 'pending' | 'approved' | 'rejected' | null;
 }
@@ -26,6 +27,7 @@ export interface AuthContextType {
   loginWithGitHub: () => Promise<void>;
   refreshAuth: () => Promise<void>;
   setAuthData: (authData: AuthResponse) => void;
+  updateUser: (updates: Partial<User>) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);

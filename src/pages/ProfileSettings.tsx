@@ -306,7 +306,7 @@ function RestAdjust({
 
 export default function ProfileSettings() {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();
   // const { currentTheme, setTheme } = useTheme();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -348,7 +348,6 @@ export default function ProfileSettings() {
         const data = await profileService.getUserProfile();
 
         if (data) {
-          // El perfil del servicio ya coincide con la estructura del backend
           setProfile({
             id: data.id,
             first_name: data.first_name || '',
@@ -366,6 +365,9 @@ export default function ProfileSettings() {
             fitness_goal: data.fitness_goal ?? null,
             gender: data.gender ?? null,
           });
+          // Sync display name and avatar to auth context so header stays current
+          const fullName = [data.first_name, data.last_name].filter(Boolean).join(' ');
+          updateUser({ name: fullName || undefined, avatar_url: data.avatar_url ?? null });
         } else {
           // Si no existe perfil, crear uno básico con datos del usuario
           setProfile({
@@ -419,7 +421,8 @@ export default function ProfileSettings() {
     value: UserProfile[K],
   ) => {
     if (!profile) return;
-    setProfile({ ...profile, [field]: value });
+    const updated = { ...profile, [field]: value };
+    setProfile(updated);
     if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     setSaveStatus('saving');
     saveTimeoutRef.current = setTimeout(async () => {
@@ -428,6 +431,11 @@ export default function ProfileSettings() {
           [field]: value,
         } as profileService.UpdateProfileData);
         if (mountedRef.current) setSaveStatus('saved');
+        // Keep auth context name in sync so header reflects changes immediately
+        if (field === 'first_name' || field === 'last_name') {
+          const fullName = [updated.first_name, updated.last_name].filter(Boolean).join(' ');
+          updateUser({ name: fullName || undefined });
+        }
       } catch (err) {
         console.error('Error updating profile:', err);
         if (mountedRef.current) setSaveStatus('error');
@@ -447,6 +455,7 @@ export default function ProfileSettings() {
       const publicUrl = await profileService.uploadAvatar(file);
       await profileService.updateUserProfile({ avatar_url: publicUrl });
       setProfile({ ...profile, avatar_url: publicUrl });
+      updateUser({ avatar_url: publicUrl });
     } catch {
       // silently ignore upload errors
     } finally {

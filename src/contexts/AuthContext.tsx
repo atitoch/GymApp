@@ -197,11 +197,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   const setAuthData = (authData: AuthResponse) => {
     saveSession(authData);
-    // Enriquecer el rol en segundo plano (p. ej. tras login OAuth), sin bloquear
-    // la navegación. Si el backend no reconoce el token, se conserva el usuario base.
     enrichUserWithRole(authData.token, authData.user).then((enriched) => {
       setUser(enriched);
       localStorage.setItem(USER_KEY, JSON.stringify(enriched));
+    });
+  };
+
+  const updateUser = (updates: Partial<import('./authContext').User>) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const next = { ...prev, ...updates };
+      localStorage.setItem(USER_KEY, JSON.stringify(next));
+      return next;
     });
   };
 
@@ -218,6 +225,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     loginWithGitHub,
     refreshAuth,
     setAuthData,
+    updateUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

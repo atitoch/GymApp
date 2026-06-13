@@ -57,6 +57,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   const displayName = authUser?.name || authUser?.email || 'Usuario';
   const displayInitial = displayName[0]?.toUpperCase() || 'U';
+  const avatarUrl = authUser?.avatar_url;
 
   const getUserColor = (name: string): string => {
     const palette = ['#a3e635', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444'];
@@ -84,18 +85,22 @@ export const Header: React.FC<HeaderProps> = ({
           {showBackButton ? (
             <button
               onClick={handleBack}
-              className="w-11 h-11 shrink-0 rounded-full flex items-center justify-center text-xl font-bold transition-[transform] duration-150 hover:scale-105 active:scale-95"
-              style={{ backgroundColor: userColor, color: colors.text.inverse }}
+              className="w-11 h-11 shrink-0 rounded-full overflow-hidden flex items-center justify-center text-xl font-bold transition-[transform] duration-150 hover:scale-105 active:scale-95"
+              style={avatarUrl ? undefined : { backgroundColor: userColor, color: colors.text.inverse }}
               title="Volver al dashboard"
             >
-              {displayInitial}
+              {avatarUrl
+                ? <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" />
+                : displayInitial}
             </button>
           ) : (
             <div
-              className="w-11 h-11 shrink-0 rounded-full flex items-center justify-center text-xl font-bold"
-              style={{ backgroundColor: userColor, color: colors.text.inverse }}
+              className="w-11 h-11 shrink-0 rounded-full overflow-hidden flex items-center justify-center text-xl font-bold"
+              style={avatarUrl ? undefined : { backgroundColor: userColor, color: colors.text.inverse }}
             >
-              {displayInitial}
+              {avatarUrl
+                ? <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" />
+                : displayInitial}
             </div>
           )}
           <div className="min-w-0">
