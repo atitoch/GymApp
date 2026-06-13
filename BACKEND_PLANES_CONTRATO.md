@@ -33,11 +33,17 @@ create table coach_plans (
 );
 ```
 
-Columna nueva en la tabla de relaciones coach-cliente (la que respalda `/coach/connections`):
+Columna nueva en la tabla de relaciones coach-cliente (`user_coach_relationships`):
 
 ```sql
-alter table client_relationships add column plan_id uuid references coach_plans(id) on delete set null;
+alter table user_coach_relationships
+  add column plan_id uuid references coach_plans(id) on delete set null;
 ```
+
+> **Estado (13-jun-2026):** ambas migraciones ya están aplicadas en el proyecto Supabase
+> `GymTrack` (`tzmuzbwbqxrvhblprwzq`). Solo falta implementar los endpoints en `GymAppBack`.
+> `coach_plans` tiene RLS habilitado sin políticas: el backend debe accederla con la
+> service role key (igual que el resto de tablas).
 
 > Nota: `on delete set null` + el frontend avisa al coach que "las solicitudes existentes lo
 > conservan" — si se prefiere conservar el histórico exacto, usar borrado lógico
