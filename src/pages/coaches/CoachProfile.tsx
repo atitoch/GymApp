@@ -235,6 +235,20 @@ export const CoachProfile: React.FC = () => {
                       {STATUS_CONFIG.ended.label}
                     </div>
                   )}
+                  {plans.length > 0 && (
+                    <p className="text-xs text-center text-stone-500">
+                      {selectedPlan ? (
+                        <>
+                          Plan elegido: <strong className="text-white">{selectedPlan.name}</strong>{' — '}
+                          <span className="text-lime-400 font-bold">
+                            {fmtPlanPrice(selectedPlan.price, selectedPlan.currency)}{PLAN_INTERVAL_SUFFIX[selectedPlan.interval]}
+                          </span>
+                        </>
+                      ) : (
+                        'Elige un plan arriba para continuar.'
+                      )}
+                    </p>
+                  )}
                   <button
                     onClick={handleConnect}
                     disabled={requesting || needsPlanSelection}
@@ -246,21 +260,10 @@ export const CoachProfile: React.FC = () => {
                         <Loader2 size={16} className="animate-spin" />
                         Enviando...
                       </>
-                    ) : needsPlanSelection ? (
-                      <>
-                        <UserPlus size={16} />
-                        Elige un plan para solicitar
-                      </>
                     ) : (
                       <>
                         <UserPlus size={16} />
-                        {connectionStatus === 'ended'
-                          ? selectedPlan
-                            ? `Reconectar · ${selectedPlan.name} (${fmtPlanPrice(selectedPlan.price, selectedPlan.currency)}${PLAN_INTERVAL_SUFFIX[selectedPlan.interval]})`
-                            : 'Solicitar de nuevo'
-                          : selectedPlan
-                            ? `Solicitar · ${selectedPlan.name} (${fmtPlanPrice(selectedPlan.price, selectedPlan.currency)}${PLAN_INTERVAL_SUFFIX[selectedPlan.interval]})`
-                            : 'Solicitar entrenamiento'}
+                        {connectionStatus === 'ended' ? 'Solicitar de nuevo' : 'Enviar solicitud'}
                       </>
                     )}
                   </button>

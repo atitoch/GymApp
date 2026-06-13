@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Clock, Loader2, CheckCircle, XCircle, CreditCard, DollarSign } from 'lucide-react';
+import { ArrowLeft, Clock, Loader2, CheckCircle, XCircle, CreditCard, DollarSign, X } from 'lucide-react';
 import { getPendingRequests, acceptRequest, rejectRequest, type ClientRelationship } from '../../services/coachDashboard';
 import { PLAN_INTERVAL_SUFFIX, fmtPlanPrice } from '../../utils/plans';
 
@@ -11,6 +11,8 @@ export const CoachRequests: React.FC = () => {
   const [actingId, setActingId] = useState<string | null>(null);
   // Solicitud con plan: al aceptar se pregunta si el pago ya se recibió
   const [confirmAcceptId, setConfirmAcceptId] = useState<string | null>(null);
+  // Confirma a dónde fue la solicitud después de aceptar/rechazar
+  const [lastAction, setLastAction] = useState<{ type: 'accepted' | 'rejected'; name: string; userId?: string } | null>(null);
 
   const load = () =>
     getPendingRequests().then(setRequests).catch(() => {}).finally(() => setLoading(false));
@@ -18,21 +20,25 @@ export const CoachRequests: React.FC = () => {
   useEffect(() => { load(); }, []);
 
   const doAccept = async (id: string, paymentReceived?: boolean) => {
+    const req = requests.find((r) => r.id === id);
     setActingId(id);
     try {
       await acceptRequest(id, paymentReceived != null ? { payment_received: paymentReceived } : undefined);
       setRequests((prev) => prev.filter((r) => r.id !== id));
       setConfirmAcceptId(null);
+      if (req) setLastAction({ type: 'accepted', name: fullName(req), userId: req.users?.id ?? req.user_id });
     } catch {} finally {
       setActingId(null);
     }
   };
 
   const handleReject = async (id: string) => {
+    const req = requests.find((r) => r.id === id);
     setActingId(id);
     try {
       await rejectRequest(id);
       setRequests((prev) => prev.filter((r) => r.id !== id));
+      if (req) setLastAction({ type: 'rejected', name: fullName(req) });
     } catch {} finally {
       setActingId(null);
     }
@@ -68,7 +74,34 @@ export const CoachRequests: React.FC = () => {
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 py-6">
+      <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
+        {lastAction && (
+          <div className={`flex items-center gap-3 rounded-xl p-4 border ${
+            lastAction.type === 'accepted'
+              ? 'bg-lime-400/10 border-lime-400/30'
+              : 'bg-stone-900 border-stone-800'
+          }`}>
+            {lastAction.type === 'accepted'
+              ? <CheckCircle className="w-5 h-5 text-lime-400 shrink-0" />
+              : <XCircle className="w-5 h-5 text-stone-500 shrink-0" />}
+            <p className={`flex-1 text-sm ${lastAction.type === 'accepted' ? 'text-lime-300' : 'text-stone-400'}`}>
+              {lastAction.type === 'accepted'
+                ? <>{lastAction.name} ya aparece en tus clientes activos.</>
+                : <>Rechazaste la solicitud de {lastAction.name}.</>}
+            </p>
+            {lastAction.type === 'accepted' && lastAction.userId && (
+              <button
+                onClick={() => navigate(`/coach/clients/${lastAction.userId}`)}
+                className="text-xs font-bold text-lime-400 hover:text-lime-300 transition-colors shrink-0"
+              >
+                Ver cliente →
+              </button>
+            )}
+            <button onClick={() => setLastAction(null)} className="p-1 rounded-lg text-stone-500 hover:text-stone-300 transition-colors shrink-0">
+              <X size={14} />
+            </button>
+          </div>
+        )}
         {loading ? (
           <div className="flex justify-center py-16"><Loader2 size={28} className="text-lime-400 animate-spin" /></div>
         ) : requests.length === 0 ? (

@@ -153,14 +153,16 @@ export const Chat: React.FC = () => {
           </div>
         ) : (
           <>
-            {messages.length < total && (
+            {messages.length < total ? (
               <button
                 onClick={handleLoadMore}
                 disabled={loadingMore}
                 className="w-full text-center text-xs text-stone-500 hover:text-stone-300 py-2 mb-4 transition-colors"
               >
-                {loadingMore ? 'Cargando...' : 'Cargar mensajes anteriores'}
+                {loadingMore ? 'Cargando...' : `Cargar mensajes anteriores (${total - messages.length})`}
               </button>
+            ) : messages.length > 0 && (
+              <p className="text-center text-xs text-stone-700 py-2 mb-4">— Inicio de la conversación —</p>
             )}
 
             {messages.map((msg, i) => {
