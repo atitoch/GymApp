@@ -178,7 +178,7 @@ export const CoachProfile: React.FC = () => {
                 </p>
                 <div className="space-y-2">
                   {plans.map(plan => {
-                    const selectable = connectionStatus === 'none';
+                    const selectable = connectionStatus === 'none' || connectionStatus === 'ended';
                     const selected = selectedPlanId === plan.id;
                     return (
                       <button
@@ -216,7 +216,7 @@ export const CoachProfile: React.FC = () => {
                     );
                   })}
                 </div>
-                {connectionStatus === 'none' && (
+                {(connectionStatus === 'none' || connectionStatus === 'ended') && (
                   <p className="text-[11px] text-stone-500">
                     Elige un plan para enviar tu solicitud. El pago se acuerda directamente con el coach.
                   </p>
