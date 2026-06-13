@@ -17,6 +17,9 @@ import { PageHeader } from '../../components/PageHeader';
 import { PLAN_INTERVAL_SUFFIX, fmtPlanPrice } from '../../utils/plans';
 
 type ConnectionStatus = 'none' | 'pending' | 'active' | 'rejected';
+const KNOWN_STATUSES: ConnectionStatus[] = ['pending', 'active', 'rejected'];
+const normalizeStatus = (s?: string): ConnectionStatus =>
+  KNOWN_STATUSES.includes(s as ConnectionStatus) ? (s as ConnectionStatus) : 'none';
 
 const STATUS_CONFIG: Record<ConnectionStatus, { label: string; className: string; icon: React.ReactNode }> = {
   none: { label: '', className: '', icon: null },
@@ -61,7 +64,7 @@ export const CoachProfile: React.FC = () => {
         const rel = (connections as any[]).find(
           (c) => c.coach_id === id || c.coaches?.id === id,
         );
-        setConnectionStatus((rel?.status as ConnectionStatus) ?? 'none');
+        setConnectionStatus(normalizeStatus(rel?.status));
       })
       .catch(() => setError('No se pudo cargar el perfil.'))
       .finally(() => setLoading(false));
