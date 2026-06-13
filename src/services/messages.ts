@@ -12,7 +12,7 @@ export interface Message {
 }
 
 export interface Conversation {
-  partner: { id: string; first_name?: string; last_name?: string };
+  partner: { id: string; first_name?: string; last_name?: string; avatar_url?: string | null };
   lastMessage: {
     id: string;
     content: string;

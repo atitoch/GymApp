@@ -4,6 +4,7 @@ import { Users, ChevronRight, Search, CreditCard } from 'lucide-react';
 import { listCoaches, getMyConnections } from '../../services/coachDashboard';
 import { PageHeader } from '../../components/PageHeader';
 import { fmtPlanPrice } from '../../utils/plans';
+import { Avatar } from '../../components/Avatar';
 
 export const BrowseCoaches: React.FC = () => {
   const navigate = useNavigate();
@@ -114,11 +115,14 @@ export const BrowseCoaches: React.FC = () => {
                 onClick={() => navigate(`/coaches/${coach.id}`)}
               >
                 <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <h2 className="text-lg font-semibold">{name}</h2>
-                    {coach.specialization && (
-                      <p className="text-lime-400 text-sm">{coach.specialization}</p>
-                    )}
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Avatar url={coach.users?.avatar_url} name={name} size={44} />
+                    <div className="min-w-0">
+                      <h2 className="text-lg font-semibold truncate">{name}</h2>
+                      {coach.specialization && (
+                        <p className="text-lime-400 text-sm truncate">{coach.specialization}</p>
+                      )}
+                    </div>
                   </div>
                   <ChevronRight size={16} className="text-stone-600 shrink-0 mt-1" />
                 </div>

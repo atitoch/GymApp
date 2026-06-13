@@ -275,7 +275,7 @@ export const ClientDetail: React.FC = () => {
           </div>
           {userId && (
             <button
-              onClick={() => navigate(`/messages/${userId}`, { state: { partnerName: displayName } })}
+              onClick={() => navigate(`/messages/${userId}`, { state: { partnerName: displayName, partnerAvatar: user?.avatar_url ?? null } })}
               className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-bold text-stone-950 transition-all hover:brightness-110"
               style={{ background: 'linear-gradient(135deg,var(--color-accent-400),var(--color-accent-500))' }}
             >

@@ -15,6 +15,7 @@ import {
   type CoachPlan,
 } from '../../services/coachDashboard';
 import { fmtPlanPrice } from '../../utils/plans';
+import { Avatar } from '../../components/Avatar';
 
 export const CoachDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -275,14 +276,17 @@ export const CoachDashboard: React.FC = () => {
           <div className="space-y-3">
             {pendingRequests.map((req) => (
               <div key={req.id} className="bg-stone-900 border border-stone-800 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
-                <div className="min-w-0">
-                  <p className="font-medium truncate">{fullName(req)}</p>
-                  <p className="text-stone-400 text-sm truncate">{req.users?.email}</p>
-                  {req.plan && (
-                    <p className="text-xs text-lime-400 font-semibold mt-0.5 truncate">
-                      {req.plan.name} · {fmtPlanPrice(req.plan.price, req.plan.currency)}
-                    </p>
-                  )}
+                <div className="flex items-center gap-3 min-w-0">
+                  <Avatar url={req.users?.avatar_url} name={fullName(req)} size={40} />
+                  <div className="min-w-0">
+                    <p className="font-medium truncate">{fullName(req)}</p>
+                    <p className="text-stone-400 text-sm truncate">{req.users?.email}</p>
+                    {req.plan && (
+                      <p className="text-xs text-lime-400 font-semibold mt-0.5 truncate">
+                        {req.plan.name} · {fmtPlanPrice(req.plan.price, req.plan.currency)}
+                      </p>
+                    )}
+                  </div>
                 </div>
                 <div className="flex gap-2 shrink-0">
                   <button

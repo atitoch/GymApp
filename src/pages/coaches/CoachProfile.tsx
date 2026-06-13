@@ -15,6 +15,7 @@ import {
 import { getCoachPublicProfile, requestConnection, getMyConnections, getCoachPlans, type CoachPlan } from '../../services/coachDashboard';
 import { PageHeader } from '../../components/PageHeader';
 import { PLAN_INTERVAL_SUFFIX, fmtPlanPrice } from '../../utils/plans';
+import { Avatar } from '../../components/Avatar';
 
 type ConnectionStatus = 'none' | 'pending' | 'active' | 'rejected' | 'ended';
 const KNOWN_STATUSES: ConnectionStatus[] = ['pending', 'active', 'rejected', 'ended'];
@@ -130,9 +131,13 @@ export const CoachProfile: React.FC = () => {
             {/* Avatar + nombre */}
             <div className="bg-stone-900 rounded-2xl p-6 border border-stone-800 space-y-4">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-lime-400/10 flex items-center justify-center shrink-0">
-                  <Dumbbell size={28} className="text-lime-400" />
-                </div>
+                {coach.users?.avatar_url ? (
+                  <Avatar url={coach.users.avatar_url} name={coachName} size={64} />
+                ) : (
+                  <div className="w-16 h-16 rounded-2xl bg-lime-400/10 flex items-center justify-center shrink-0">
+                    <Dumbbell size={28} className="text-lime-400" />
+                  </div>
+                )}
                 <div className="flex-1 min-w-0">
                   <h2 className="text-xl font-black text-white truncate">{coachName}</h2>
                   {coach.specialization && (

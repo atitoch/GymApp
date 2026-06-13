@@ -14,6 +14,7 @@ import {
   UserMinus,
 } from 'lucide-react';
 import { getMyCoach, disconnectFromCoach, type MyCoachData } from '../services/coachDashboard';
+import { Avatar } from '../components/Avatar';
 
 const COMMENT_TYPE_LABELS: Record<string, string> = {
   general: 'General',
@@ -106,9 +107,13 @@ export const MyCoach: React.FC = () => {
             {/* Perfil del coach */}
             <div className="bg-stone-900 rounded-2xl p-6 border border-stone-800 space-y-4">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-lime-400/10 flex items-center justify-center shrink-0">
-                  <Dumbbell size={28} className="text-lime-400" />
-                </div>
+                {(coach.users as any)?.avatar_url ? (
+                  <Avatar url={(coach.users as any).avatar_url} name={coachName} size={64} />
+                ) : (
+                  <div className="w-16 h-16 rounded-2xl bg-lime-400/10 flex items-center justify-center shrink-0">
+                    <Dumbbell size={28} className="text-lime-400" />
+                  </div>
+                )}
                 <div className="flex-1 min-w-0">
                   <h2 className="text-xl font-black text-white truncate">{coachName}</h2>
                   {coach.specialization && (
@@ -122,7 +127,7 @@ export const MyCoach: React.FC = () => {
                 </div>
                 {coach.users?.id && (
                   <button
-                    onClick={() => navigate(`/messages/${coach.users!.id}`, { state: { partnerName: coachName } })}
+                    onClick={() => navigate(`/messages/${coach.users!.id}`, { state: { partnerName: coachName, partnerAvatar: (coach.users as any)?.avatar_url ?? null } })}
                     className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-bold text-stone-950 transition-all hover:brightness-110"
                     style={{ background: 'linear-gradient(135deg,#a3e635,#84cc16)' }}
                   >

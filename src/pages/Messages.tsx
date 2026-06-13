@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, MessageSquare, Loader2, Circle, AlertCircle } from 'lucide-react';
 import { getConversations, type Conversation } from '../services/messages';
+import { Avatar } from '../components/Avatar';
 
 const formatTime = (iso: string) => {
   const d = new Date(iso);
@@ -87,12 +88,10 @@ export const Messages: React.FC = () => {
               return (
                 <button
                   key={conv.partner.id}
-                  onClick={() => navigate(`/messages/${conv.partner.id}`, { state: { partnerName: name } })}
+                  onClick={() => navigate(`/messages/${conv.partner.id}`, { state: { partnerName: name, partnerAvatar: conv.partner.avatar_url ?? null } })}
                   className="w-full text-left bg-stone-900 hover:bg-stone-800 border border-stone-800 rounded-2xl p-4 flex items-center gap-3 transition-colors"
                 >
-                  <div className="w-10 h-10 rounded-full bg-lime-400/20 flex items-center justify-center shrink-0 text-lime-400 font-bold">
-                    {name[0]?.toUpperCase()}
-                  </div>
+                  <Avatar url={conv.partner.avatar_url} name={name} size={40} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
                       <p className={`font-bold truncate ${unread ? 'text-white' : 'text-stone-300'}`}>{name}</p>

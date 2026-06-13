@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Clock, Loader2, CheckCircle, XCircle, CreditCard, DollarSign, X } from 'lucide-react';
 import { getPendingRequests, acceptRequest, rejectRequest, type ClientRelationship } from '../../services/coachDashboard';
 import { PLAN_INTERVAL_SUFFIX, fmtPlanPrice } from '../../utils/plans';
+import { Avatar } from '../../components/Avatar';
 
 export const CoachRequests: React.FC = () => {
   const navigate = useNavigate();
@@ -115,7 +116,9 @@ export const CoachRequests: React.FC = () => {
             {requests.map((req) => (
               <div key={req.id} className="bg-stone-900 border border-stone-800 rounded-xl p-4">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
-                  <div className="min-w-0">
+                  <div className="flex items-start gap-3 min-w-0">
+                    <Avatar url={req.users?.avatar_url} name={fullName(req)} size={40} />
+                    <div className="min-w-0">
                     <p className="font-medium truncate">{fullName(req)}</p>
                     <p className="text-stone-400 text-sm truncate">{req.users?.email}</p>
                     {req.plan && (
@@ -130,6 +133,7 @@ export const CoachRequests: React.FC = () => {
                         <p className="text-[11px] text-stone-500 mt-1">Al aceptar podrás registrar el pago de este plan.</p>
                       </>
                     )}
+                    </div>
                   </div>
                   <div className="flex gap-2 shrink-0">
                     <button

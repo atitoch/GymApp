@@ -13,10 +13,11 @@ import { useColors } from "../theme";
 import { Dumbbell, Calendar, TrendingUp, Sparkles, ChevronRight, ChevronLeft, Users, Star, Flame, AlertCircle } from "lucide-react";
 import { DashboardSkeleton } from "../components/DashboardSkeleton";
 import { OnboardingModal } from "../components/OnboardingModal";
+import { Avatar } from "../components/Avatar";
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const colors = useColors();
   const [routines, setRoutines] = useState<CalculatedDayRoutine[]>([]);
   const [myCoachData, setMyCoachData] = useState<MyCoachData | null>(null);
@@ -198,8 +199,7 @@ export const Dashboard: React.FC = () => {
           onComplete={(name) => {
             localStorage.setItem('onboarding_done', '1');
             setShowOnboarding(false);
-            // Refresh page so header picks up new name
-            if (name) window.location.reload();
+            if (name) updateUser({ name });
           }}
         />
       )}
@@ -327,12 +327,20 @@ export const Dashboard: React.FC = () => {
                 borderColor: colors.primary[500] + '25',
               }}
             >
-              <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                style={{ backgroundColor: colors.primary[500] + '20' }}
-              >
-                <Dumbbell className="w-5 h-5" style={{ color: colors.primary[400] }} />
-              </div>
+              {(myCoachData.coach.users as any)?.avatar_url ? (
+                <Avatar
+                  url={(myCoachData.coach.users as any).avatar_url}
+                  name={[myCoachData.coach.users?.first_name, myCoachData.coach.users?.last_name].filter(Boolean).join(' ') || 'E'}
+                  size={48}
+                />
+              ) : (
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+                  style={{ backgroundColor: colors.primary[500] + '20' }}
+                >
+                  <Dumbbell className="w-5 h-5" style={{ color: colors.primary[400] }} />
+                </div>
+              )}
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-bold uppercase tracking-widest text-stone-500 mb-0.5">Mi entrenador</p>
                 <p className="text-white font-bold truncate">

@@ -10,6 +10,7 @@ import {
   type Message,
 } from '../services/messages';
 import { useAuth } from '../contexts/useAuth';
+import { Avatar } from '../components/Avatar';
 
 const formatTime = (iso: string) =>
   new Date(iso).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
@@ -25,6 +26,7 @@ export const Chat: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const partnerName = (location.state as any)?.partnerName ?? 'Chat';
+  const partnerAvatar = (location.state as any)?.partnerAvatar ?? null;
   const { user } = useAuth();
 
   const [messages, setMessages] = useState<Message[]>([]);
@@ -138,9 +140,7 @@ export const Chat: React.FC = () => {
           >
             <ArrowLeft size={20} />
           </button>
-          <div className="w-8 h-8 rounded-full bg-lime-400/20 flex items-center justify-center text-lime-400 font-bold text-sm shrink-0">
-            {partnerName[0]?.toUpperCase()}
-          </div>
+          <Avatar url={partnerAvatar} name={partnerName} size={32} />
           <p className="text-white font-bold truncate">{partnerName}</p>
         </div>
       </div>

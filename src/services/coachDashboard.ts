@@ -7,7 +7,7 @@ export interface CoachProfile {
   certifications?: string[];
   years_experience?: number;
   hourly_rate?: number;
-  users?: { id?: string; first_name?: string; last_name?: string; email: string };
+  users?: { id?: string; first_name?: string; last_name?: string; email: string; avatar_url?: string | null };
 }
 
 export interface ClientRelationship {
@@ -15,7 +15,7 @@ export interface ClientRelationship {
   user_id: string;
   status: string;
   started_at?: string;
-  users?: { id: string; first_name?: string; last_name?: string; email: string };
+  users?: { id: string; first_name?: string; last_name?: string; email: string; avatar_url?: string | null };
   plan_id?: string | null;
   plan?: Pick<CoachPlan, 'id' | 'name' | 'price' | 'currency' | 'interval'> | null;
 }
@@ -246,7 +246,7 @@ export const listCoaches = async (): Promise<any[]> => {
 };
 
 export const getCoachPublicProfile = (coachId: string) =>
-  authenticatedGet<{ coach: CoachProfile & { users?: { first_name?: string; last_name?: string } } }>(`/coaches/${coachId}`);
+  authenticatedGet<{ coach: CoachProfile & { users?: { first_name?: string; last_name?: string; avatar_url?: string | null } } }>(`/coaches/${coachId}`);
 
 export const requestConnection = (coachId: string, planId?: string) =>
   authenticatedPost(`/coaches/${coachId}/connect`, planId ? { plan_id: planId } : {});
