@@ -209,13 +209,21 @@ export const ClientDetail: React.FC = () => {
 
   const handleAssignRoutine = async () => {
     if (!userId || !selectedRoutineId) return;
-    const alreadyHasRoutine = clientData?.routine_id;
+    const alreadyHasRoutine = clientData?.assigned_routine?.id ?? clientData?.routine_id;
     if (alreadyHasRoutine && !showResetWarning) { setShowResetWarning(true); return; }
     setShowResetWarning(false);
     setAssigning(true);
     setAssignMsg(null);
     try {
       await assignRoutine(userId, selectedRoutineId, startMode);
+      const assigned = routines.find(r => r.id === selectedRoutineId);
+      setClientData((prev: any) => ({
+        ...prev,
+        assigned_routine: assigned
+          ? { id: assigned.id, name: assigned.name, total_days: assigned.total_days, is_cyclic: assigned.is_cyclic }
+          : prev?.assigned_routine,
+        routine_id: selectedRoutineId,
+      }));
       setAssignMsg({ type: 'success', text: 'Rutina asignada exitosamente' });
     } catch (e: any) {
       setAssignMsg({ type: 'error', text: e?.message ?? 'Error al asignar rutina' });
@@ -235,7 +243,9 @@ export const ClientDetail: React.FC = () => {
     ? (workouts.reduce((a: number, w: any) => a + (w.rating ?? 0), 0) / workouts.filter((w: any) => w.rating != null).length).toFixed(1)
     : null;
   const lastWorkout = workouts.find((w: any) => w.completed_at);
-  const currentRoutineName = routines.find(r => r.id === clientData?.routine_id)?.name;
+  const currentRoutineName =
+    clientData?.assigned_routine?.name ??
+    routines.find(r => r.id === clientData?.routine_id)?.name;
 
   const TABS: { id: Tab; label: string; icon: React.ReactNode; count?: number }[] = [
     { id: 'actividad', label: 'Actividad',  icon: <Activity size={15} />,    count: workouts.length },
