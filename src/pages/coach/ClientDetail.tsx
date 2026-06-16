@@ -9,6 +9,7 @@ import {
   getClientDetail, addComment, getClientComments, updateComment,
   deleteComment, disconnectClient, getMyRoutines, assignRoutine,
   getClientPayments, createPayment, updatePayment, deletePayment,
+  getClientActiveRoutine,
   type CoachComment, type CoachRoutine, type CoachPayment, type PaymentStatus,
 } from '../../services/coachDashboard';
 
@@ -57,6 +58,7 @@ export const ClientDetail: React.FC = () => {
   const [clientData, setClientData] = useState<any>(null);
   const [comments, setComments] = useState<CoachComment[]>([]);
   const [routines, setRoutines] = useState<CoachRoutine[]>([]);
+  const [assignedRoutine, setAssignedRoutine] = useState<CoachRoutine | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>('actividad');
 
@@ -108,12 +110,14 @@ export const ClientDetail: React.FC = () => {
       getClientComments(userId),
       getMyRoutines(),
       getClientPayments(userId).catch(() => []),
+      getClientActiveRoutine(userId).catch(() => null),
     ])
-      .then(([detail, c, r, p]) => {
+      .then(([detail, c, r, p, activeRoutine]) => {
         setClientData(detail);
         setComments(c ?? []);
         setRoutines(r ?? []);
         setPayments(p ?? []);
+        setAssignedRoutine(activeRoutine ?? null);
       })
       .finally(() => setLoading(false));
   }, [userId]);
@@ -209,21 +213,15 @@ export const ClientDetail: React.FC = () => {
 
   const handleAssignRoutine = async () => {
     if (!userId || !selectedRoutineId) return;
-    const alreadyHasRoutine = clientData?.assigned_routine?.id ?? clientData?.routine_id;
+    const alreadyHasRoutine = assignedRoutine?.id ?? clientData?.assigned_routine?.id ?? clientData?.routine_id;
     if (alreadyHasRoutine && !showResetWarning) { setShowResetWarning(true); return; }
     setShowResetWarning(false);
     setAssigning(true);
     setAssignMsg(null);
     try {
       await assignRoutine(userId, selectedRoutineId, startMode);
-      const assigned = routines.find(r => r.id === selectedRoutineId);
-      setClientData((prev: any) => ({
-        ...prev,
-        assigned_routine: assigned
-          ? { id: assigned.id, name: assigned.name, total_days: assigned.total_days, is_cyclic: assigned.is_cyclic }
-          : prev?.assigned_routine,
-        routine_id: selectedRoutineId,
-      }));
+      const selected = routines.find(r => r.id === selectedRoutineId);
+      if (selected) setAssignedRoutine(selected);
       setAssignMsg({ type: 'success', text: 'Rutina asignada exitosamente' });
     } catch (e: any) {
       setAssignMsg({ type: 'error', text: e?.message ?? 'Error al asignar rutina' });
@@ -244,6 +242,7 @@ export const ClientDetail: React.FC = () => {
     : null;
   const lastWorkout = workouts.find((w: any) => w.completed_at);
   const currentRoutineName =
+    assignedRoutine?.name ??
     clientData?.assigned_routine?.name ??
     routines.find(r => r.id === clientData?.routine_id)?.name;
 

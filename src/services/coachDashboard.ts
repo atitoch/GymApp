@@ -1,4 +1,5 @@
-import { authenticatedGet, authenticatedPost, authenticatedPut, authenticatedDelete } from '../utils/api';
+import { authenticatedGet, authenticatedPost, authenticatedPut, authenticatedDelete, getAuthToken } from '../utils/api';
+import { supabase } from '../config/supabase';
 
 export interface CoachProfile {
   id: string;
@@ -166,6 +167,43 @@ export const assignRoutine = (userId: string, routineId: string, startMode: 'tod
 export const getMyRoutines = async (): Promise<CoachRoutine[]> => {
   const res = await authenticatedGet<{ routines: CoachRoutine[] }>('/coach/routines');
   return res.routines ?? [];
+};
+
+/** Obtiene la rutina activa asignada a un cliente específico.
+ * Usa el cliente Supabase directamente con el JWT del coach (OAuth o compatible).
+ * Devuelve null si no hay rutina asignada o si el JWT no es Supabase-compatible. */
+export const getClientActiveRoutine = async (userId: string): Promise<CoachRoutine | null> => {
+  try {
+    // Primero intenta con el cliente supabase-js (tiene sesión para OAuth users).
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (sessionData?.session) {
+      const { data } = await supabase
+        .from('routines')
+        .select('id, name, total_days, is_cyclic')
+        .eq('assigned_user_id', userId)
+        .eq('is_active', true)
+        .limit(1)
+        .single();
+      if (data) return data as CoachRoutine;
+    }
+
+    // Fallback: usa el token custom del backend directamente contra Supabase REST API.
+    // Funciona si el backend emite JWTs firmados con el mismo secret de Supabase.
+    const token = getAuthToken();
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+    const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
+    if (!token || !supabaseUrl || !supabaseKey) return null;
+
+    const res = await fetch(
+      `${supabaseUrl}/rest/v1/routines?select=id%2Cname%2Ctotal_days%2Cis_cyclic&assigned_user_id=eq.${encodeURIComponent(userId)}&is_active=eq.true&limit=1`,
+      { headers: { apikey: supabaseKey, Authorization: `Bearer ${token}` } },
+    );
+    if (!res.ok) return null;
+    const rows: CoachRoutine[] = await res.json();
+    return rows[0] ?? null;
+  } catch {
+    return null;
+  }
 };
 
 export const getRoutineTemplate = async (routineId: string): Promise<RoutineTemplateDetail> => {
