@@ -65,7 +65,6 @@ export const Login: React.FC = () => {
     password: "",
     confirmPassword: "",
     fullName: "",
-    rememberMe: false,
   });
 
   // Validación de email
@@ -248,7 +247,6 @@ export const Login: React.FC = () => {
         await login({
           email: formData.email,
           password: formData.password,
-          rememberMe: formData.rememberMe,
         });
       }
     } catch (err) {
@@ -733,20 +731,7 @@ export const Login: React.FC = () => {
               )}
 
               {!isRegistering && (
-                <div className="flex items-center justify-between text-sm">
-                  <label className="flex items-center gap-2 text-stone-400 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      name="rememberMe"
-                      checked={formData.rememberMe}
-                      onChange={handleInputChange}
-                      disabled={isLoading}
-                      className="w-4 h-4 rounded border-stone-600 bg-stone-900/30 text-lime-400 focus:ring-2 focus:ring-lime-400/30 focus:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
-                    />
-                    <span className="group-hover:text-stone-300 transition-colors">
-                      Recordarme
-                    </span>
-                  </label>
+                <div className="flex items-center justify-end text-sm">
                   <button
                     type="button"
                     disabled={isLoading}
@@ -844,7 +829,7 @@ export const Login: React.FC = () => {
                   setError(null);
                   setFieldErrors({});
                   setTouchedFields(new Set());
-                  setFormData({ email: "", password: "", confirmPassword: "", fullName: "", rememberMe: false });
+                  setFormData({ email: "", password: "", confirmPassword: "", fullName: "" });
                 }}
                 disabled={isLoading}
                 className="text-lime-400 hover:text-lime-300 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
