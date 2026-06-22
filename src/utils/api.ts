@@ -3,6 +3,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 import type { ApiResponse } from '../types/api';
 import { parseApiError, handleFetchError } from './errorHandler';
+import { emitTokenRefreshed } from './authEvents';
 
 const parseJsonResponse = async <T>(response: Response): Promise<T> => {
   const contentType = response.headers.get('content-type');
@@ -62,6 +63,9 @@ const tryRefreshToken = (): Promise<string | null> => {
       if (data?.data?.refreshToken ?? data?.refreshToken) {
         localStorage.setItem(REFRESH_TOKEN_KEY, data?.data?.refreshToken ?? data?.refreshToken);
       }
+      // Avisar a quien tenga un socket de Realtime abierto con el JWT
+      // viejo (ver authEvents.ts) para que se reautentique.
+      emitTokenRefreshed(newToken);
       return newToken;
     } catch {
       return null;

@@ -25,6 +25,8 @@ import type { ExerciseLog } from '../types/workoutLog';
 import { CompleteWorkoutModal } from '../components/CompleteWorkoutModal';
 import { Flag, Timer } from 'lucide-react';
 import { getUserProfile } from '../services/profile';
+import { isNetworkError } from '../utils/errorHandler';
+import { enqueueSet, flushQueue, toOptimisticLog } from '../services/syncQueue';
 
 export const DayRoutine: React.FC = () => {
   const { dayIndex } = useParams<{
@@ -180,6 +182,34 @@ export const DayRoutine: React.FC = () => {
     }
   }, [currentRoutine]);
 
+  // Reintenta los sets pendientes (guardados offline) cada vez que vuelve
+  // la conexión, y una vez al entrar a la página por si quedaron de una
+  // sesión anterior. Los sets sincronizados reemplazan su entrada temporal
+  // por la versión real del backend (mismo exercise_name, mismo set_number).
+  useEffect(() => {
+    const flushPendingSets = async () => {
+      const { synced } = await flushQueue(logExerciseSet);
+      if (synced.length === 0) return;
+
+      setExerciseLogs((prev) => {
+        const updated = new Map(prev);
+        for (const { tempId, log } of synced) {
+          const sets = updated.get(log.exercise_name) ?? [];
+          const idx = sets.findIndex((s) => s.id === tempId);
+          if (idx === -1) continue;
+          const newSets = [...sets];
+          newSets[idx] = log;
+          updated.set(log.exercise_name, newSets);
+        }
+        return updated;
+      });
+    };
+
+    flushPendingSets();
+    window.addEventListener('online', flushPendingSets);
+    return () => window.removeEventListener('online', flushPendingSets);
+  }, []);
+
   // Inicializar workout log cuando la rutina está lista
   // exerciseTargetSets se excluye del dep array porque es un Map (nueva referencia en cada render)
   // Solo necesitamos que corra cuando la rutina o el estado del día cambien
@@ -254,12 +284,21 @@ export const DayRoutine: React.FC = () => {
     const existingSets = exerciseLogs.get(exerciseName) || [];
     const setNumber = existingSets.length + 1;
 
-    // Guardar en backend
-    const newLog = await logExerciseSet(workoutLogId, {
+    const payload = {
       exercise_name: exerciseName,
       set_number: setNumber,
       ...setData,
-    });
+    };
+
+    // Guardar en backend; si falla por falta de conexión, encolar para
+    // sincronizar después en vez de perder el set.
+    let newLog: ExerciseLog;
+    try {
+      newLog = await logExerciseSet(workoutLogId, payload);
+    } catch (error) {
+      if (!isNetworkError(error)) throw error;
+      newLog = toOptimisticLog(enqueueSet(workoutLogId, payload));
+    }
 
     // Actualizar estado local
     setExerciseLogs((prev) => {

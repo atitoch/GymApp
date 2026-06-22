@@ -104,6 +104,19 @@ export const handleFetchError = (error: unknown): ApiError => {
 };
 
 /**
+ * Distingue una falla de red/conectividad (fetch nunca llegó al servidor)
+ * de un error real devuelto por el backend. parseApiError siempre envuelve
+ * la respuesta del servidor con originalError = el body ya parseado (un
+ * objeto plano o undefined); en cambio, cuando fetch lanza (sin conexión,
+ * DNS, etc.) handleFetchError guarda el Error nativo como originalError.
+ * Esa es la señal para decidir si algo debe encolarse para reintentar en
+ * vez de mostrarse como error definitivo.
+ */
+export const isNetworkError = (error: unknown): boolean => {
+  return error instanceof ApiError && error.originalError instanceof Error;
+};
+
+/**
  * Normaliza errores de validación por campo
  * Convierte arrays de errores en strings simples
  */

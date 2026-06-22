@@ -1,4 +1,5 @@
 import { authenticatedGet, authenticatedPost, authenticatedFetch, authenticatedDelete, getAuthToken } from '../utils/api';
+import { onTokenRefreshed } from '../utils/authEvents';
 import { supabaseRealtime } from '../config/supabase';
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
@@ -60,6 +61,15 @@ export const subscribeToMessages = (
 ) => {
   let channel: ReturnType<typeof supabaseRealtime.channel> | null = null;
 
+  // El JWT del socket se renueva al suscribirse, pero un access token dura
+  // poco; si expira mientras el chat está abierto, RLS empieza a bloquear
+  // los postgres_changes y el chat deja de recibir mensajes sin avisar.
+  // Cuando api.ts renueve el token (ver authEvents.ts), reautenticamos el
+  // socket con el token nuevo para no perder la conexión silenciosamente.
+  const unsubscribeFromTokenRefresh = onTokenRefreshed((newToken) => {
+    supabaseRealtime.realtime.setAuth(newToken);
+  });
+
   try {
     // La sesión vive en localStorage (login vía backend REST), no en el
     // cliente supabase-js; sin el JWT en el socket, RLS bloquea todos los
@@ -106,6 +116,7 @@ export const subscribeToMessages = (
   }
 
   return () => {
+    unsubscribeFromTokenRefresh();
     if (channel) supabaseRealtime.removeChannel(channel).catch(() => {});
   };
 };
