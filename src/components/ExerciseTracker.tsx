@@ -82,14 +82,18 @@ function LastSessionBadge({
         const lastSets = history[0].sets;
         if (!lastSets?.length) return;
 
+        const getWeight = (s: (typeof lastSets)[number]) =>
+          (weightUnit === 'lbs' ? s.weight_lbs : s.weight_kg) ?? 0;
+
         // Buscar el set con mayor peso
         const best = lastSets.reduce((acc, s) =>
-          (s.weight_kg ?? 0) > (acc.weight_kg ?? 0) ? s : acc,
+          getWeight(s) > getWeight(acc) ? s : acc,
         );
 
-        if (best.weight_kg) {
+        const bestWeight = getWeight(best);
+        if (bestWeight) {
           setLastSession({
-            weight: best.weight_kg,
+            weight: bestWeight,
             reps: best.reps_completed ?? 0,
           });
         }
@@ -250,15 +254,17 @@ export default function ExerciseTracker({
   const initRows = useCallback((): SetRow[] => {
     return Array.from({ length: targetSets }, (_, i) => {
       const saved = completedSets[i];
+      const savedWeight =
+        weightUnit === 'lbs' ? saved?.weight_lbs : saved?.weight_kg;
       return {
         setIndex: i,
-        weight: saved?.weight_kg?.toString() ?? '',
+        weight: savedWeight?.toString() ?? '',
         reps: saved?.reps_completed?.toString() ?? '',
         saved: !!saved,
         saving: false,
       };
     });
-  }, [targetSets, completedSets]);
+  }, [targetSets, completedSets, weightUnit]);
 
   const [rows, setRows] = useState<SetRow[]>(initRows);
   const [expanded, setExpanded] = useState(isCurrentDay);
