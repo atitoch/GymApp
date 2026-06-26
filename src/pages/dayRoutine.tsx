@@ -17,6 +17,7 @@ import WorkoutProgress, {
 import ExerciseTracker from '../components/ExerciseTracker';
 import {
   getOrCreateWorkoutLog,
+  getWorkoutLogByDate,
   logExerciseSet,
   getWorkoutExerciseLogs,
   completeWorkoutLog,
@@ -53,6 +54,9 @@ export const DayRoutine: React.FC = () => {
     Map<string, number>
   >(new Map());
   const [workoutLogError, setWorkoutLogError] = useState(false);
+  const [pastWorkoutCompletedAt, setPastWorkoutCompletedAt] = useState<
+    string | null
+  >(null);
   const [weightUnit, setWeightUnit] = useState<'kg' | 'lbs'>('kg');
   const [defaultRestSeconds, setDefaultRestSeconds] = useState(90);
 
@@ -184,49 +188,69 @@ export const DayRoutine: React.FC = () => {
   // exerciseTargetSets se excluye del dep array porque es un Map (nueva referencia en cada render)
   // Solo necesitamos que corra cuando la rutina o el estado del día cambien
   useEffect(() => {
+    const applyLogs = (logs: ExerciseLog[]) => {
+      const logsMap = new Map<string, ExerciseLog[]>();
+      logs.forEach((log: ExerciseLog) => {
+        const existing = logsMap.get(log.exercise_name) || [];
+        logsMap.set(log.exercise_name, [...existing, log]);
+      });
+      setExerciseLogs(logsMap);
+
+      // Actualizar statuses — derivar targetSets de currentRoutine directamente
+      // (exerciseTargetSets es state y puede estar stale en este closure)
+      const freshTargetSets = new Map<string, number>();
+      (currentRoutine!.sections ?? []).forEach((section) => {
+        (section.exercises ?? []).forEach((ex) => {
+          freshTargetSets.set(ex.name, parseTargetSets(ex.sets));
+        });
+      });
+
+      setExerciseStatuses((prev) =>
+        prev.map((ex) => {
+          const targetSets = freshTargetSets.get(ex.name) ?? 0;
+          const completedSetsCount = logsMap.get(ex.name)?.length ?? 0;
+          return {
+            ...ex,
+            completed: targetSets > 0 && completedSetsCount >= targetSets,
+          };
+        }),
+      );
+    };
+
     const initWorkoutLog = async () => {
-      if (!currentRoutine || !isCurrentDay) return;
-
+      if (!currentRoutine) return;
       setWorkoutLogError(false);
+      setPastWorkoutCompletedAt(null);
+
+      if (isCurrentDay) {
+        try {
+          const workoutLog = await getOrCreateWorkoutLog(
+            currentRoutine.id,
+            currentRoutine.routineId,
+          );
+          setWorkoutLogId(workoutLog.id);
+
+          const logs = await getWorkoutExerciseLogs(workoutLog.id);
+          applyLogs(logs);
+        } catch (error) {
+          console.error('Error al inicializar workout log:', error);
+          setWorkoutLogError(true);
+        }
+        return;
+      }
+
+      // Día pasado: solo leer el registro existente, sin crear uno nuevo
       try {
-        const workoutLog = await getOrCreateWorkoutLog(
-          currentRoutine.id,
-          currentRoutine.routineId,
-        );
-        setWorkoutLogId(workoutLog.id);
+        const pastLog = await getWorkoutLogByDate(currentRoutine.date);
+        setWorkoutLogId(pastLog?.id ?? null);
+        setPastWorkoutCompletedAt(pastLog?.completed_at ?? null);
 
-        // Cargar logs existentes
-        const logs = await getWorkoutExerciseLogs(workoutLog.id);
-        const logsMap = new Map<string, ExerciseLog[]>();
-
-        logs.forEach((log: ExerciseLog) => {
-          const existing = logsMap.get(log.exercise_name) || [];
-          logsMap.set(log.exercise_name, [...existing, log]);
-        });
-
-        setExerciseLogs(logsMap);
-
-        // Actualizar statuses — derivar targetSets de currentRoutine directamente
-        // (exerciseTargetSets es state y puede estar stale en este closure)
-        const freshTargetSets = new Map<string, number>();
-        (currentRoutine.sections ?? []).forEach((section) => {
-          (section.exercises ?? []).forEach((ex) => {
-            freshTargetSets.set(ex.name, parseTargetSets(ex.sets));
-          });
-        });
-
-        setExerciseStatuses((prev) =>
-          prev.map((ex) => {
-            const targetSets = freshTargetSets.get(ex.name) ?? 0;
-            const completedSetsCount = logsMap.get(ex.name)?.length ?? 0;
-            return {
-              ...ex,
-              completed: targetSets > 0 && completedSetsCount >= targetSets,
-            };
-          }),
-        );
+        if (pastLog) {
+          const logs = await getWorkoutExerciseLogs(pastLog.id);
+          applyLogs(logs);
+        }
       } catch (error) {
-        console.error('Error al inicializar workout log:', error);
+        console.error('Error al cargar el registro del día:', error);
         setWorkoutLogError(true);
       }
     };
@@ -345,6 +369,20 @@ export const DayRoutine: React.FC = () => {
       />
 
       <div className={cn(themeClasses.layout.container, 'py-8')}>
+        {!isCurrentDay && pastWorkoutCompletedAt && (
+          <div
+            className="mb-6 px-4 py-3 rounded-xl text-sm font-semibold flex items-center gap-2"
+            style={{
+              background: 'rgba(16,185,129,0.08)',
+              border: '1px solid rgba(16,185,129,0.2)',
+              color: '#34d399',
+            }}
+          >
+            <Flag size={16} />
+            Entrenamiento completado — viendo tu registro
+          </div>
+        )}
+
         {currentRoutine.warmup && <WarmUp currentRoutine={currentRoutine} />}
 
         {(currentRoutine.sections ?? []).map((section, sIdx) => (
@@ -364,6 +402,7 @@ export const DayRoutine: React.FC = () => {
                   isCurrentDay={isCurrentDay}
                   workoutLogError={workoutLogError}
                   weightUnit={weightUnit}
+                  viewOnly={!isCurrentDay && (exerciseLogs.get(exercise.name)?.length ?? 0) > 0}
                 />
               ))}
             </div>

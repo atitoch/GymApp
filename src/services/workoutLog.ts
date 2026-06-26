@@ -30,6 +30,24 @@ export const getOrCreateWorkoutLog = async (
 };
 
 /**
+ * Obtiene el workout log de una fecha específica SIN crearlo si no existe.
+ * Usado para ver el registro de días pasados (solo lectura).
+ * Devuelve null si el usuario no entrenó ese día.
+ */
+export const getWorkoutLogByDate = async (
+  date: string,
+): Promise<WorkoutLog | null> => {
+  try {
+    return await authenticatedGet<WorkoutLog>(
+      `/workout-logs/by-date?date=${encodeURIComponent(date)}`,
+    );
+  } catch (error) {
+    if ((error as { statusCode?: number })?.statusCode === 404) return null;
+    throw error;
+  }
+};
+
+/**
  * Actualiza el workout log (completar, rating, notas)
  */
 export const updateWorkoutLog = async (

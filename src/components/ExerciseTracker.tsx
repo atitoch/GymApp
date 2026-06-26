@@ -34,6 +34,8 @@ interface ExerciseTrackerProps {
   /** true si falló la inicialización del workout log */
   workoutLogError?: boolean;
   weightUnit?: 'kg' | 'lbs';
+  /** true si es un día pasado con series ya registradas — muestra el registro en solo lectura */
+  viewOnly?: boolean;
 }
 
 interface SetRow {
@@ -245,10 +247,12 @@ export default function ExerciseTracker({
   isCurrentDay,
   workoutLogError = false,
   weightUnit = 'kg',
+  viewOnly = false,
 }: ExerciseTrackerProps) {
   const { toasts, showToast, hideToast } = useToast();
   const targetSets = parseTargetSets(exercise.sets);
   const targetReps = parseTargetReps(exercise.reps);
+  const canExpand = isCurrentDay || viewOnly;
 
   // Inicializar filas: una por set planificado
   const initRows = useCallback((): SetRow[] => {
@@ -267,7 +271,7 @@ export default function ExerciseTracker({
   }, [targetSets, completedSets, weightUnit]);
 
   const [rows, setRows] = useState<SetRow[]>(initRows);
-  const [expanded, setExpanded] = useState(isCurrentDay);
+  const [expanded, setExpanded] = useState(canExpand);
 
   // Sincronizar cuando llegan completedSets desde el estado global
   useEffect(() => {
@@ -334,9 +338,9 @@ export default function ExerciseTracker({
       {/* Header */}
       <button
         className="w-full px-4 pt-3 pb-2 flex items-start justify-between gap-3 text-left"
-        onClick={() => isCurrentDay && setExpanded((e) => !e)}
-        disabled={!isCurrentDay}
-        style={{ cursor: isCurrentDay ? 'pointer' : 'default' }}
+        onClick={() => canExpand && setExpanded((e) => !e)}
+        disabled={!canExpand}
+        style={{ cursor: canExpand ? 'pointer' : 'default' }}
       >
         <div className="flex-1 min-w-0">
           {/* Exercise name */}
@@ -397,7 +401,7 @@ export default function ExerciseTracker({
           >
             {completedCount}/{targetSets}
           </span>
-          {isCurrentDay &&
+          {canExpand &&
             (expanded ? (
               <ChevronUp size={14} className="text-stone-600" />
             ) : (
@@ -406,8 +410,8 @@ export default function ExerciseTracker({
         </div>
       </button>
 
-      {/* Rows - Solo mostrar si es el día actual */}
-      {expanded && isCurrentDay && (
+      {/* Rows - día actual (editable) o día pasado con registro (solo lectura) */}
+      {expanded && canExpand && (
         <div className="px-3 pb-3">
           {/* Column headers */}
           <div className="flex items-center gap-2 px-1 mb-1">
