@@ -185,6 +185,22 @@ export const getClientActiveRoutine = async (userId: string): Promise<CoachRouti
         .limit(1)
         .single();
       if (data) return data as CoachRoutine;
+
+      // Fallback: cuentas antiguas (de antes del sistema de copias por cliente)
+      // tienen users.routine_id apuntando directo a la rutina, sin assigned_user_id.
+      const { data: userRow } = await supabase
+        .from('users')
+        .select('routine_id')
+        .eq('id', userId)
+        .maybeSingle();
+      if (userRow?.routine_id) {
+        const { data: directRoutine } = await supabase
+          .from('routines')
+          .select('id, name, total_days, is_cyclic')
+          .eq('id', userRow.routine_id)
+          .maybeSingle();
+        if (directRoutine) return directRoutine as CoachRoutine;
+      }
     }
 
     // Fallback: usa el token custom del backend directamente contra Supabase REST API.
@@ -198,9 +214,27 @@ export const getClientActiveRoutine = async (userId: string): Promise<CoachRouti
       `${supabaseUrl}/rest/v1/routines?select=id%2Cname%2Ctotal_days%2Cis_cyclic&assigned_user_id=eq.${encodeURIComponent(userId)}&is_active=eq.true&limit=1`,
       { headers: { apikey: supabaseKey, Authorization: `Bearer ${token}` } },
     );
-    if (!res.ok) return null;
-    const rows: CoachRoutine[] = await res.json();
-    return rows[0] ?? null;
+    if (res.ok) {
+      const rows: CoachRoutine[] = await res.json();
+      if (rows[0]) return rows[0];
+    }
+
+    const userRes = await fetch(
+      `${supabaseUrl}/rest/v1/users?select=routine_id&id=eq.${encodeURIComponent(userId)}`,
+      { headers: { apikey: supabaseKey, Authorization: `Bearer ${token}` } },
+    );
+    if (!userRes.ok) return null;
+    const userRows: { routine_id: string | null }[] = await userRes.json();
+    const routineId = userRows[0]?.routine_id;
+    if (!routineId) return null;
+
+    const routineRes = await fetch(
+      `${supabaseUrl}/rest/v1/routines?select=id%2Cname%2Ctotal_days%2Cis_cyclic&id=eq.${encodeURIComponent(routineId)}`,
+      { headers: { apikey: supabaseKey, Authorization: `Bearer ${token}` } },
+    );
+    if (!routineRes.ok) return null;
+    const routineRows: CoachRoutine[] = await routineRes.json();
+    return routineRows[0] ?? null;
   } catch {
     return null;
   }
