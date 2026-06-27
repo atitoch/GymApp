@@ -46,6 +46,7 @@ export const DayRoutine: React.FC = () => {
     [],
   );
   const [workoutLogId, setWorkoutLogId] = useState<string | null>(null);
+  const [workoutCompleted, setWorkoutCompleted] = useState(false);
   const [exerciseLogs, setExerciseLogs] = useState<Map<string, ExerciseLog[]>>(
     new Map(),
   );
@@ -224,6 +225,7 @@ export const DayRoutine: React.FC = () => {
           currentRoutine.routineId,
         );
         setWorkoutLogId(workoutLog.id);
+        setWorkoutCompleted(!!workoutLog.completed_at);
 
         // Cargar logs existentes
         const logs = await getWorkoutExerciseLogs(workoutLog.id);
@@ -400,7 +402,7 @@ export const DayRoutine: React.FC = () => {
                   workoutLogId={workoutLogId}
                   completedSets={exerciseLogs.get(exercise.name) || []}
                   onLogSet={handleLogSet}
-                  isCurrentDay={isCurrentDay}
+                  isCurrentDay={isCurrentDay && !workoutCompleted}
                   workoutLogError={workoutLogError}
                   weightUnit={weightUnit}
                 />
@@ -416,7 +418,7 @@ export const DayRoutine: React.FC = () => {
         {showTips && <Tips />}
 
         {/* Botones de acción */}
-        {isCurrentDay && (
+        {isCurrentDay && !workoutCompleted && (
           <div className="mt-8 flex justify-center gap-3">
             <button
               onClick={() => setTimerOpen(true)}
@@ -442,6 +444,20 @@ export const DayRoutine: React.FC = () => {
               <Flag size={18} />
               Terminar
             </button>
+          </div>
+        )}
+
+        {isCurrentDay && workoutCompleted && (
+          <div
+            className="mt-8 flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm mx-auto w-fit"
+            style={{
+              background: 'rgba(163,230,53,0.12)',
+              border: '1px solid rgba(163,230,53,0.3)',
+              color: '#a3e635',
+            }}
+          >
+            <Flag size={18} />
+            Entrenamiento ya finalizado — solo lectura
           </div>
         )}
 
