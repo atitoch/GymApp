@@ -12,6 +12,7 @@ import {
   getClientActiveRoutine,
   type CoachComment, type CoachRoutine, type CoachPayment, type PaymentStatus,
 } from '../../services/coachDashboard';
+import { useAuth } from '../../contexts/useAuth';
 
 const COMMENT_TYPES = ['general', 'nutrition', 'training', 'progress', 'motivation', 'technique'] as const;
 type CommentType = typeof COMMENT_TYPES[number];
@@ -54,6 +55,8 @@ const StarRow = ({ rating }: { rating: number }) => (
 export const ClientDetail: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
+  const { user: authUser } = useAuth();
+  const isSelf = !!userId && userId === authUser?.id;
 
   const [clientData, setClientData] = useState<any>(null);
   const [comments, setComments] = useState<CoachComment[]>([]);
@@ -279,10 +282,10 @@ export const ClientDetail: React.FC = () => {
               : displayName[0]?.toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-bold text-white truncate leading-tight">{displayName}</p>
+            <p className="font-bold text-white truncate leading-tight">{isSelf ? 'Tú (vista de cliente)' : displayName}</p>
             <p className="text-xs text-stone-500 truncate">{user?.email}</p>
           </div>
-          {userId && (
+          {userId && !isSelf && (
             <button
               onClick={() => navigate(`/messages/${userId}`, { state: { partnerName: displayName, partnerAvatar: user?.avatar_url ?? null } })}
               className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-bold text-stone-950 transition-all hover:brightness-110"
@@ -623,18 +626,20 @@ export const ClientDetail: React.FC = () => {
             )}
 
             {/* Danger zone */}
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-stone-600 mb-3">Zona de peligro</p>
-              <div className="bg-stone-900 border border-red-900/40 rounded-2xl p-4">
-                <button
-                  onClick={() => setConfirmDisconnect(true)}
-                  className="flex items-center gap-2 text-sm font-medium text-red-400 hover:text-red-300 transition-colors"
-                >
-                  <UserMinus size={15} />
-                  Terminar conexión con este cliente
-                </button>
+            {!isSelf && (
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-stone-600 mb-3">Zona de peligro</p>
+                <div className="bg-stone-900 border border-red-900/40 rounded-2xl p-4">
+                  <button
+                    onClick={() => setConfirmDisconnect(true)}
+                    className="flex items-center gap-2 text-sm font-medium text-red-400 hover:text-red-300 transition-colors"
+                  >
+                    <UserMinus size={15} />
+                    Terminar conexión con este cliente
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 

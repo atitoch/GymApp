@@ -18,6 +18,8 @@ const emptySection = (): SectionInput => ({ title: '', exercises: [emptyExercise
 const emptyDay = (): DayRoutineInput => ({ dayName: 'DÍA', title: 'Entrenamiento', warmup: [], sections: [emptySection()], cooldown: [] });
 const restDay = (): DayRoutineInput => ({ dayName: 'DESCANSO', title: 'Descanso', warmup: [], sections: [], cooldown: [] });
 const isRestDay = (d: DayRoutineInput) => d.dayName.toLowerCase().includes('descanso') || d.dayName.toLowerCase().includes('rest');
+// Quita acentos para que "jalon" encuentre "jalón" y todas sus variantes (al pecho, en polea, en máquina...)
+const normalize = (s: string) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
@@ -46,9 +48,8 @@ function ExerciseRow({
   const handleNameChange = (val: string) => {
     onChange({ ...ex, name: val });
     if (val.trim().length >= 2) {
-      const matches = EXERCISE_NAMES.filter((n) =>
-        n.toLowerCase().includes(val.toLowerCase())
-      ).slice(0, 6);
+      const query = normalize(val);
+      const matches = EXERCISE_NAMES.filter((n) => normalize(n).includes(query)).slice(0, 6);
       setSuggestions(matches);
       setShowSuggestions(matches.length > 0);
     } else {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Dumbbell, Users, Clock, CheckCircle, XCircle, ArrowLeft, Settings, Plus, Pencil, ChevronRight, AlertCircle, CreditCard, X } from 'lucide-react';
+import { Dumbbell, Users, Clock, CheckCircle, XCircle, ArrowLeft, Settings, Plus, Pencil, ChevronRight, AlertCircle, CreditCard, X, UserCircle } from 'lucide-react';
 import {
   getMyClients,
   getPendingRequests,
@@ -16,10 +16,12 @@ import {
 } from '../../services/coachDashboard';
 import { fmtPlanPrice } from '../../utils/plans';
 import { Avatar } from '../../components/Avatar';
+import { useAuth } from '../../contexts/useAuth';
 
 export const CoachDashboard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
   // Aviso de una sola vez que llega vía navigate state (ej. tras desvincular un cliente)
   const [notice, setNotice] = useState<string | null>(location.state?.notice ?? null);
   const [clients, setClients] = useState<ClientRelationship[]>([]);
@@ -105,6 +107,20 @@ export const CoachDashboard: React.FC = () => {
           <Settings size={20} />
         </button>
       </div>
+
+      {user?.id && (
+        <button
+          onClick={() => navigate(`/coach/clients/${user.id}`)}
+          className="w-full mb-6 flex items-center gap-3 bg-sky-400/10 border border-sky-400/30 hover:border-sky-400/60 hover:bg-sky-400/15 rounded-xl p-4 text-left transition-all group"
+        >
+          <UserCircle className="w-5 h-5 text-sky-400 shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-sky-300">Tú también entrenas</p>
+            <p className="text-xs text-sky-400/70 mt-0.5">Ve tu historial, notas y rutina como si fueras tu propio cliente</p>
+          </div>
+          <ChevronRight className="w-4 h-4 text-sky-400/60 group-hover:text-sky-400 transition-colors shrink-0" />
+        </button>
+      )}
 
       {notice && (
         <div className="w-full mb-3 flex items-center gap-3 bg-lime-400/10 border border-lime-400/30 rounded-xl p-4">

@@ -228,7 +228,7 @@ function SessionCard({ session }: { session: SessionWithDayInfo }) {
             {session.rating != null && (
               <span className="flex items-center gap-1 text-xs text-yellow-500 font-semibold">
                 <Star size={11} />
-                {session.rating}/10
+                {session.rating}/5
               </span>
             )}
           </div>
