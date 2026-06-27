@@ -372,13 +372,13 @@ export const DayRoutine: React.FC = () => {
         'pb-12',
       )}
     >
-      {/* Barra de progreso sticky */}
-      <WorkoutProgress
+      {/* Barra de progreso sticky — no aplica una vez que el entrenamiento ya se finalizó */}
+      {!workoutCompleted && <WorkoutProgress
         exercises={exerciseStatuses}
         dayName={currentRoutine.dayName}
         sessionStarted={exerciseStatuses.some((e) => e.completed)}
         estimatedMinutes={60}
-      />
+      />}
 
       <DayHeader
         currentRoutine={currentRoutine}
