@@ -398,7 +398,7 @@ export const ApplyAsCoach: React.FC = () => {
               {application.status === 'rejected' && (
                 <div className="flex items-start gap-3">
                   <XCircle size={18} className="text-red-400 shrink-0 mt-0.5" />
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <p className="text-sm text-stone-400 leading-relaxed">
                       Tu solicitud no fue aprobada.
                     </p>
@@ -407,6 +407,19 @@ export const ApplyAsCoach: React.FC = () => {
                         {application.rejection_reason}
                       </p>
                     )}
+                    <button
+                      onClick={() => {
+                        setApplication(null);
+                        setDocuments([]);
+                        setFiles(DOCUMENT_SLOTS.map((s) => ({ ...s, file: null, status: 'idle' as const })));
+                        setError(null);
+                        setStep('intro');
+                      }}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-stone-950 transition-all hover:brightness-110"
+                      style={{ background: 'linear-gradient(135deg,#a3e635,#84cc16)' }}
+                    >
+                      Volver a aplicar
+                    </button>
                   </div>
                 </div>
               )}

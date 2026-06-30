@@ -11,6 +11,12 @@ export interface CoachProfile {
   users?: { id?: string; first_name?: string; last_name?: string; email: string; avatar_url?: string | null };
 }
 
+export interface ClientWorkoutStats {
+  last_workout_at: string | null;
+  workouts_last_7_days: number;
+  workouts_last_30_days: number;
+}
+
 export interface ClientRelationship {
   id: string;
   user_id: string;
@@ -19,6 +25,7 @@ export interface ClientRelationship {
   users?: { id: string; first_name?: string; last_name?: string; email: string; avatar_url?: string | null };
   plan_id?: string | null;
   plan?: Pick<CoachPlan, 'id' | 'name' | 'price' | 'currency' | 'interval'> | null;
+  workout_stats?: ClientWorkoutStats;
 }
 
 // ── Planes de entrenamiento (precio que el cliente ve al solicitar) ──────────

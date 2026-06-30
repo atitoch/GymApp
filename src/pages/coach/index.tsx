@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Dumbbell, Users, Clock, CheckCircle, XCircle, ArrowLeft, Settings, Plus, Pencil, ChevronRight, AlertCircle, CreditCard, X, UserCircle } from 'lucide-react';
+import { Dumbbell, Users, Clock, CheckCircle, XCircle, ArrowLeft, Settings, Plus, Pencil, ChevronRight, AlertCircle, CreditCard, X, UserCircle, Flame, AlertTriangle } from 'lucide-react';
 import {
   getMyClients,
   getPendingRequests,
@@ -17,6 +17,9 @@ import {
 import { fmtPlanPrice } from '../../utils/plans';
 import { Avatar } from '../../components/Avatar';
 import { useAuth } from '../../contexts/useAuth';
+
+const daysSince = (iso?: string | null) =>
+  iso ? Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000) : null;
 
 export const CoachDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -65,8 +68,12 @@ export const CoachDashboard: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const [lastAcceptedId, setLastAcceptedId] = useState<string | null>(null);
+
   const handleAccept = async (id: string) => {
+    const req = pendingRequests.find(r => r.id === id);
     await acceptRequest(id);
+    if (req) setLastAcceptedId(req.users?.id ?? req.user_id);
     load();
   };
 
@@ -286,10 +293,25 @@ export const CoachDashboard: React.FC = () => {
       </section>
 
       {/* Pending requests */}
-      {pendingRequests.length > 0 && (
+      {(pendingRequests.length > 0 || lastAcceptedId) && (
         <section className="mb-8">
           <h2 className="text-xl font-semibold mb-4 text-stone-200">Solicitudes pendientes</h2>
           <div className="space-y-3">
+            {lastAcceptedId && (
+              <div className="flex items-center gap-3 bg-lime-400/10 border border-lime-400/30 rounded-xl p-4">
+                <CheckCircle className="w-5 h-5 text-lime-400 shrink-0" />
+                <p className="flex-1 text-sm text-lime-300">Cliente aceptado y agregado a tu lista.</p>
+                <button
+                  onClick={() => navigate(`/coach/clients/${lastAcceptedId}`)}
+                  className="text-xs font-bold text-lime-400 hover:text-lime-300 transition-colors shrink-0"
+                >
+                  Ver cliente →
+                </button>
+                <button onClick={() => setLastAcceptedId(null)} className="p-1 rounded-lg text-lime-400/60 hover:text-lime-300 shrink-0">
+                  <X size={14} />
+                </button>
+              </div>
+            )}
             {pendingRequests.map((req) => (
               <div key={req.id} className="bg-stone-900 border border-stone-800 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
                 <div className="flex items-center gap-3 min-w-0">
@@ -328,27 +350,54 @@ export const CoachDashboard: React.FC = () => {
 
       {/* Active clients */}
       <section>
-        <h2 className="text-xl font-semibold mb-4 text-stone-200">Clientes activos</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-stone-200">Clientes activos</h2>
+          {clients.length > 3 && (
+            <button onClick={() => navigate('/coach/clients')} className="text-sm text-stone-400 hover:text-(--color-accent-400) transition-colors">
+              Ver todos →
+            </button>
+          )}
+        </div>
         {clients.length === 0 ? (
           <div className="bg-stone-900 border border-stone-800 rounded-xl p-8 text-center text-stone-400">
             No tienes clientes activos todavía.
           </div>
         ) : (
           <div className="space-y-3">
-            {clients.map((client) => (
-              <div key={client.id} className="bg-stone-900 border border-stone-800 rounded-xl p-4 flex items-center justify-between">
-                <div>
-                  <p className="font-medium">{fullName(client)}</p>
-                  <p className="text-stone-400 text-sm">{client.users?.email}</p>
-                </div>
-                <button
-                  onClick={() => navigate(`/coach/clients/${client.users?.id ?? client.user_id}`)}
-                  className="px-3 py-1.5 rounded-lg border border-lime-400 text-lime-400 text-sm font-medium hover:bg-lime-400 hover:text-black transition-colors"
-                >
-                  Ver cliente →
-                </button>
-              </div>
-            ))}
+            {[...clients]
+              .sort((a, b) => (daysSince(b.workout_stats?.last_workout_at) ?? 999) - (daysSince(a.workout_stats?.last_workout_at) ?? 999))
+              .slice(0, 5)
+              .map((client) => {
+                const days = daysSince(client.workout_stats?.last_workout_at);
+                return (
+                  <button
+                    key={client.id}
+                    onClick={() => navigate(`/coach/clients/${client.users?.id ?? client.user_id}`)}
+                    className="w-full bg-stone-900 border border-stone-800 rounded-xl p-4 flex items-center justify-between gap-3 hover:border-(--color-accent-400)/30 transition-colors text-left group"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <Avatar url={client.users?.avatar_url} name={fullName(client)} size={36} />
+                      <div className="min-w-0">
+                        <p className="font-medium text-sm truncate">{fullName(client)}</p>
+                        <p className="text-stone-500 text-xs truncate">
+                          {days === null ? 'Sin entrenos' : days === 0 ? 'Entrenó hoy' : `Hace ${days}d`}
+                          {(client.workout_stats?.workouts_last_7_days ?? 0) > 0 && ` · ${client.workout_stats!.workouts_last_7_days} esta semana`}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      {days !== null && days <= 2 && <Flame size={14} className="text-(--color-accent-400)" />}
+                      {days !== null && days > 5 && <AlertTriangle size={14} className="text-red-400" />}
+                      <ChevronRight size={15} className="text-stone-600 group-hover:text-(--color-accent-400) transition-colors" />
+                    </div>
+                  </button>
+                );
+              })}
+            {clients.length > 5 && (
+              <button onClick={() => navigate('/coach/clients')} className="w-full text-center text-sm text-stone-500 hover:text-(--color-accent-400) py-2 transition-colors">
+                Ver los {clients.length} clientes →
+              </button>
+            )}
           </div>
         )}
       </section>
