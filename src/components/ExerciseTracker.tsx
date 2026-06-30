@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useToast } from '../hooks/useToast';
 import { Toast } from './Toast';
 import { Check, ChevronDown, ChevronUp, Clock, TrendingUp } from 'lucide-react';
@@ -70,22 +70,18 @@ function LastSessionBadge({
     weight: number;
     reps: number;
   } | null>(null);
-  const fetched = useRef(false);
-
   useEffect(() => {
-    if (fetched.current) return;
-    fetched.current = true;
+    let cancelled = false;
 
     getExerciseHistory(exerciseName, 1)
       .then((history) => {
-        if (!history?.length) return;
+        if (cancelled || !history?.length) return;
         const lastSets = history[0].sets;
         if (!lastSets?.length) return;
 
         const getWeight = (s: (typeof lastSets)[number]) =>
           (weightUnit === 'lbs' ? s.weight_lbs : s.weight_kg) ?? 0;
 
-        // Buscar el set con mayor peso
         const best = lastSets.reduce((acc, s) =>
           getWeight(s) > getWeight(acc) ? s : acc,
         );
@@ -98,8 +94,10 @@ function LastSessionBadge({
           });
         }
       })
-      .catch(() => {}); // silencioso si no hay historial
-  }, [exerciseName]);
+      .catch(() => {});
+
+    return () => { cancelled = true; };
+  }, [exerciseName, weightUnit]);
 
   if (!lastSession) return null;
 
