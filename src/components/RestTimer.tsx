@@ -38,12 +38,19 @@ export default function RestTimer({
   const [overtime, setOvertime] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
+  // Wall-clock anchors so background throttling doesn't skew the count
+  const startTimeRef = useRef<number>(0);
+  const startRemainingRef = useRef<number>(defaultSeconds);
+  const hasBeepedRef = useRef(false);
 
   // Reset when opened
   useEffect(() => {
     if (isOpen) {
       setTotalSeconds(defaultSeconds);
       setRemaining(defaultSeconds);
+      startRemainingRef.current = defaultSeconds;
+      startTimeRef.current = Date.now();
+      hasBeepedRef.current = false;
       setIsRunning(true);
       setOvertime(false);
     }
@@ -76,23 +83,31 @@ export default function RestTimer({
   useEffect(() => { playBeepRef.current = playBeep; }, [playBeep]);
   useEffect(() => { onCompleteRef.current = onComplete; }, [onComplete]);
 
-  // Tick
+  // Tick — anchored to wall clock so browser throttling doesn't skew the count
   useEffect(() => {
     if (!isRunning || !isOpen) return;
 
-    intervalRef.current = setInterval(() => {
-      setRemaining((prev) => {
-        if (prev === 1) {
-          playBeepRef.current();
-          setOvertime(true);
-          onCompleteRef.current?.();
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    const tick = () => {
+      const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
+      const next = startRemainingRef.current - elapsed;
+      setRemaining(next);
+      if (next <= 0 && !hasBeepedRef.current) {
+        hasBeepedRef.current = true;
+        playBeepRef.current();
+        setOvertime(true);
+        onCompleteRef.current?.();
+      }
+    };
+
+    intervalRef.current = setInterval(tick, 500);
+
+    // Recalculate immediately when tab becomes visible again
+    const onVisible = () => { if (!document.hidden) tick(); };
+    document.addEventListener("visibilitychange", onVisible);
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, [isRunning, isOpen]);
 
@@ -103,7 +118,15 @@ export default function RestTimer({
 
   const handleAdjust = (delta: number) => {
     setTotalSeconds((prev) => Math.max(10, prev + delta));
-    setRemaining((prev) => Math.max(1, prev + delta));
+    setRemaining((prev) => {
+      const next = Math.max(1, prev + delta);
+      // Re-anchor wall clock so subsequent ticks stay in sync
+      startRemainingRef.current = next;
+      startTimeRef.current = Date.now();
+      hasBeepedRef.current = false;
+      if (next > 0) setOvertime(false);
+      return next;
+    });
   };
 
   const progress = overtime
@@ -254,6 +277,9 @@ export default function RestTimer({
               onClick={() => {
                 setTotalSeconds(s);
                 setRemaining(s);
+                startRemainingRef.current = s;
+                startTimeRef.current = Date.now();
+                hasBeepedRef.current = false;
                 setOvertime(false);
               }}
               className="px-3 py-1 rounded-full text-xs font-semibold transition-all"
