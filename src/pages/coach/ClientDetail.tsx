@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft, Star, MessageSquare, Dumbbell, Pencil, Trash2,
   Loader2, X, Check, Send, UserMinus, Calendar, TrendingUp,
-  Lock, Plus, Clock, Activity, DollarSign,
+  Lock, Plus, Clock, Activity, DollarSign, ChevronDown, ChevronUp, Weight,
 } from 'lucide-react';
 import {
   getClientDetail, addComment, getClientComments, updateComment,
   deleteComment, disconnectClient, getMyRoutines, assignRoutine,
   getClientPayments, createPayment, updatePayment, deletePayment,
-  getClientActiveRoutine,
+  getClientActiveRoutine, getClientWorkouts,
   type CoachComment, type CoachRoutine, type CoachPayment, type PaymentStatus,
+  type ClientWorkout,
 } from '../../services/coachDashboard';
 import { useAuth } from '../../contexts/useAuth';
 
@@ -94,6 +95,13 @@ export const ClientDetail: React.FC = () => {
   const [confirmDisconnect, setConfirmDisconnect] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
 
+  // Workouts (actividad tab — paginado con exercises)
+  const [workoutsFull, setWorkoutsFull] = useState<ClientWorkout[]>([]);
+  const [workoutsPage, setWorkoutsPage] = useState(1);
+  const [workoutsTotalPages, setWorkoutsTotalPages] = useState(1);
+  const [workoutsLoading, setWorkoutsLoading] = useState(false);
+  const [expandedWorkoutIds, setExpandedWorkoutIds] = useState<Set<string>>(new Set());
+
   // Payments
   const [payments, setPayments] = useState<CoachPayment[]>([]);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
@@ -105,6 +113,18 @@ export const ClientDetail: React.FC = () => {
   const [savingPayment, setSavingPayment] = useState(false);
   const [paymentActingId, setPaymentActingId] = useState<string | null>(null);
   const [confirmDeletePaymentId, setConfirmDeletePaymentId] = useState<string | null>(null);
+
+  const loadWorkoutsPage = useCallback(async (uid: string, page: number) => {
+    setWorkoutsLoading(true);
+    try {
+      const result = await getClientWorkouts(uid, page, 10);
+      setWorkoutsFull(prev => page === 1 ? result.workouts : [...prev, ...result.workouts]);
+      setWorkoutsPage(page);
+      setWorkoutsTotalPages(result.pagination.pages);
+    } catch {} finally {
+      setWorkoutsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (!userId) return;
@@ -123,7 +143,8 @@ export const ClientDetail: React.FC = () => {
         setAssignedRoutine(activeRoutine ?? null);
       })
       .finally(() => setLoading(false));
-  }, [userId]);
+    loadWorkoutsPage(userId, 1);
+  }, [userId, loadWorkoutsPage]);
 
   const handleAddPayment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -238,19 +259,22 @@ export const ClientDetail: React.FC = () => {
   );
 
   const user = clientData?.user;
-  const workouts = clientData?.recentWorkouts ?? [];
   const displayName = [user?.first_name, user?.last_name].filter(Boolean).join(' ') || user?.email || userId;
-  const avgRating = workouts.filter((w: any) => w.rating != null).length
-    ? (workouts.reduce((a: number, w: any) => a + (w.rating ?? 0), 0) / workouts.filter((w: any) => w.rating != null).length).toFixed(1)
+  const ratedWorkouts = workoutsFull.filter(w => w.rating != null);
+  const avgRating = ratedWorkouts.length
+    ? (ratedWorkouts.reduce((a, w) => a + (w.rating ?? 0), 0) / ratedWorkouts.length).toFixed(1)
     : null;
-  const lastWorkout = workouts.find((w: any) => w.completed_at);
+  const lastWorkout = workoutsFull[0];
   const currentRoutineName =
     assignedRoutine?.name ??
     clientData?.assigned_routine?.name ??
     routines.find(r => r.id === clientData?.routine_id)?.name;
 
+  // Total real de entrenos viene del paginador; antes del primer fetch usamos lo que tengamos
+  const totalWorkoutsCount = workoutsTotalPages > 0 ? undefined : workoutsFull.length;
+
   const TABS: { id: Tab; label: string; icon: React.ReactNode; count?: number }[] = [
-    { id: 'actividad', label: 'Actividad',  icon: <Activity size={15} />,    count: workouts.length },
+    { id: 'actividad', label: 'Actividad',  icon: <Activity size={15} />,    count: totalWorkoutsCount },
     { id: 'notas',     label: 'Notas',      icon: <MessageSquare size={15} />, count: comments.length },
     { id: 'rutina',    label: 'Rutina',     icon: <Dumbbell size={15} /> },
     { id: 'pagos',     label: 'Pagos',      icon: <DollarSign size={15} />,  count: payments.length },
@@ -301,7 +325,7 @@ export const ClientDetail: React.FC = () => {
         <div className="max-w-2xl mx-auto px-4 pb-3 flex items-center gap-4 text-xs">
           <div className="flex items-center gap-1.5 text-stone-400">
             <TrendingUp size={12} className="text-(--color-accent-400)" />
-            <span><strong className="text-white">{workouts.length}</strong> entrenos</span>
+            <span><strong className="text-white">{workoutsFull.length > 0 ? `${workoutsFull.length}${workoutsPage < workoutsTotalPages ? '+' : ''}` : '—'}</strong> entrenos</span>
           </div>
           {avgRating && (
             <div className="flex items-center gap-1.5 text-stone-400">
@@ -355,31 +379,129 @@ export const ClientDetail: React.FC = () => {
         {/* ── ACTIVIDAD ── */}
         {activeTab === 'actividad' && (
           <div className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-widest text-stone-500 mb-4">Entrenamientos recientes</p>
-            {workouts.length === 0 ? (
+            <p className="text-xs font-semibold uppercase tracking-widest text-stone-500 mb-4">
+              Historial de entrenamientos
+            </p>
+            {workoutsFull.length === 0 && !workoutsLoading ? (
               <div className="bg-stone-900 border border-stone-800 rounded-2xl p-8 text-center">
                 <Activity size={28} className="text-stone-700 mx-auto mb-3" />
                 <p className="text-stone-400 text-sm">Sin entrenamientos registrados todavía.</p>
               </div>
-            ) : workouts.map((w: any) => (
-              <div key={w.id} className="bg-stone-900 border border-stone-800 rounded-2xl p-4 flex items-start gap-3">
-                <div className="p-2 bg-stone-800 rounded-xl shrink-0 mt-0.5">
-                  <Calendar size={15} className="text-(--color-accent-400)" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="text-sm font-semibold text-white">{fmtDate(w.completed_at)}</p>
-                    {w.rating != null && <StarRow rating={w.rating} />}
-                  </div>
-                  {w.duration_minutes && (
-                    <p className="text-xs text-stone-500 mt-0.5 flex items-center gap-1">
-                      <Clock size={10} /> {w.duration_minutes} min
-                    </p>
+            ) : workoutsFull.map((w) => {
+              const isExpanded = expandedWorkoutIds.has(w.id);
+              const toggle = () => setExpandedWorkoutIds(prev => {
+                const next = new Set(prev);
+                next.has(w.id) ? next.delete(w.id) : next.add(w.id);
+                return next;
+              });
+              return (
+                <div key={w.id} className="bg-stone-900 border border-stone-800 rounded-2xl overflow-hidden">
+                  {/* Cabecera del workout */}
+                  <button
+                    onClick={toggle}
+                    className="w-full flex items-center gap-3 p-4 text-left hover:bg-stone-800/50 transition-colors"
+                  >
+                    <div className="p-2 bg-stone-800 rounded-xl shrink-0">
+                      <Calendar size={14} className="text-(--color-accent-400)" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-sm font-semibold text-white">{fmtDate(w.completed_at)}</p>
+                        {w.rating != null && <StarRow rating={w.rating} />}
+                        {w.energy_level != null && (
+                          <span className="text-[10px] text-stone-500 bg-stone-800 px-1.5 py-0.5 rounded-full">
+                            energía {w.energy_level}/10
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-3 mt-0.5 text-xs text-stone-500">
+                        {w.duration_minutes && (
+                          <span className="flex items-center gap-1"><Clock size={10} />{w.duration_minutes} min</span>
+                        )}
+                        {w.exercises.length > 0 && (
+                          <span className="flex items-center gap-1"><Dumbbell size={10} />{w.exercises.length} ejercicio{w.exercises.length !== 1 ? 's' : ''}</span>
+                        )}
+                      </div>
+                      {w.notes && !isExpanded && (
+                        <p className="text-xs text-stone-500 mt-1 truncate">{w.notes}</p>
+                      )}
+                    </div>
+                    {w.exercises.length > 0 && (
+                      isExpanded ? <ChevronUp size={14} className="text-stone-500 shrink-0" /> : <ChevronDown size={14} className="text-stone-500 shrink-0" />
+                    )}
+                  </button>
+
+                  {/* Detalle expandido */}
+                  {isExpanded && (
+                    <div className="border-t border-stone-800 px-4 pb-4 pt-3 space-y-4">
+                      {w.notes && (
+                        <p className="text-sm text-stone-400 leading-relaxed italic">"{w.notes}"</p>
+                      )}
+                      {w.exercises.length === 0 ? (
+                        <p className="text-xs text-stone-600">No hay series registradas para esta sesión.</p>
+                      ) : w.exercises.map((ex) => {
+                        const workSets = ex.sets.filter(s => !s.is_warmup);
+                        const warmSets = ex.sets.filter(s => s.is_warmup);
+                        return (
+                          <div key={ex.exercise_name}>
+                            <div className="flex items-center gap-2 mb-2">
+                              <Weight size={12} className="text-(--color-accent-400) shrink-0" />
+                              <p className="text-sm font-semibold text-stone-200">{ex.exercise_name}</p>
+                              <span className="text-[10px] text-stone-600 ml-auto">
+                                {workSets.length} serie{workSets.length !== 1 ? 's' : ''}
+                                {warmSets.length > 0 && ` + ${warmSets.length} calent.`}
+                              </span>
+                            </div>
+                            <div className="space-y-1">
+                              {ex.sets.map((s) => (
+                                <div
+                                  key={s.set_number}
+                                  className={`flex items-center gap-2 text-xs px-2 py-1.5 rounded-lg ${s.is_warmup ? 'bg-stone-800/50 text-stone-600' : 'bg-stone-800 text-stone-300'}`}
+                                >
+                                  <span className="w-4 text-stone-600 font-mono shrink-0">{s.set_number}</span>
+                                  {s.is_warmup && <span className="text-[10px] text-yellow-600 shrink-0">C</span>}
+                                  {s.reps_completed != null && (
+                                    <span><span className="font-semibold text-white">{s.reps_completed}</span> reps</span>
+                                  )}
+                                  {s.weight_kg != null && (
+                                    <span className="ml-1">@ <span className="font-semibold text-white">{s.weight_kg}</span> kg</span>
+                                  )}
+                                  {s.weight_lbs != null && s.weight_kg == null && (
+                                    <span className="ml-1">@ <span className="font-semibold text-white">{s.weight_lbs}</span> lb</span>
+                                  )}
+                                  {s.rpe_actual != null && (
+                                    <span className="ml-auto text-stone-500">RPE {s.rpe_actual}</span>
+                                  )}
+                                  {s.notes && (
+                                    <span className="text-stone-600 truncate max-w-[100px]" title={s.notes}>{s.notes}</span>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   )}
-                  {w.notes && <p className="text-sm text-stone-400 mt-1.5 leading-relaxed">{w.notes}</p>}
                 </div>
+              );
+            })}
+
+            {/* Load more */}
+            {workoutsPage < workoutsTotalPages && (
+              <button
+                onClick={() => userId && loadWorkoutsPage(userId, workoutsPage + 1)}
+                disabled={workoutsLoading}
+                className="w-full py-2.5 text-sm text-stone-400 hover:text-white border border-stone-800 hover:border-stone-700 rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {workoutsLoading ? <Loader2 size={14} className="animate-spin" /> : 'Cargar más entrenamientos'}
+              </button>
+            )}
+            {workoutsLoading && workoutsFull.length === 0 && (
+              <div className="flex justify-center py-8">
+                <Loader2 size={20} className="animate-spin text-stone-600" />
               </div>
-            ))}
+            )}
           </div>
         )}
 

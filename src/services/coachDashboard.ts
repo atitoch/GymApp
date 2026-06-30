@@ -354,3 +354,41 @@ export const getMyConnections = async (): Promise<any[]> => {
   const res = await authenticatedGet<{ connections: any[] }>('/coaches/my-connections');
   return res.connections ?? [];
 };
+
+// ── Historial de entrenamientos del cliente (vista coach) ───────────────────
+
+export interface WorkoutSet {
+  set_number: number;
+  reps_completed: number | null;
+  weight_kg: number | null;
+  weight_lbs: number | null;
+  rpe_actual: number | null;
+  notes: string | null;
+  is_warmup: boolean;
+}
+
+export interface WorkoutExercise {
+  exercise_name: string;
+  sets: WorkoutSet[];
+}
+
+export interface ClientWorkout {
+  id: string;
+  workout_date: string;
+  completed_at: string;
+  duration_minutes: number | null;
+  notes: string | null;
+  rating: number | null;
+  energy_level: number | null;
+  exercises: WorkoutExercise[];
+}
+
+export interface ClientWorkoutPage {
+  workouts: ClientWorkout[];
+  pagination: { page: number; limit: number; total: number; pages: number };
+}
+
+export const getClientWorkouts = async (userId: string, page = 1, limit = 10): Promise<ClientWorkoutPage> => {
+  const res = await authenticatedGet<ClientWorkoutPage>(`/coach/clients/${userId}/workouts?page=${page}&limit=${limit}`);
+  return res;
+};
