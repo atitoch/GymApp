@@ -28,11 +28,13 @@ export const getConversations = async (): Promise<Conversation[]> => {
   return res.conversations ?? [];
 };
 
+// Fix 9: cursor-based pagination — pass `before` ISO timestamp to get older messages
 export const getMessages = async (
   partnerId: string,
-  page = 0,
-): Promise<{ messages: Message[]; total: number; page: number; pageSize: number }> => {
-  return authenticatedGet(`/messages/${partnerId}?page=${page}`);
+  before?: string,
+): Promise<{ messages: Message[]; hasMore: boolean; pageSize: number }> => {
+  const qs = before ? `?before=${encodeURIComponent(before)}` : '';
+  return authenticatedGet(`/messages/${partnerId}${qs}`);
 };
 
 export const sendMessage = async (partnerId: string, content: string): Promise<Message> => {
@@ -58,6 +60,7 @@ export const subscribeToMessages = (
   myUserId: string,
   onNewMessage: (msg: Message) => void,
   onDeleteMessage: (id: string) => void,
+  onReadUpdate?: (msgId: string) => void,
 ) => {
   let channel: ReturnType<typeof supabaseRealtime.channel> | null = null;
 
@@ -104,6 +107,21 @@ export const subscribeToMessages = (
         (payload: RealtimePostgresChangesPayload<Message>) => {
           if (payload.eventType === 'DELETE' && payload.old?.id) {
             onDeleteMessage(payload.old.id);
+          }
+        },
+      )
+      // Fix 8: real-time read receipts — partner marked our message as read
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter: `sender_id=eq.${myUserId}`,
+        },
+        (payload: RealtimePostgresChangesPayload<Message>) => {
+          if (payload.eventType === 'UPDATE' && (payload.new as Message).is_read && onReadUpdate) {
+            onReadUpdate((payload.new as Message).id);
           }
         },
       )

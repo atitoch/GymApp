@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Send, Loader2, Trash2 } from 'lucide-react';
+import { ArrowLeft, Send, Loader2, Trash2, AlertCircle } from 'lucide-react';
 import {
   getMessages,
   sendMessage,
@@ -11,6 +11,8 @@ import {
 } from '../services/messages';
 import { useAuth } from '../contexts/useAuth';
 import { Avatar } from '../components/Avatar';
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const formatTime = (iso: string) =>
   new Date(iso).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
@@ -29,9 +31,11 @@ export const Chat: React.FC = () => {
   const partnerAvatar = (location.state as any)?.partnerAvatar ?? null;
   const { user } = useAuth();
 
+  // Fix 10: validate UUID before any API call
+  const invalidId = !partnerId || !UUID_RE.test(partnerId);
+
   const [messages, setMessages] = useState<Message[]>([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [text, setText] = useState('');
@@ -39,42 +43,53 @@ export const Chat: React.FC = () => {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const removeMessage = useCallback((id: string) => {
     setMessages((prev) => prev.filter((m) => m.id !== id));
   }, []);
 
-  const load = useCallback(async (p: number, prepend = false) => {
+  // Fix 8: mark a specific message as read when partner reads it
+  const markMessageRead = useCallback((msgId: string) => {
+    setMessages((prev) =>
+      prev.map((m) => (m.id === msgId ? { ...m, is_read: true } : m)),
+    );
+  }, []);
+
+  // Fix 9: cursor-based load — pass oldest message's created_at as `before`
+  const load = useCallback(async (before?: string, prepend = false) => {
     if (!partnerId) return;
     try {
-      const res = await getMessages(partnerId, p);
-      setTotal(res.total);
-      setMessages((prev) => prepend ? [...(res.messages ?? []), ...prev] : (res.messages ?? []));
-      setPage(p);
+      const res = await getMessages(partnerId, before);
+      setHasMore(res.hasMore ?? false);
+      setMessages((prev) =>
+        prepend ? [...(res.messages ?? []), ...prev] : (res.messages ?? []),
+      );
     } catch {}
   }, [partnerId]);
 
   useEffect(() => {
-    if (!partnerId || !user?.id) return;
+    if (invalidId || !user?.id) return;
 
     setLoading(true);
-    load(0).finally(() => setLoading(false));
+    load().finally(() => setLoading(false));
 
-    markAsRead(partnerId).catch(() => {});
+    markAsRead(partnerId!).catch(() => {});
 
     const unsub = subscribeToMessages(
       user.id,
       (msg) => {
         if (msg.sender_id === partnerId) {
           setMessages((prev) => [...prev, msg]);
-          markAsRead(partnerId).catch(() => {});
+          markAsRead(partnerId!).catch(() => {});
         }
       },
       (id) => removeMessage(id),
+      (msgId) => markMessageRead(msgId),
     );
 
     return () => { unsub(); };
-  }, [partnerId, user?.id, load, removeMessage]);
+  }, [partnerId, user?.id, load, removeMessage, markMessageRead, invalidId]);
 
   useEffect(() => {
     if (!loading) {
@@ -115,12 +130,38 @@ export const Chat: React.FC = () => {
     }
   };
 
+  // Fix 9: use oldest message timestamp as cursor
   const handleLoadMore = async () => {
-    if (messages.length >= total) return;
+    if (!hasMore) return;
+    const oldest = messages[0]?.created_at;
     setLoadingMore(true);
-    await load(page + 1, true);
+    const prevHeight = scrollRef.current?.scrollHeight ?? 0;
+    await load(oldest, true);
+    // restore scroll position so new messages don't snap to top
+    requestAnimationFrame(() => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight - prevHeight;
+      }
+    });
     setLoadingMore(false);
   };
+
+  // Fix 10: graceful error state for invalid partnerId
+  if (invalidId) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-stone-950 text-white gap-4 px-6">
+        <AlertCircle size={40} className="text-red-400" />
+        <p className="font-bold text-lg">Conversación no encontrada</p>
+        <p className="text-stone-400 text-sm text-center">El enlace es inválido o esta conversación no existe.</p>
+        <button
+          onClick={() => navigate('/messages')}
+          className="mt-2 px-6 py-2.5 bg-lime-400 text-stone-950 rounded-xl font-bold text-sm"
+        >
+          Ver conversaciones
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col bg-stone-950" style={{ height: '100dvh', minHeight: '100vh' }}>
@@ -146,20 +187,20 @@ export const Chat: React.FC = () => {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 max-w-lg mx-auto w-full">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 max-w-lg mx-auto w-full">
         {loading ? (
           <div className="flex justify-center py-16">
             <Loader2 size={24} className="text-lime-400 animate-spin" />
           </div>
         ) : (
           <>
-            {messages.length < total ? (
+            {hasMore ? (
               <button
                 onClick={handleLoadMore}
                 disabled={loadingMore}
                 className="w-full text-center text-xs text-stone-500 hover:text-stone-300 py-2 mb-4 transition-colors"
               >
-                {loadingMore ? 'Cargando...' : `Cargar mensajes anteriores (${total - messages.length})`}
+                {loadingMore ? 'Cargando...' : 'Cargar mensajes anteriores'}
               </button>
             ) : messages.length > 0 && (
               <p className="text-center text-xs text-stone-700 py-2 mb-4">— Inicio de la conversación —</p>
@@ -177,7 +218,6 @@ export const Chat: React.FC = () => {
                     </div>
                   )}
                   <div className={`flex mb-2 group ${isMe ? 'justify-end' : 'justify-start'}`}>
-                    {/* Botón borrar — solo mensajes propios */}
                     {isMe && (
                       <button
                         onClick={() => handleDelete(msg.id)}
@@ -203,6 +243,7 @@ export const Chat: React.FC = () => {
                       </p>
                       <p className={`text-xs mt-1 ${isMe ? 'text-stone-700 text-right' : 'text-stone-500'}`}>
                         {formatTime(msg.created_at)}
+                        {/* Fix 8: live read receipt tick updates via realtime */}
                         {isMe && msg.is_read && <span className="ml-1">✓✓</span>}
                       </p>
                     </div>

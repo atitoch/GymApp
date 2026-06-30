@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { LogOut, Home, Dumbbell, History, User, Menu, X, ShieldCheck, Users2, UserCheck, MessageSquare } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/useAuth';
 import { themeClasses, cn } from '../theme/constants';
 import { useColors } from '../theme';
@@ -18,10 +18,18 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const { logout, user: authUser } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const colors = useColors();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [unread, setUnread] = useState(0);
+
+  // Fix 6: reset badge whenever user navigates to /messages (any chat)
+  useEffect(() => {
+    if (location.pathname.startsWith('/messages')) {
+      getUnreadCount().then(setUnread).catch(() => {});
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     if (!authUser?.id) return;
@@ -29,10 +37,16 @@ export const Header: React.FC<HeaderProps> = ({
     const interval = setInterval(() => {
       getUnreadCount().then(setUnread).catch(() => {});
     }, 30_000);
-    // Increment badge immediately on new incoming message
+    // Fix 7: only increment badge when the incoming message is NOT from the currently open chat
     const unsub = subscribeToMessages(
       authUser.id,
-      () => setUnread((n) => n + 1),
+      (msg: any) => {
+        const openPartnerId = location.pathname.startsWith('/messages/')
+          ? location.pathname.split('/messages/')[1]
+          : null;
+        if (openPartnerId && msg?.sender_id === openPartnerId) return;
+        setUnread((n) => n + 1);
+      },
       () => {},
     );
     return () => { clearInterval(interval); unsub(); };
