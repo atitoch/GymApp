@@ -431,12 +431,28 @@ export const ApplyAsCoach: React.FC = () => {
                   Documentos enviados
                 </p>
                 <ul className="space-y-2">
-                  {documents.map((doc) => (
-                    <li key={doc.id} className="flex items-center gap-2 text-sm text-stone-400">
-                      <FileText size={14} className="text-stone-500 shrink-0" />
-                      {doc.file_name ?? doc.document_type}
-                    </li>
-                  ))}
+                  {documents.map((doc) => {
+                    const statusColor =
+                      doc.status === 'approved' ? 'text-lime-400'
+                      : doc.status === 'rejected' ? 'text-red-400'
+                      : 'text-stone-500';
+                    const StatusIcon =
+                      doc.status === 'approved' ? CheckCircle
+                      : doc.status === 'rejected' ? XCircle
+                      : Clock;
+                    return (
+                      <li key={doc.id} className="space-y-0.5">
+                        <div className="flex items-center gap-2 text-sm text-stone-400">
+                          <FileText size={14} className="text-stone-500 shrink-0" />
+                          <span className="flex-1 truncate">{doc.file_name ?? doc.document_type}</span>
+                          <StatusIcon size={14} className={`shrink-0 ${statusColor}`} />
+                        </div>
+                        {doc.status === 'rejected' && doc.rejection_reason && (
+                          <p className="text-xs text-red-400 pl-5">{doc.rejection_reason}</p>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             )}

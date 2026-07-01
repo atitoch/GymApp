@@ -34,8 +34,12 @@ export const applyAsCoach = async (): Promise<CoachApplication> => {
 };
 
 export const getMyApplication = async (): Promise<MyApplication> => {
-  const res = await authenticatedGet<{ application: CoachApplication; documents: CoachDocument[] }>('/coach/application');
-  return { application: res.application, documents: res.documents ?? [] };
+  const res = await authenticatedGet<{ application: CoachApplication & { coach_documents?: CoachDocument[] }; documents?: CoachDocument[] }>('/coach/application');
+  // Backend now returns { application, documents } but handle legacy shape where
+  // documents were nested as application.coach_documents
+  const documents = res.documents ?? (res.application as any).coach_documents ?? [];
+  const { coach_documents: _, ...application } = res.application as any;
+  return { application, documents };
 };
 
 export const uploadCoachDocument = async (data: {

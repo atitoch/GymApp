@@ -11,6 +11,8 @@ import {
   XCircle,
   BadgeCheck,
   CreditCard,
+  FileText,
+  ShieldCheck,
 } from 'lucide-react';
 import { getCoachPublicProfile, requestConnection, getMyConnections, getCoachPlans, type CoachPlan } from '../../services/coachDashboard';
 import { PageHeader } from '../../components/PageHeader';
@@ -51,6 +53,7 @@ export const CoachProfile: React.FC = () => {
   const navigate = useNavigate();
 
   const [coach, setCoach] = useState<any | null>(null);
+  const [documents, setDocuments] = useState<any[]>([]);
   const [plans, setPlans] = useState<CoachPlan[]>([]);
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('none');
@@ -67,6 +70,7 @@ export const CoachProfile: React.FC = () => {
     ])
       .then(([profileData, connections, coachPlans]) => {
         setCoach(profileData.coach);
+        setDocuments((profileData as any).documents ?? []);
         setPlans(coachPlans);
         const rel = (connections as any[]).find(
           (c) => c.coach_id === id || c.coaches?.id === id,
@@ -185,6 +189,47 @@ export const CoachProfile: React.FC = () => {
                 </div>
               )}
             </div>
+
+            {/* Documentos verificados por admin */}
+            {documents.length > 0 && (
+              <div className="bg-stone-900 rounded-2xl p-4 border border-stone-800 space-y-3">
+                <p className="text-xs font-bold uppercase tracking-widest text-stone-500 flex items-center gap-1.5">
+                  <ShieldCheck size={12} className="text-lime-400" />
+                  Documentos verificados
+                </p>
+                <ul className="space-y-2">
+                  {documents.map((doc: any) => {
+                    const label = doc.label || (
+                      doc.document_type === 'certification' ? 'Certificación de entrenador'
+                      : doc.document_type === 'id' ? 'Identificación oficial'
+                      : doc.document_type === 'diploma' ? 'Diploma / Curso complementario'
+                      : doc.file_name ?? doc.document_type
+                    );
+                    return (
+                      <li key={doc.id}>
+                        {doc.signed_url ? (
+                          <a
+                            href={doc.signed_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-sm text-stone-300 hover:text-lime-400 transition-colors group"
+                          >
+                            <FileText size={14} className="text-lime-400 shrink-0" />
+                            <span className="flex-1 truncate">{label}</span>
+                            <CheckCircle size={12} className="text-lime-400 shrink-0 opacity-70" />
+                          </a>
+                        ) : (
+                          <div className="flex items-center gap-2 text-sm text-stone-500">
+                            <FileText size={14} className="shrink-0" />
+                            <span className="truncate">{label}</span>
+                          </div>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
 
             {/* Planes */}
             {plans.length > 0 && (
