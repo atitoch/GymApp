@@ -125,12 +125,9 @@ export const subscribeToMessages = (
           }
         },
       )
-      .subscribe((status, err) => {
-        // Log siempre: si algo falla en producción necesitamos verlo en consola
-        console.info(`[Realtime] estado: ${status}${err ? ` — ${err.message}` : ''}`);
-      });
-  } catch (e) {
-    console.warn('[Realtime] WebSocket not available, realtime disabled:', e);
+      .subscribe();
+  } catch {
+    // WebSocket not available — realtime disabled silently
   }
 
   return () => {
