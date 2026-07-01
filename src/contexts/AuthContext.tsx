@@ -45,6 +45,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   // Cargar datos de sesión al iniciar
   useEffect(() => {
+    let cancelled = false;
+
     const loadSession = async () => {
       try {
         try {
@@ -69,18 +71,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
               typeof parsed.email === 'string'
             ) {
               setUser(parsed);
-              // F3 fix: track whether this loadSession call is still active;
-              // if the user logs out while enrichUserWithRole is in flight,
-              // don't resurrect the session.
-              let cancelled = false;
               enrichUserWithRole(storedToken, parsed).then(enriched => {
                 if (!cancelled) {
                   setUser(enriched);
                   localStorage.setItem(USER_KEY, JSON.stringify(enriched));
                 }
               });
-              // Cleanup: mark cancelled if the effect fires again (e.g. fast logout)
-              return () => { cancelled = true; };
             } else {
               clearSession();
               setIsLoading(false);
@@ -100,6 +96,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     };
 
     loadSession();
+    return () => { cancelled = true; };
   }, []);
 
   const saveSession = (authData: AuthResponse) => {

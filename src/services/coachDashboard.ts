@@ -124,7 +124,10 @@ export type CoachProfileUpdate = {
   [K in 'bio' | 'specialization' | 'certifications' | 'years_experience' | 'hourly_rate']?:
     CoachProfile[K] | null;
 };
-export const updateMyCoachProfile = (data: CoachProfileUpdate) => authenticatedPut<CoachProfile>('/coach/profile', data);
+export const updateMyCoachProfile = async (data: CoachProfileUpdate): Promise<CoachProfile> => {
+  const res = await authenticatedPut<{ coach: CoachProfile }>('/coach/profile', data);
+  return res.coach;
+};
 
 export const getMyClients = async (): Promise<ClientRelationship[]> => {
   const res = await authenticatedGet<{ clients: ClientRelationship[] }>('/coach/clients');

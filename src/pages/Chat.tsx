@@ -65,7 +65,9 @@ export const Chat: React.FC = () => {
       setMessages((prev) =>
         prepend ? [...(res.messages ?? []), ...prev] : (res.messages ?? []),
       );
-    } catch {}
+    } catch {
+      setHasMore(false);
+    }
   }, [partnerId]);
 
   useEffect(() => {
