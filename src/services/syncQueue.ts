@@ -10,6 +10,9 @@ import type { CreateExerciseSetRequest, ExerciseLog } from '../types/workoutLog'
 import { isNetworkError } from '../utils/errorHandler';
 
 const STORAGE_KEY = 'gymapp_pending_exercise_sets';
+// F4 fix: discard queued sets older than 24h — after that the workout log is
+// almost certainly completed or the session is stale, and retrying will always fail.
+const MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
 export interface QueuedSet {
   tempId: string;
@@ -23,7 +26,12 @@ function readQueue(): QueuedSet[] {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) return [];
+    // F4 fix: evict stale items so they don't accumulate indefinitely
+    const now = Date.now();
+    const fresh = parsed.filter((item: QueuedSet) => now - item.createdAt < MAX_AGE_MS);
+    if (fresh.length !== parsed.length) writeQueue(fresh);
+    return fresh;
   } catch {
     return [];
   }

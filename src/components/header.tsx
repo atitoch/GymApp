@@ -24,7 +24,12 @@ export const Header: React.FC<HeaderProps> = ({
   const [menuOpen, setMenuOpen] = useState(false);
   const [unread, setUnread] = useState(0);
 
-  // Fix 6: reset badge whenever user navigates to /messages (any chat)
+  // F5 fix: keep a ref so the realtime callback always reads the current pathname,
+  // not the stale value captured when the effect ran (on mount / authUser change).
+  const pathnameRef = useRef(location.pathname);
+  useEffect(() => { pathnameRef.current = location.pathname; }, [location.pathname]);
+
+  // Reset badge count whenever the user navigates to any /messages route
   useEffect(() => {
     if (location.pathname.startsWith('/messages')) {
       getUnreadCount().then(setUnread).catch(() => {});
@@ -37,12 +42,14 @@ export const Header: React.FC<HeaderProps> = ({
     const interval = setInterval(() => {
       getUnreadCount().then(setUnread).catch(() => {});
     }, 30_000);
-    // Fix 7: only increment badge when the incoming message is NOT from the currently open chat
+    // Only increment badge when the incoming message is NOT from the currently open chat.
+    // Uses pathnameRef so this closure always sees the live route (F5 fix).
     const unsub = subscribeToMessages(
       authUser.id,
       (msg: any) => {
-        const openPartnerId = location.pathname.startsWith('/messages/')
-          ? location.pathname.split('/messages/')[1]
+        const path = pathnameRef.current;
+        const openPartnerId = path.startsWith('/messages/')
+          ? path.split('/messages/')[1]
           : null;
         if (openPartnerId && msg?.sender_id === openPartnerId) return;
         setUnread((n) => n + 1);

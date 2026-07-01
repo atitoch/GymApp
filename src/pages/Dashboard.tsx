@@ -84,13 +84,13 @@ export const Dashboard: React.FC = () => {
     }
   }, [user, loading]);
 
-  // Coach widget loads independently — doesn't block the dashboard skeleton
+  // F1 fix: coach widget is for clients only — coaches don't have a "my coach"
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?.id || user?.role === 'coach' || user?.role === 'admin') return;
     getMyCoach()
       .then(setMyCoachData)
       .catch(() => {}); // silent — widget stays hidden if it fails
-  }, [user?.id]);
+  }, [user?.id, user?.role]);
 
   // Verifica perfil del coach incompleto — depende de role que carga async
   useEffect(() => {

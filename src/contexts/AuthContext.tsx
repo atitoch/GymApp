@@ -69,11 +69,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
               typeof parsed.email === 'string'
             ) {
               setUser(parsed);
-              // Refresh role in background
+              // F3 fix: track whether this loadSession call is still active;
+              // if the user logs out while enrichUserWithRole is in flight,
+              // don't resurrect the session.
+              let cancelled = false;
               enrichUserWithRole(storedToken, parsed).then(enriched => {
-                setUser(enriched);
-                localStorage.setItem(USER_KEY, JSON.stringify(enriched));
+                if (!cancelled) {
+                  setUser(enriched);
+                  localStorage.setItem(USER_KEY, JSON.stringify(enriched));
+                }
               });
+              // Cleanup: mark cancelled if the effect fires again (e.g. fast logout)
+              return () => { cancelled = true; };
             } else {
               clearSession();
               setIsLoading(false);
