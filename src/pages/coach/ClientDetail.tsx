@@ -44,6 +44,8 @@ const TYPE_COLORS: Record<CommentType, { bg: string; text: string }> = {
 
 const fmtDate = (iso?: string) =>
   iso ? new Date(iso).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: '2-digit' }) : '—';
+const fmtWorkoutDate = (dateStr?: string) =>
+  dateStr ? new Date(dateStr + 'T12:00:00').toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: '2-digit' }) : '—';
 
 const StarRow = ({ rating }: { rating: number }) => (
   <div className="flex items-center gap-0.5">
@@ -406,7 +408,7 @@ export const ClientDetail: React.FC = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="text-sm font-semibold text-white">{fmtDate(w.completed_at)}</p>
+                        <p className="text-sm font-semibold text-white">{fmtWorkoutDate(w.workout_date)}</p>
                         {w.rating != null && <StarRow rating={w.rating} />}
                         {w.energy_level != null && (
                           <span className="text-[10px] text-stone-500 bg-stone-800 px-1.5 py-0.5 rounded-full">
