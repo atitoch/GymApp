@@ -1,4 +1,4 @@
-import { Edit2, Trash2, Calendar } from "lucide-react";
+import { Calendar } from "lucide-react";
 import type { DayRoutine, CalculatedDayRoutine } from "../types/routineType";
 
 interface DayHeaderProps {
@@ -70,14 +70,6 @@ export const DayHeader: React.FC<DayHeaderProps> = ({
               </div>
             )}
             <p className="text-stone-400 truncate">{currentRoutine.title}</p>
-          </div>
-          <div className="flex gap-2 shrink-0">
-            <button className="p-2 bg-stone-800 hover:bg-stone-700 rounded-lg transition-colors">
-              <Edit2 className="w-5 h-5 text-stone-400" />
-            </button>
-            <button className="p-2 bg-stone-800 hover:bg-stone-700 rounded-lg transition-colors">
-              <Trash2 className="w-5 h-5 text-stone-400" />
-            </button>
           </div>
         </div>
       </div>
