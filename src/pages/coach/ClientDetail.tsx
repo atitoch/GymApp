@@ -420,15 +420,15 @@ export const ClientDetail: React.FC = () => {
                         {w.duration_minutes && (
                           <span className="flex items-center gap-1"><Clock size={10} />{w.duration_minutes} min</span>
                         )}
-                        {w.exercises.length > 0 && (
-                          <span className="flex items-center gap-1"><Dumbbell size={10} />{w.exercises.length} ejercicio{w.exercises.length !== 1 ? 's' : ''}</span>
+                        {(w.exercises ?? []).length > 0 && (
+                          <span className="flex items-center gap-1"><Dumbbell size={10} />{(w.exercises ?? []).length} ejercicio{(w.exercises ?? []).length !== 1 ? 's' : ''}</span>
                         )}
                       </div>
                       {w.notes && !isExpanded && (
                         <p className="text-xs text-stone-500 mt-1 truncate">{w.notes}</p>
                       )}
                     </div>
-                    {w.exercises.length > 0 && (
+                    {(w.exercises ?? []).length > 0 && (
                       isExpanded ? <ChevronUp size={14} className="text-stone-500 shrink-0" /> : <ChevronDown size={14} className="text-stone-500 shrink-0" />
                     )}
                   </button>
@@ -439,9 +439,9 @@ export const ClientDetail: React.FC = () => {
                       {w.notes && (
                         <p className="text-sm text-stone-400 leading-relaxed italic">"{w.notes}"</p>
                       )}
-                      {w.exercises.length === 0 ? (
+                      {(w.exercises ?? []).length === 0 ? (
                         <p className="text-xs text-stone-600">No hay series registradas para esta sesión.</p>
-                      ) : w.exercises.map((ex) => {
+                      ) : (w.exercises ?? []).map((ex) => {
                         const workSets = ex.sets.filter(s => !s.is_warmup);
                         const warmSets = ex.sets.filter(s => s.is_warmup);
                         return (
