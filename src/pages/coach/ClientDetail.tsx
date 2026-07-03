@@ -137,8 +137,6 @@ export const ClientDetail: React.FC = () => {
     ])
       .then(([detail, c, r, p, activeRoutine]) => {
         setClientData(detail);
-        // Seed stats inmediatamente con los 5 recientes para el header
-        if (detail?.recentWorkouts?.length) setWorkoutsFull(detail.recentWorkouts);
         setComments(c ?? []);
         setRoutines(r ?? []);
         setPayments(p ?? []);

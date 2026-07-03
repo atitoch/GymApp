@@ -433,7 +433,14 @@ export const DayRoutine: React.FC = () => {
               Timer
             </button>
             <button
-              onClick={() => setShowFinishDialog(true)}
+              onClick={() => {
+                const totalLogged = Array.from(exerciseLogs.values()).reduce((acc, sets) => acc + sets.length, 0);
+                if (totalLogged === 0) {
+                  alert('Registra al menos una serie antes de terminar el entrenamiento.');
+                  return;
+                }
+                setShowFinishDialog(true);
+              }}
               className="px-6 py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 flex items-center gap-2"
               style={{
                 background: 'linear-gradient(135deg, #ef4444, #dc2626)',
