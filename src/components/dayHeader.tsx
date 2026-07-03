@@ -48,7 +48,7 @@ export const DayHeader: React.FC<DayHeaderProps> = ({
 
   return (
     <div className="sticky top-0 z-10 w-full bg-stone-900/95 backdrop-blur-sm border-b border-stone-800 overflow-hidden">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
+      <div className="max-w-4xl mx-auto px-6 py-4">
         <button
           onClick={handleBackToRoutine}
           className="text-lime-400 hover:text-lime-300 mb-3 flex items-center gap-2 transition-colors"
