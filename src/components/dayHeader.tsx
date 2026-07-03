@@ -55,7 +55,7 @@ export const DayHeader: React.FC<DayHeaderProps> = ({
         >
           ← Volver al dashboard
         </button>
-        <div className="flex items-center justify-between gap-3 min-w-0">
+        <div className="flex items-center justify-between gap-3 min-w-0 pl-4">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <h1 className="text-2xl font-bold text-stone-50 truncate">{dayLabel}</h1>
