@@ -18,8 +18,6 @@ const emptySection = (): SectionInput => ({ title: '', exercises: [emptyExercise
 const emptyDay = (): DayRoutineInput => ({ dayName: 'DÍA', title: 'Entrenamiento', warmup: [], sections: [emptySection()], cooldown: [] });
 const restDay = (): DayRoutineInput => ({ dayName: 'DESCANSO', title: 'Descanso', warmup: [], sections: [], cooldown: [] });
 const isRestDay = (d: DayRoutineInput) => d.dayName.toLowerCase().includes('descanso') || d.dayName.toLowerCase().includes('rest');
-// Quita acentos para que "jalon" encuentre "jalón" y todas sus variantes (al pecho, en polea, en máquina...)
-const normalize = (s: string) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
