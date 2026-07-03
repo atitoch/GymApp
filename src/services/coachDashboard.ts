@@ -77,6 +77,7 @@ export interface ExerciseInput {
   rpe: string;
   rest: string;
   notes?: string;
+  exercise_catalog_id?: string | null;
 }
 
 export interface SectionInput {

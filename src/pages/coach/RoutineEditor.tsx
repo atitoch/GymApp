@@ -9,7 +9,7 @@ import {
   type ExerciseInput,
   type SectionInput,
 } from '../../services/coachDashboard';
-import { EXERCISE_NAMES } from '../../data/exerciseNames';
+import { authenticatedGet } from '../../utils/api';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -40,26 +40,36 @@ function ExerciseRow({
   isFirst: boolean;
   isLast: boolean;
 }) {
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<{ id: string; name: string; equipment: string }[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [rpeHint, setRpeHint] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleNameChange = (val: string) => {
-    onChange({ ...ex, name: val });
+    onChange({ ...ex, name: val, exercise_catalog_id: null });
+    if (debounceRef.current) clearTimeout(debounceRef.current);
     if (val.trim().length >= 2) {
-      const query = normalize(val);
-      const matches = EXERCISE_NAMES.filter((n) => normalize(n).includes(query)).slice(0, 6);
-      setSuggestions(matches);
-      setShowSuggestions(matches.length > 0);
+      debounceRef.current = setTimeout(async () => {
+        try {
+          const data = await authenticatedGet<{ id: string; name: string; equipment: string }[]>(
+            `exercises/catalog/search?q=${encodeURIComponent(val)}&limit=8`,
+          );
+          setSuggestions(data ?? []);
+          setShowSuggestions((data ?? []).length > 0);
+        } catch {
+          setSuggestions([]);
+          setShowSuggestions(false);
+        }
+      }, 250);
     } else {
       setSuggestions([]);
       setShowSuggestions(false);
     }
   };
 
-  const selectSuggestion = (name: string) => {
-    onChange({ ...ex, name });
+  const selectSuggestion = (s: { id: string; name: string }) => {
+    onChange({ ...ex, name: s.name, exercise_catalog_id: s.id });
     setSuggestions([]);
     setShowSuggestions(false);
   };
@@ -117,11 +127,14 @@ function ExerciseRow({
             <div className="absolute top-full left-0 right-0 z-30 mt-0.5 bg-stone-800 border border-stone-600 rounded-lg overflow-hidden shadow-xl">
               {suggestions.map((s) => (
                 <button
-                  key={s}
+                  key={s.id}
                   onMouseDown={(e) => { e.preventDefault(); selectSuggestion(s); }}
                   className="w-full text-left px-3 py-2 text-sm text-stone-200 hover:bg-lime-400/10 hover:text-lime-300 transition-colors"
                 >
-                  {s}
+                  <span>{s.name}</span>
+                  {s.equipment && (
+                    <span className="ml-2 text-xs text-stone-500">{s.equipment}</span>
+                  )}
                 </button>
               ))}
             </div>

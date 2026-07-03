@@ -128,6 +128,8 @@ function SetRowItem({
   onWeightChange,
   onRepsChange,
   onSave,
+  lastWeight,
+  lastReps,
 }: {
   row: SetRow;
   setNumber: number;
@@ -137,6 +139,8 @@ function SetRowItem({
   onWeightChange: (val: string) => void;
   onRepsChange: (val: string) => void;
   onSave: () => void;
+  lastWeight?: string;
+  lastReps?: string;
 }) {
   const canSave = row.weight.trim() !== '' && row.reps.trim() !== '';
 
@@ -165,7 +169,7 @@ function SetRowItem({
           inputMode="decimal"
           value={row.weight}
           onChange={(e) => onWeightChange(e.target.value)}
-          placeholder="—"
+          placeholder={!row.saved && lastWeight ? lastWeight : '—'}
           disabled={row.saved || !isCurrentDay}
           min={0}
           step={0.5}
@@ -186,7 +190,7 @@ function SetRowItem({
           inputMode="numeric"
           value={row.reps}
           onChange={(e) => onRepsChange(e.target.value)}
-          placeholder={targetReps || '—'}
+          placeholder={!row.saved && lastReps ? lastReps : (targetReps || '—')}
           disabled={row.saved || !isCurrentDay}
           min={0}
           step={1}
@@ -247,6 +251,27 @@ export default function ExerciseTracker({
   const { toasts, showToast, hideToast } = useToast();
   const targetSets = parseTargetSets(exercise.sets);
   const targetReps = parseTargetReps(exercise.reps);
+
+  // Peso y reps de la última sesión para pre-rellenar inputs vacíos
+  const [lastWeight, setLastWeight] = useState('');
+  const [lastReps, setLastReps] = useState('');
+
+  useEffect(() => {
+    if (!isCurrentDay) return;
+    getExerciseHistory(exercise.name, 1)
+      .then((history) => {
+        if (!history?.length) return;
+        const sets = history[0].sets;
+        if (!sets?.length) return;
+        const getW = (s: ExerciseLog) =>
+          (weightUnit === 'lbs' ? s.weight_lbs : s.weight_kg) ?? 0;
+        const best = sets.reduce((acc, s) => (getW(s) > getW(acc) ? s : acc));
+        const w = getW(best);
+        if (w > 0) setLastWeight(w.toString());
+        if (best.reps_completed) setLastReps(best.reps_completed.toString());
+      })
+      .catch(() => {});
+  }, [exercise.name, weightUnit, isCurrentDay]);
 
   // Inicializar filas: una por set planificado
   const initRows = useCallback((): SetRow[] => {
@@ -431,6 +456,8 @@ export default function ExerciseTracker({
                 onWeightChange={(val) => updateRow(i, { weight: val })}
                 onRepsChange={(val) => updateRow(i, { reps: val })}
                 onSave={() => handleSave(i)}
+                lastWeight={lastWeight || undefined}
+                lastReps={lastReps || undefined}
               />
             ))}
           </div>
