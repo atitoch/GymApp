@@ -45,17 +45,25 @@ export const AdminDocuments: React.FC = () => {
 
   useEffect(() => { load(filter); }, [filter]);
 
+  const [viewingId, setViewingId] = useState<string | null>(null);
+
   const handleView = async (doc: AdminCoachDocument) => {
-    const win = window.open('', '_blank');
-    if (!win) { alert('Activa los pop-ups para este sitio y vuelve a intentarlo.'); return; }
+    setViewingId(doc.id);
     try {
       const res = await authenticatedGet<{ url: string }>(
         `/admin/storage/signed-url?path=${encodeURIComponent(doc.file_url)}`,
       );
-      win.location.href = res.url;
+      const a = document.createElement('a');
+      a.href = res.url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     } catch (err: any) {
-      win.close();
-      alert(`Error al abrir el documento:\n${err?.message ?? err}`);
+      alert(`Error al obtener el documento:\n${err?.message ?? err}`);
+    } finally {
+      setViewingId(null);
     }
   };
 
@@ -141,7 +149,7 @@ export const AdminDocuments: React.FC = () => {
                     </p>
                   </div>
                   <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-800 text-stone-300 text-xs font-medium shrink-0">
-                    <ExternalLink size={12} />
+                    {viewingId === doc.id ? <Loader2 size={12} className="animate-spin" /> : <ExternalLink size={12} />}
                     Ver
                   </div>
                 </button>
