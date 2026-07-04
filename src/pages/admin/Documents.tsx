@@ -46,12 +46,17 @@ export const AdminDocuments: React.FC = () => {
   useEffect(() => { load(filter); }, [filter]);
 
   const handleView = async (doc: AdminCoachDocument) => {
+    const win = window.open('', '_blank');
+    if (!win) return;
+    win.document.write('<p style="font-family:sans-serif;color:#888;padding:2rem">Cargando documento…</p>');
     try {
       const res = await authenticatedGet<{ url: string }>(
         `/admin/storage/signed-url?path=${encodeURIComponent(doc.file_url)}`,
       );
-      window.open(res.url, '_blank');
-    } catch { /* silencioso */ }
+      win.location.href = res.url;
+    } catch {
+      win.document.body.innerHTML = '<p style="font-family:sans-serif;color:#c00;padding:2rem">No se pudo cargar el documento. Intenta de nuevo.</p>';
+    }
   };
 
   const handleApprove = async (id: string) => {
