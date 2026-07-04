@@ -51,7 +51,7 @@ function ExerciseRow({
       debounceRef.current = setTimeout(async () => {
         try {
           const data = await authenticatedGet<{ id: string; name: string; equipment: string }[]>(
-            `exercises/catalog/search?q=${encodeURIComponent(val)}&limit=8`,
+            `exercises/catalog/search?q=${encodeURIComponent(val)}&limit=5`,
           );
           setSuggestions(data ?? []);
           setShowSuggestions((data ?? []).length > 0);
