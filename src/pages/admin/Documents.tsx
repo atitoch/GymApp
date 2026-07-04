@@ -87,7 +87,7 @@ export const AdminDocuments: React.FC = () => {
         style={{ background: 'rgba(12,10,9,0.95)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}
       >
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
-          <button onClick={() => navigate('/admin')} className="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-all">
+          <button onClick={() => navigate('/admin')} className="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer">
             <ArrowLeft size={20} />
           </button>
           <FileText size={20} className="text-lime-400" />
@@ -99,7 +99,7 @@ export const AdminDocuments: React.FC = () => {
             <button
               key={s}
               onClick={() => setFilter(s)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
                 filter === s ? STATUS_BADGE[s] : 'bg-stone-800 text-stone-500 hover:bg-stone-700'
               }`}
             >
@@ -126,7 +126,7 @@ export const AdminDocuments: React.FC = () => {
               <div key={doc.id} className="bg-stone-900 border border-stone-800 rounded-2xl overflow-hidden">
                 <button
                   onClick={() => handleView(doc)}
-                  className="w-full text-left flex items-center gap-3 p-4 hover:bg-white/[0.03] active:bg-white/[0.05] transition-colors"
+                  className="w-full text-left flex items-center gap-3 p-4 hover:bg-white/[0.03] active:bg-white/[0.05] transition-colors cursor-pointer"
                 >
                   <div className="p-2.5 rounded-xl bg-stone-800 shrink-0">
                     <FileText size={16} className="text-lime-400" />
@@ -166,13 +166,13 @@ export const AdminDocuments: React.FC = () => {
                           <button
                             onClick={() => handleReject(doc.id)}
                             disabled={actingId === doc.id}
-                            className="px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-bold hover:bg-red-500 disabled:opacity-50 transition-colors"
+                            className="px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-bold hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
                           >
                             {actingId === doc.id ? <Loader2 size={12} className="animate-spin" /> : 'Confirmar rechazo'}
                           </button>
                           <button
                             onClick={() => { setRejectingId(null); setRejectReason(''); }}
-                            className="px-3 py-1.5 rounded-lg bg-stone-800 text-stone-300 text-xs hover:bg-stone-700 transition-colors"
+                            className="px-3 py-1.5 rounded-lg bg-stone-800 text-stone-300 text-xs hover:bg-stone-700 transition-colors cursor-pointer"
                           >
                             Cancelar
                           </button>
@@ -183,7 +183,7 @@ export const AdminDocuments: React.FC = () => {
                         <button
                           onClick={() => handleApprove(doc.id)}
                           disabled={actingId === doc.id}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-lime-400 text-stone-950 text-xs font-bold hover:bg-lime-300 disabled:opacity-50 transition-colors"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-lime-400 text-stone-950 text-xs font-bold hover:bg-lime-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
                         >
                           {actingId === doc.id ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
                           Aprobar
@@ -191,7 +191,7 @@ export const AdminDocuments: React.FC = () => {
                         <button
                           onClick={() => setRejectingId(doc.id)}
                           disabled={actingId === doc.id}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-400/40 text-red-400 text-xs font-medium hover:bg-red-400/10 disabled:opacity-50 transition-colors"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-400/40 text-red-400 text-xs font-medium hover:bg-red-400/10 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
                         >
                           <X size={12} />
                           Rechazar
