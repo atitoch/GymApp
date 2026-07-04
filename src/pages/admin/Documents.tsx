@@ -118,8 +118,11 @@ export const AdminDocuments: React.FC = () => {
         ) : (
           <div className="space-y-3">
             {documents.map((doc) => (
-              <div key={doc.id} className="bg-stone-900 border border-stone-800 rounded-2xl p-4">
-                <div className="flex items-center gap-3">
+              <div key={doc.id} className="bg-stone-900 border border-stone-800 rounded-2xl overflow-hidden">
+                <button
+                  onClick={() => handleView(doc)}
+                  className="w-full text-left flex items-center gap-3 p-4 hover:bg-white/[0.03] active:bg-white/[0.05] transition-colors"
+                >
                   <div className="p-2.5 rounded-xl bg-stone-800 shrink-0">
                     <FileText size={16} className="text-lime-400" />
                   </div>
@@ -132,23 +135,20 @@ export const AdminDocuments: React.FC = () => {
                       {doc.application_id ? ' · de solicitud' : ' · post-aprobación'}
                     </p>
                   </div>
-                  <button
-                    onClick={() => handleView(doc)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-800 text-stone-300 text-xs font-medium hover:bg-stone-700 transition-colors shrink-0"
-                  >
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-800 text-stone-300 text-xs font-medium shrink-0">
                     <ExternalLink size={12} />
                     Ver
-                  </button>
-                </div>
+                  </div>
+                </button>
 
                 {doc.status === 'rejected' && doc.rejection_reason && (
-                  <p className="mt-2 text-xs text-red-400/80 bg-red-400/5 border border-red-400/20 rounded-lg px-3 py-2">
+                  <p className="mx-4 mb-3 text-xs text-red-400/80 bg-red-400/5 border border-red-400/20 rounded-lg px-3 py-2">
                     {doc.rejection_reason}
                   </p>
                 )}
 
                 {filter === 'pending' && (
-                  <div className="mt-3 pt-3 border-t border-stone-800">
+                  <div className="px-4 pb-4 pt-3 border-t border-stone-800">
                     {rejectingId === doc.id ? (
                       <div className="space-y-2">
                         <input
