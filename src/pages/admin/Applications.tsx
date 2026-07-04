@@ -41,16 +41,21 @@ const getSignedUrl = (path: string): Promise<string> =>
 
 interface DocLinkProps { doc: { id: string; document_type: string; file_url: string; file_name?: string } }
 const DocLink: React.FC<DocLinkProps> = ({ doc }) => {
-  const [url, setUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleOpen = async () => {
-    if (url) { window.open(url, '_blank'); return; }
     setLoading(true);
     try {
       const signed = await getSignedUrl(doc.file_url);
-      setUrl(signed);
-      window.open(signed, '_blank');
+      const a = document.createElement('a');
+      a.href = signed;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (err: any) {
+      alert(`No se pudo abrir el documento:\n${err?.message ?? err}`);
     } finally {
       setLoading(false);
     }
@@ -60,7 +65,7 @@ const DocLink: React.FC<DocLinkProps> = ({ doc }) => {
     <button
       onClick={handleOpen}
       disabled={loading}
-      className="flex items-center gap-2 text-sm text-lime-400 hover:text-lime-300 transition-colors disabled:opacity-50"
+      className="flex items-center gap-2 text-sm text-lime-400 hover:text-lime-300 transition-colors disabled:opacity-50 cursor-pointer"
     >
       {loading ? <Loader2 size={14} className="animate-spin" /> : <FileText size={14} />}
       {DOC_LABELS[doc.document_type] ?? doc.document_type}
@@ -93,7 +98,7 @@ const ApplicationModal: React.FC<ModalProps> = ({ app, onClose, onApprove, onRej
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-stone-800">
           <h2 className="text-lg font-black text-white">Solicitud de coach</h2>
-          <button onClick={onClose} className="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-all">
+          <button onClick={onClose} className="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer">
             <X size={18} />
           </button>
         </div>
@@ -151,7 +156,7 @@ const ApplicationModal: React.FC<ModalProps> = ({ app, onClose, onApprove, onRej
                   <button
                     onClick={() => onApprove(app.id)}
                     disabled={loading}
-                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-lime-400 text-stone-950 font-bold rounded-xl hover:bg-lime-300 disabled:opacity-50 transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-lime-400 text-stone-950 font-bold rounded-xl hover:bg-lime-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
                   >
                     {loading ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
                     Aprobar
@@ -159,7 +164,7 @@ const ApplicationModal: React.FC<ModalProps> = ({ app, onClose, onApprove, onRej
                   <button
                     onClick={() => setRejectOpen(true)}
                     disabled={loading}
-                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-red-400/10 text-red-400 border border-red-400/30 font-bold rounded-xl hover:bg-red-400/20 disabled:opacity-50 transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-red-400/10 text-red-400 border border-red-400/30 font-bold rounded-xl hover:bg-red-400/20 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
                   >
                     <X size={16} />
                     Rechazar
@@ -283,7 +288,7 @@ export const AdminApplications: React.FC = () => {
                 <button
                   key={app.id}
                   onClick={() => setSelected(app)}
-                  className="w-full text-left bg-stone-900 border border-stone-800 hover:border-stone-600 rounded-2xl p-5 transition-colors flex items-center justify-between gap-4"
+                  className="w-full text-left bg-stone-900 border border-stone-800 hover:border-stone-600 rounded-2xl p-5 transition-colors flex items-center justify-between gap-4 cursor-pointer"
                 >
                   <div className="space-y-1">
                     <p className="text-stone-100 font-bold">{userName}</p>
