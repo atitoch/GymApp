@@ -7,6 +7,7 @@ import type {
   CreateExerciseSetRequest,
 } from '../types/workoutLog';
 import { getExerciseHistory } from '../services/workoutLog';
+import { getSetWeightInUnit } from '../utils/weight';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -87,7 +88,7 @@ function LastSessionBadge({
         if (!lastSets?.length) return;
 
         const getWeight = (s: (typeof lastSets)[number]) =>
-          (weightUnit === 'lbs' ? s.weight_lbs : s.weight_kg) ?? 0;
+          getSetWeightInUnit(s, weightUnit === 'lbs' ? 'lbs' : 'kg');
 
         const best = lastSets.reduce((acc, s) =>
           getWeight(s) > getWeight(acc) ? s : acc,
@@ -271,8 +272,7 @@ export default function ExerciseTracker({
         if (!history?.length) return;
         const sets = history[0].sets;
         if (!sets?.length) return;
-        const getW = (s: ExerciseLog) =>
-          (weightUnit === 'lbs' ? s.weight_lbs : s.weight_kg) ?? 0;
+        const getW = (s: ExerciseLog) => getSetWeightInUnit(s, weightUnit);
         const best = sets.reduce((acc, s) => (getW(s) > getW(acc) ? s : acc));
         const w = getW(best);
         if (w > 0) setLastWeight(w.toString());
