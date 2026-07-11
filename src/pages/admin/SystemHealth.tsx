@@ -47,10 +47,15 @@ export const AdminSystemHealth: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getSystemHealth()
-      .then(setHealth)
-      .catch(() => setError('Error al cargar estado del sistema'))
-      .finally(() => setLoading(false));
+    const fetchHealth = () =>
+      getSystemHealth()
+        .then(setHealth)
+        .catch(() => setError('Error al cargar estado del sistema'))
+        .finally(() => setLoading(false));
+
+    fetchHealth();
+    const interval = setInterval(fetchHealth, 30_000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
