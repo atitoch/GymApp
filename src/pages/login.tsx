@@ -589,6 +589,7 @@ export const Login: React.FC = () => {
                     onChange={handleInputChange}
                     onBlur={handleBlur}
                     placeholder="Carlos Mendoza"
+                    maxLength={201}
                     disabled={isLoading}
                     className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-2.5 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-[border-color,box-shadow,background-color] duration-150 disabled:opacity-50 disabled:cursor-not-allowed ${
                       fieldErrors.fullName && touchedFields.has("fullName")
@@ -616,6 +617,7 @@ export const Login: React.FC = () => {
                   onChange={handleInputChange}
                   onBlur={handleBlur}
                   placeholder="tu@email.com"
+                  maxLength={254}
                   disabled={isLoading}
                   autoComplete="email"
                   className={`w-full bg-stone-800/60 border border-stone-700/50 rounded-lg px-4 py-2.5 text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:bg-stone-800/80 focus:border-stone-600 transition-[border-color,box-shadow,background-color] duration-150 disabled:opacity-50 disabled:cursor-not-allowed ${
@@ -644,6 +646,7 @@ export const Login: React.FC = () => {
                     onChange={handleInputChange}
                     onBlur={handleBlur}
                     placeholder="••••••••"
+                    maxLength={128}
                     disabled={isLoading}
                     autoComplete={
                       isRegistering ? "new-password" : "current-password"
@@ -688,6 +691,7 @@ export const Login: React.FC = () => {
                       type={showConfirmPassword ? "text" : "password"}
                       name="confirmPassword"
                       value={formData.confirmPassword}
+                      maxLength={128}
                       onChange={handleInputChange}
                       onBlur={handleBlur}
                       placeholder="••••••••"

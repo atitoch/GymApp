@@ -119,6 +119,7 @@ function ExerciseRow({
             onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
             onKeyDown={(e) => { if (e.key === 'Escape') setShowSuggestions(false); }}
             placeholder="Nombre del ejercicio"
+            maxLength={200}
             className="w-full bg-stone-800 border border-stone-700 rounded-lg px-2.5 py-2 text-sm text-white focus:outline-none focus:border-lime-400"
           />
           {showSuggestions && (
@@ -249,6 +250,7 @@ function SectionBlock({
           value={section.title}
           onChange={(e) => onChange({ ...section, title: e.target.value })}
           placeholder="Bloque A · Circuito · Superset..."
+          maxLength={200}
           className="flex-1 bg-stone-800 border border-stone-700 rounded-lg px-2.5 py-1.5 text-sm font-bold text-white focus:outline-none focus:border-lime-400 placeholder-stone-600"
         />
         <button onClick={onRemove} className="p-1.5 text-stone-500 hover:text-red-400 transition-colors shrink-0">
@@ -397,6 +399,7 @@ function DayEditor({
             onClick={(e) => e.stopPropagation()}
             onChange={(e) => onChange({ ...day, dayName: e.target.value })}
             placeholder="PUSH / PULL / DESCANSO..."
+            maxLength={50}
             className="bg-transparent border-b border-stone-700 text-sm font-bold text-white focus:outline-none focus:border-lime-400 w-28 min-w-0"
           />
           <input
@@ -404,6 +407,7 @@ function DayEditor({
             onClick={(e) => e.stopPropagation()}
             onChange={(e) => onChange({ ...day, title: e.target.value })}
             placeholder="Título"
+            maxLength={200}
             className="bg-transparent border-b border-stone-700 text-sm text-stone-300 focus:outline-none focus:border-lime-400 flex-1 min-w-0"
           />
         </div>
@@ -619,6 +623,7 @@ export const RoutineEditor: React.FC = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Ej. Rutina Push/Pull/Legs"
+              maxLength={200}
               className="w-full bg-stone-800 border border-stone-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-lime-400"
             />
           </div>
@@ -629,6 +634,7 @@ export const RoutineEditor: React.FC = () => {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Descripción breve (opcional)"
               rows={2}
+              maxLength={1000}
               className="w-full bg-stone-800 border border-stone-700 rounded-xl px-3 py-2.5 text-sm text-white placeholder-stone-600 resize-none focus:outline-none focus:border-lime-400"
             />
           </div>

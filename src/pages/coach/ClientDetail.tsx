@@ -550,6 +550,7 @@ export const ClientDetail: React.FC = () => {
                   onChange={e => setCommentText(e.target.value)}
                   placeholder="Escribe tu nota..."
                   rows={3}
+                  maxLength={5000}
                   className="w-full bg-stone-800 border border-stone-700 rounded-xl p-3 text-sm text-white placeholder-stone-500 focus:outline-none focus:border-(--color-accent-400) resize-none transition-colors"
                 />
 
@@ -599,6 +600,7 @@ export const ClientDetail: React.FC = () => {
                           </div>
                           <textarea
                             value={editText} onChange={e => setEditText(e.target.value)} rows={3}
+                            maxLength={5000}
                             className="w-full bg-stone-800 border border-stone-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-(--color-accent-400) resize-none transition-colors"
                           />
                           <div className="flex items-center justify-between">
