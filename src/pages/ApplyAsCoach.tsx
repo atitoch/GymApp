@@ -44,6 +44,8 @@ const DOCUMENT_SLOTS: Omit<PendingFile, 'status' | 'file'>[] = [
 ];
 
 const ACCEPTED = '.pdf,.jpg,.jpeg,.png,.webp';
+const ALLOWED_MIME = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 const StatusBadge = ({ status }: { status: CoachApplication['status'] }) => {
   if (status === 'pending')
@@ -107,6 +109,20 @@ export const ApplyAsCoach: React.FC = () => {
   };
 
   const handleFileChange = (key: PendingFile['key'], file: File | null) => {
+    if (file) {
+      if (!ALLOWED_MIME.includes(file.type)) {
+        setFiles((prev) =>
+          prev.map((f) => (f.key === key ? { ...f, file: null, status: 'error', error: 'Solo se permiten PDF, JPG, PNG o WEBP' } : f)),
+        );
+        return;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        setFiles((prev) =>
+          prev.map((f) => (f.key === key ? { ...f, file: null, status: 'error', error: 'El archivo supera el límite de 10 MB' } : f)),
+        );
+        return;
+      }
+    }
     setFiles((prev) =>
       prev.map((f) => (f.key === key ? { ...f, file, status: 'idle', error: undefined } : f)),
     );
