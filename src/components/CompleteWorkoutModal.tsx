@@ -136,6 +136,7 @@ export const CompleteWorkoutModal: React.FC<CompleteWorkoutModalProps> = ({
               onChange={(e) => setNotes(e.target.value)}
               placeholder="¿Algo que destacar de este entrenamiento?"
               rows={3}
+              maxLength={2000}
               className={cn(
                 "w-full px-4 py-3 text-sm",
                 "bg-stone-800/50 border-2 border-stone-700",

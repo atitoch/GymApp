@@ -177,6 +177,7 @@ const ApplicationModal: React.FC<ModalProps> = ({ app, onClose, onApprove, onRej
                     onChange={e => setRejectReason(e.target.value)}
                     placeholder="Motivo del rechazo (opcional)..."
                     rows={3}
+                    maxLength={1000}
                     className="w-full bg-stone-800 border border-stone-700 rounded-xl px-3 py-2 text-stone-100 text-sm placeholder-stone-500 resize-none focus:outline-none focus:border-stone-500"
                   />
                   <div className="flex gap-2">

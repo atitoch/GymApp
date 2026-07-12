@@ -169,6 +169,7 @@ export const CoachProfileEditor: React.FC = () => {
               value={specialization}
               onChange={(e) => setSpecialization(e.target.value)}
               placeholder="Ej. Fuerza y acondicionamiento"
+              maxLength={200}
               className="w-full bg-stone-800 border border-stone-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-lime-400"
             />
           </div>
@@ -179,7 +180,7 @@ export const CoachProfileEditor: React.FC = () => {
               <input
                 type="number"
                 min={0}
-                max={50}
+                max={80}
                 value={yearsExperience}
                 onChange={(e) => setYearsExperience(e.target.value)}
                 placeholder="0"
@@ -210,6 +211,7 @@ export const CoachProfileEditor: React.FC = () => {
             onChange={(e) => setBio(e.target.value)}
             placeholder="Cuéntale a tus clientes quién eres y cuál es tu enfoque de entrenamiento..."
             rows={4}
+            maxLength={2000}
             className="w-full bg-stone-800 border border-stone-700 rounded-xl px-3 py-2.5 text-sm text-white placeholder-stone-600 resize-none focus:outline-none focus:border-lime-400"
           />
         </div>
@@ -237,6 +239,7 @@ export const CoachProfileEditor: React.FC = () => {
                 value={cert}
                 onChange={(e) => updateCert(i, e.target.value)}
                 placeholder="Ej. NSCA-CSCS, ACE Personal Trainer..."
+                maxLength={300}
                 className="flex-1 bg-stone-800 border border-stone-700 rounded-xl px-3 py-2 text-sm text-white placeholder-stone-600 focus:outline-none focus:border-lime-400"
               />
               <button onClick={() => removeCert(i)} className="p-2 text-stone-500 hover:text-red-400 transition-colors shrink-0">
@@ -264,6 +267,7 @@ export const CoachProfileEditor: React.FC = () => {
               value={docLabel}
               onChange={(e) => setDocLabel(e.target.value)}
               placeholder="Nombre del certificado (opcional)"
+              maxLength={200}
               className="flex-1 bg-stone-800 border border-stone-700 rounded-xl px-3 py-2 text-sm text-white placeholder-stone-600 focus:outline-none focus:border-lime-400"
             />
             <input

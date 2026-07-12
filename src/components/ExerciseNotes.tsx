@@ -198,6 +198,7 @@ export default function ExerciseNotes({
             }
             disabled={loading}
             rows={2}
+            maxLength={2000}
             className="w-full bg-transparent px-4 pt-3 pb-2 text-sm text-stone-300 placeholder-stone-600 resize-none outline-none leading-relaxed"
             style={{ minHeight: '64px' }}
           />

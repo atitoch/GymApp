@@ -166,6 +166,7 @@ export const CoachPlans: React.FC = () => {
                 value={form.name}
                 onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                 placeholder="Ej. Plan mensual con seguimiento"
+                maxLength={200}
                 className="w-full bg-stone-950 border border-stone-700 rounded-xl px-3 py-2.5 text-sm text-white placeholder-stone-600 focus:border-lime-400 focus:outline-none transition-colors"
               />
             </div>
@@ -176,6 +177,7 @@ export const CoachPlans: React.FC = () => {
                 <input
                   type="number"
                   min="0"
+                  max="9999999"
                   step="50"
                   value={form.price}
                   onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
@@ -204,6 +206,7 @@ export const CoachPlans: React.FC = () => {
                 onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
                 placeholder="Qué incluye: rutina personalizada, seguimiento semanal, ajustes de nutrición..."
                 rows={3}
+                maxLength={1000}
                 className="w-full bg-stone-950 border border-stone-700 rounded-xl px-3 py-2.5 text-sm text-white placeholder-stone-600 focus:border-lime-400 focus:outline-none transition-colors resize-none"
               />
             </div>
