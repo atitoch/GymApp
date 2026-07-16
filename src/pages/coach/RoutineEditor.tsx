@@ -13,10 +13,12 @@ import { authenticatedGet } from '../../utils/api';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
+type DayEntry = DayRoutineInput & { _key: string };
+
 const emptyExercise = (): ExerciseInput => ({ name: '', sets: '3', reps: '10', rpe: '7', rest: '60s', notes: '' });
 const emptySection = (): SectionInput => ({ title: '', exercises: [emptyExercise()] });
-const emptyDay = (): DayRoutineInput => ({ dayName: 'DÍA', title: 'Entrenamiento', warmup: [], sections: [emptySection()], cooldown: [] });
-const restDay = (): DayRoutineInput => ({ dayName: 'DESCANSO', title: 'Descanso', warmup: [], sections: [], cooldown: [] });
+const emptyDay = (): DayEntry => ({ dayName: 'DÍA', title: 'Entrenamiento', warmup: [], sections: [emptySection()], cooldown: [], _key: crypto.randomUUID() });
+const restDay = (): DayEntry => ({ dayName: 'DESCANSO', title: 'Descanso', warmup: [], sections: [], cooldown: [], _key: crypto.randomUUID() });
 const isRestDay = (d: DayRoutineInput) => d.dayName.toLowerCase().includes('descanso') || d.dayName.toLowerCase().includes('rest');
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -502,7 +504,7 @@ export const RoutineEditor: React.FC = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [isCyclic, setIsCyclic] = useState(true);
-  const [days, setDays] = useState<DayRoutineInput[]>([emptyDay()]);
+  const [days, setDays] = useState<DayEntry[]>([emptyDay()]);
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -516,14 +518,14 @@ export const RoutineEditor: React.FC = () => {
         setName(t.name);
         setDescription(t.description ?? '');
         setIsCyclic(t.isCyclic);
-        setDays(t.routines.length > 0 ? t.routines : [emptyDay()]);
+        setDays(t.routines.length > 0 ? t.routines.map(r => ({ ...r, _key: crypto.randomUUID() })) : [emptyDay()]);
       })
       .catch(() => setError('No se pudo cargar la rutina.'))
       .finally(() => setLoading(false));
   }, [routineId, isNew]);
 
   const updateDay = useCallback((i: number, d: DayRoutineInput) => {
-    setDays((prev) => prev.map((day, idx) => idx === i ? d : day));
+    setDays((prev) => prev.map((day, idx) => idx === i ? { ...d, _key: day._key } : day));
   }, []);
 
   const removeDay = useCallback((i: number) => {
@@ -540,7 +542,7 @@ export const RoutineEditor: React.FC = () => {
     });
   }, []);
 
-  const addDay = (factory: () => DayRoutineInput) => {
+  const addDay = (factory: () => DayEntry) => {
     setDays((prev) => {
       const next = [...prev, factory()];
       const idx = next.length - 1;
@@ -556,6 +558,10 @@ export const RoutineEditor: React.FC = () => {
   const handleSave = async () => {
     if (!name.trim()) { setError('El nombre es requerido.'); return; }
     if (days.length === 0) { setError('Agrega al menos un día.'); return; }
+    const hasEmptyExercise = days.some(
+      (d) => !isRestDay(d) && d.sections.some((s) => s.exercises.some((e) => !e.name.trim()))
+    );
+    if (hasEmptyExercise) { setError('Todos los ejercicios deben tener nombre.'); return; }
 
     setError(null);
     setSaving(true);
@@ -565,7 +571,8 @@ export const RoutineEditor: React.FC = () => {
         description: description.trim() || undefined,
         isCyclic,
         pattern: days.map((d) => d.dayName),
-        routines: days,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        routines: days.map(({ _key, ...d }) => d),
       };
 
       if (isNew) {
@@ -670,7 +677,7 @@ export const RoutineEditor: React.FC = () => {
             </div>
           </div>
           {days.map((day, i) => (
-            <div key={i} ref={(el) => { dayRefs.current[i] = el; }}>
+            <div key={day._key} ref={(el) => { dayRefs.current[i] = el; }}>
               <DayEditor
                 day={day}
                 index={i}

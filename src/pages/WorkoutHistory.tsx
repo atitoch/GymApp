@@ -565,8 +565,10 @@ export default function WorkoutHistory() {
   const [filter, setFilter] = useState<FilterType>('all');
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
+  const loadVersionRef = useRef(0);
 
   const loadInitial = useCallback(async () => {
+    const version = ++loadVersionRef.current;
     setLoading(true);
     setError(null);
     try {
@@ -578,11 +580,13 @@ export default function WorkoutHistory() {
         }),
         getWeeklyStats(),
       ]);
+      if (version !== loadVersionRef.current) return;
       setSessions(hist.sessions as SessionWithDayInfo[]);
       setTotal(hist.total);
       setWeekStats(stats as WeeklyStats);
       setOffset(PAGE_SIZE);
     } catch {
+      if (version !== loadVersionRef.current) return;
       setError('No se pudo cargar el historial.');
     } finally {
       setLoading(false);
