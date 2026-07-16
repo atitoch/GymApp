@@ -59,6 +59,14 @@ Todos los campos tienen `maxLength` en el input HTML:
 
 - Textarea de mensaje: `maxLength={2000}`, coherente con el límite del backend.
 
+### Subida de avatar — Perfil de usuario (`ProfileSettings.tsx`)
+
+Corregido en julio 2026 (PR #12): `handleAvatarChange` ahora valida antes de llamar a `uploadAvatar`:
+- MIME type: acepta solo `image/jpeg`, `image/png`, `image/webp`, `image/gif`
+- Tamaño: rechaza si supera 5 MB
+
+Antes no había ninguna validación client-side.
+
 ### Subida de archivos — Perfil de coach (`ProfileEditor.tsx`)
 
 Valida antes de pedir URL firmada:
@@ -75,7 +83,31 @@ Antes de la corrección no había ninguna validación client-side (solo el atrib
 
 ---
 
-## 5. Pendiente — Fuera del código
+## 5. Pendiente — Requiere cambio en backend
+
+### IDOR en `/messages/:partnerId` — CRÍTICO
+
+**Archivo:** `src/pages/Chat.tsx` + `src/services/messages.ts`
+
+**Descripción:** Cualquier usuario autenticado puede leer el historial de mensajes de otro usuario navegando directamente a `/messages/<victim-uuid>`. El cliente solo valida formato UUID; no verifica que el `partnerId` tenga una conversación existente con el usuario actual.
+
+**Riesgo:** Lectura no autorizada de mensajes privados entre usuarios.
+
+**Acción requerida en el backend:** El endpoint `GET /messages/:partnerId` debe verificar que `auth.uid()` sea igual a `sender_id` OR `receiver_id` de los mensajes antes de devolverlos. En Supabase esto se resuelve con una RLS policy sobre la tabla `messages`:
+
+```sql
+CREATE POLICY "users can only read their own messages"
+ON messages FOR SELECT
+USING (auth.uid() = sender_id OR auth.uid() = receiver_id);
+```
+
+Verificar también que la policy esté activa y que el cliente realtime use el JWT del usuario (ya implementado en `messages.ts` vía `supabaseRealtime.realtime.setAuth(token)`).
+
+**Detectado:** julio 2026 (code review PR #12). No corregido en frontend por ser responsabilidad exclusiva del backend.
+
+---
+
+## 6. Pendiente — Fuera del código
 
 ### Límite de tamaño en Supabase Storage
 
