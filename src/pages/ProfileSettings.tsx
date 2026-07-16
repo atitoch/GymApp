@@ -450,6 +450,18 @@ export default function ProfileSettings() {
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !profile) return;
+    const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    const MAX_SIZE_MB = 5;
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      alert('Solo se permiten imágenes JPG, PNG, WebP o GIF.');
+      if (avatarInputRef.current) avatarInputRef.current.value = '';
+      return;
+    }
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      alert(`La imagen no puede superar ${MAX_SIZE_MB} MB.`);
+      if (avatarInputRef.current) avatarInputRef.current.value = '';
+      return;
+    }
     setUploadingAvatar(true);
     try {
       const publicUrl = await profileService.uploadAvatar(file);

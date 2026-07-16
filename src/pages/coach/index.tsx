@@ -72,14 +72,22 @@ export const CoachDashboard: React.FC = () => {
 
   const handleAccept = async (id: string) => {
     const req = pendingRequests.find(r => r.id === id);
-    await acceptRequest(id);
-    if (req) setLastAcceptedId(req.users?.id ?? req.user_id);
-    load();
+    try {
+      await acceptRequest(id);
+      if (req) setLastAcceptedId(req.users?.id ?? req.user_id);
+      load();
+    } catch (e: any) {
+      setError(e?.message ?? 'No se pudo aceptar la solicitud. Intenta de nuevo.');
+    }
   };
 
   const handleReject = async (id: string) => {
-    await rejectRequest(id);
-    load();
+    try {
+      await rejectRequest(id);
+      load();
+    } catch (e: any) {
+      setError(e?.message ?? 'No se pudo rechazar la solicitud. Intenta de nuevo.');
+    }
   };
 
   const fullName = (rel: ClientRelationship) => {

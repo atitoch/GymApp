@@ -103,6 +103,7 @@ export const subscribeToMessages = (
           event: 'DELETE',
           schema: 'public',
           table: 'messages',
+          filter: `sender_id=eq.${myUserId}`,
         },
         (payload: RealtimePostgresChangesPayload<Message>) => {
           if (payload.eventType === 'DELETE' && payload.old?.id) {

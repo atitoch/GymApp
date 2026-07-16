@@ -1,5 +1,7 @@
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useToast } from '../hooks/useToast';
+import { Toast } from '../components/Toast';
 import { Cooldown } from '../components/cooldown';
 import { DayHeader } from '../components/dayHeader';
 import { Tips } from '../components/tips';
@@ -37,6 +39,7 @@ export const DayRoutine: React.FC = () => {
   const dateFromNav: string | null = (location.state as any)?.date ?? null;
   const routineFromNav: any | null = (location.state as any)?.routine ?? null;
   const { user } = useAuth();
+  const { toasts, showToast, hideToast } = useToast();
   const [currentRoutine, setCurrentRoutine] =
     useState<CalculatedDayRoutine | null>(null);
   const [loading, setLoading] = useState(true);
@@ -333,7 +336,7 @@ export const DayRoutine: React.FC = () => {
       try {
         await completeWorkoutLog(workoutLogId, data.rating, data.notes);
       } catch {
-        // Si falla, igual navegar — no bloquear al usuario
+        showToast('No se pudo guardar el entreno. Revisa tu conexión.', 'error');
       }
     }
     navigate('/dashboard');
@@ -372,6 +375,9 @@ export const DayRoutine: React.FC = () => {
         'pb-12',
       )}
     >
+      {toasts.map((t) => (
+        <Toast key={t.id} message={t.message} type={t.type} onClose={() => hideToast(t.id)} />
+      ))}
       {/* Barra de progreso sticky — no aplica una vez que el entrenamiento ya se finalizó */}
       {!workoutCompleted && <WorkoutProgress
         exercises={exerciseStatuses}

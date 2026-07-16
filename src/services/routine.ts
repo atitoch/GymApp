@@ -1367,7 +1367,7 @@ export const fetchUserRoutines = async (
 
   if (weekData?.days && weekData.days.length > 0) {
     const today = new Date();
-    const todayStr = today.toISOString().split('T')[0];
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
     const routines: CalculatedDayRoutine[] = weekData.days.map((d, i) => {
       const dayNumber = i + 1; // 1=Lunes … 7=Domingo
