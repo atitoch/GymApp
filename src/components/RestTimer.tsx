@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { X, SkipForward, Plus, Minus, Bell, BellOff } from "lucide-react";
+import { X, SkipForward, Plus, Minus, Bell, BellOff, Minimize2, Maximize2 } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -36,6 +36,7 @@ export default function RestTimer({
   const [isRunning, setIsRunning] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [overtime, setOvertime] = useState(false);
+  const [minimized, setMinimized] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   // Wall-clock anchors so background throttling doesn't skew the count
@@ -53,6 +54,7 @@ export default function RestTimer({
       hasBeepedRef.current = false;
       setIsRunning(true);
       setOvertime(false);
+      setMinimized(false);
     }
   }, [isOpen, defaultSeconds]);
 
@@ -145,6 +147,79 @@ export default function RestTimer({
 
   if (!isOpen) return null;
 
+  // ─── Minimized bubble ────────────────────────────────────────────────────────
+  if (minimized) {
+    const bubbleSize = 72;
+    const r = 30;
+    const circ = 2 * Math.PI * r;
+    const offset = circ * (1 - (overtime ? 1 : Math.max(0, remaining / totalSeconds)));
+
+    return (
+      <button
+        onClick={() => setMinimized(false)}
+        aria-label="Restaurar timer de descanso"
+        className="fixed bottom-6 right-4 z-50 flex items-center justify-center rounded-full active:scale-95 transition-transform"
+        style={{
+          width: bubbleSize,
+          height: bubbleSize,
+          background: "#1c1917",
+          boxShadow: `0 0 0 1px rgba(255,255,255,0.06), 0 4px 24px rgba(0,0,0,0.6), 0 0 16px ${timerColor}40`,
+        }}
+      >
+        {/* Ring */}
+        <svg
+          className="absolute inset-0 -rotate-90"
+          width={bubbleSize}
+          height={bubbleSize}
+          viewBox={`0 0 ${bubbleSize} ${bubbleSize}`}
+        >
+          <circle
+            cx={bubbleSize / 2} cy={bubbleSize / 2} r={r}
+            fill="none"
+            stroke="rgba(255,255,255,0.08)"
+            strokeWidth="5"
+          />
+          <circle
+            cx={bubbleSize / 2} cy={bubbleSize / 2} r={r}
+            fill="none"
+            stroke={timerColor}
+            strokeWidth="5"
+            strokeLinecap="round"
+            strokeDasharray={circ}
+            strokeDashoffset={offset}
+            style={{ transition: "stroke-dashoffset 1s linear, stroke 0.3s" }}
+          />
+        </svg>
+
+        {/* Content */}
+        <div className="relative flex flex-col items-center justify-center leading-none">
+          <span
+            className="text-sm font-black tabular-nums"
+            style={{
+              color: timerColor,
+              fontFeatureSettings: '"tnum"',
+              textShadow: `0 0 10px ${timerColor}80`,
+              transition: "color 0.3s",
+            }}
+          >
+            {formatTime(remaining)}
+          </span>
+          {overtime && (
+            <span className="text-[9px] text-red-400 font-bold mt-0.5 animate-pulse">
+              EXTRA
+            </span>
+          )}
+          {!overtime && (
+            <span className="text-[9px] font-semibold mt-0.5" style={{ color: timerColor, opacity: 0.7 }}>
+              REST
+            </span>
+          )}
+        </div>
+      </button>
+    );
+  }
+
+  // ─── Full modal ──────────────────────────────────────────────────────────────
   return (
     /* Backdrop */
     <div
@@ -178,6 +253,13 @@ export default function RestTimer({
               className="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-colors"
             >
               {soundEnabled ? <Bell size={18} /> : <BellOff size={18} />}
+            </button>
+            <button
+              onClick={() => setMinimized(true)}
+              className="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-colors"
+              aria-label="Minimizar timer"
+            >
+              <Minimize2 size={18} />
             </button>
             <button
               onClick={onClose}
@@ -254,7 +336,6 @@ export default function RestTimer({
 
         {/* Actions */}
         <div className="px-6 pb-8 flex gap-3">
-          {/* Skip */}
           <button
             onClick={handleSkip}
             className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-sm transition-all active:scale-95"
