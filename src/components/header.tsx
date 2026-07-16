@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { LogOut, Home, Dumbbell, History, User, Menu, X, ShieldCheck, Users2, UserCheck, MessageSquare } from 'lucide-react';
+import { LogOut, Home, Dumbbell, History, User, Menu, X, ShieldCheck, Users2, UserCheck, MessageSquare, HelpCircle } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/useAuth';
 import { themeClasses, cn } from '../theme/constants';
 import { useColors } from '../theme';
 import { ConfirmDialog } from './ConfirmDialog';
 import { getUnreadCount, subscribeToMessages } from '../services/messages';
+import { HowItWorksModal } from './HowItWorksModal';
 
 interface HeaderProps {
   handleBackToSelect?: () => void;
@@ -23,6 +24,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [unread, setUnread] = useState(0);
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
 
   // F5 fix: keep a ref so the realtime callback always reads the current pathname,
   // not the stale value captured when the effect ran (on mount / authUser change).
@@ -95,6 +97,7 @@ export const Header: React.FC<HeaderProps> = ({
     ...(authUser?.role === 'user' ? [{ icon: UserCheck, label: 'Mi Coach', action: () => navigate('/my-coach') }] : []),
     ...(authUser?.role === 'admin' ? [{ icon: ShieldCheck, label: 'Admin', action: () => navigate('/admin') }] : []),
     { icon: MessageSquare, label: 'Mensajes', action: () => navigate('/messages'), badge: unread > 0 ? unread : undefined },
+    { icon: HelpCircle, label: '¿Cómo funciona?', action: () => setShowHowItWorks(true) },
     { icon: LogOut, label: 'Cerrar sesión', action: () => setShowLogoutDialog(true), danger: true },
   ];
 
@@ -184,6 +187,13 @@ export const Header: React.FC<HeaderProps> = ({
         icon={<Dumbbell className="w-12 h-12" />}
         variant="default"
       />
+
+      {showHowItWorks && (
+        <HowItWorksModal
+          role={authUser?.role}
+          onClose={() => setShowHowItWorks(false)}
+        />
+      )}
     </>
   );
 };
