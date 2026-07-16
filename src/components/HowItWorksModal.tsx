@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Users, Star, Dumbbell, ClipboardList, MessageSquare, CheckCircle, ChevronRight, UserCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-type Role = 'user' | 'coach' | 'admin' | string | undefined;
+type Role = 'user' | 'coach' | 'admin' | undefined;
 
 interface Props {
   role: Role;
@@ -162,11 +162,23 @@ const coachSections: Section[] = [
 
 export const HowItWorksModal: React.FC<Props> = ({ role, onClose }) => {
   const navigate = useNavigate();
-  const isCoach = role === 'coach';
+  const isCoach = role === 'coach' || role === 'admin';
   const sections = isCoach ? coachSections : userSections;
   const [activeSection, setActiveSection] = useState(sections[0].id);
 
   const current = sections.find(s => s.id === activeSection) ?? sections[0];
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [onClose]);
 
   const handleAction = (path: string) => {
     onClose();
@@ -255,7 +267,7 @@ export const HowItWorksModal: React.FC<Props> = ({ role, onClose }) => {
                   <p className="text-stone-400 text-xs mt-1 leading-relaxed">{step.desc}</p>
                   {step.action && (
                     <button
-                      onClick={() => handleAction(step.action!.path)}
+                      onClick={() => handleAction(step.action?.path ?? '')}
                       className="mt-2 flex items-center gap-1 text-xs font-bold transition-colors"
                       style={{ color: current.color }}
                     >
