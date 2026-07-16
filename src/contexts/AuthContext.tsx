@@ -71,12 +71,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
               typeof parsed.email === 'string'
             ) {
               setUser(parsed);
-              enrichUserWithRole(storedToken, parsed).then(enriched => {
-                if (!cancelled) {
-                  setUser(enriched);
-                  localStorage.setItem(USER_KEY, JSON.stringify(enriched));
-                }
-              });
+              const enriched = await enrichUserWithRole(storedToken, parsed);
+              if (!cancelled) {
+                setUser(enriched);
+                localStorage.setItem(USER_KEY, JSON.stringify(enriched));
+              }
             } else {
               clearSession();
               setIsLoading(false);
