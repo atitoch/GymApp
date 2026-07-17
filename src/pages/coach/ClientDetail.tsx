@@ -113,6 +113,7 @@ export const ClientDetail: React.FC = () => {
   const [payStatus, setPayStatus] = useState<PaymentStatus>('confirmed');
   const [payNotes, setPayNotes] = useState('');
   const [savingPayment, setSavingPayment] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
   const [paymentActingId, setPaymentActingId] = useState<string | null>(null);
   const [confirmDeletePaymentId, setConfirmDeletePaymentId] = useState<string | null>(null);
 
@@ -152,6 +153,7 @@ export const ClientDetail: React.FC = () => {
     e.preventDefault();
     if (!userId || !payAmount || Number(payAmount) <= 0) return;
     setSavingPayment(true);
+    setPaymentError(null);
     try {
       const created = await createPayment(userId, {
         amount: Number(payAmount),
@@ -166,15 +168,20 @@ export const ClientDetail: React.FC = () => {
       setPayNotes('');
       setPayStatus('confirmed');
       setShowPaymentForm(false);
-    } catch {} finally { setSavingPayment(false); }
+    } catch (e: any) {
+      setPaymentError(e?.message ?? 'No se pudo registrar el pago. Intenta de nuevo.');
+    } finally { setSavingPayment(false); }
   };
 
   const handlePaymentStatus = async (id: string, status: PaymentStatus) => {
     setPaymentActingId(id);
+    setPaymentError(null);
     try {
       const updated = await updatePayment(id, { status });
       setPayments(prev => prev.map(p => p.id === id ? { ...p, ...updated } : p));
-    } catch {} finally { setPaymentActingId(null); }
+    } catch (e: any) {
+      setPaymentError(e?.message ?? 'No se pudo actualizar el estado del pago.');
+    } finally { setPaymentActingId(null); }
   };
 
   const handleDeletePayment = async (id: string) => {
@@ -866,6 +873,9 @@ export const ClientDetail: React.FC = () => {
                 >
                   {savingPayment ? 'Guardando...' : 'Registrar pago'}
                 </button>
+                {paymentError && (
+                  <p className="text-xs text-red-400 text-center">{paymentError}</p>
+                )}
               </form>
             )}
 
