@@ -137,9 +137,11 @@ export const getExerciseHistory = async (
   exerciseName: string,
   limit: number = 5,
   before?: string,
+  exact = false,
 ): Promise<{ date: string; sets: ExerciseLog[] }[]> => {
   const params = new URLSearchParams({ limit: String(limit) });
   if (before) params.set('before', before);
+  if (exact) params.set('exact', 'true');
   return authenticatedGet<{ date: string; sets: ExerciseLog[] }[]>(
     `/workout-logs/exercise-history/${encodeURIComponent(exerciseName)}?${params}`,
   );
