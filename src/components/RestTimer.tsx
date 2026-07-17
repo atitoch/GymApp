@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { X, SkipForward, Plus, Minus, Bell, BellOff, Minimize2, Maximize2 } from "lucide-react";
+import { X, SkipForward, Plus, Minus, Bell, BellOff, Minimize2 } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
