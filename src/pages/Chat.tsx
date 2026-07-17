@@ -44,6 +44,7 @@ export const Chat: React.FC = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const loadVersionRef = useRef(0);
 
   const removeMessage = useCallback((id: string) => {
     setMessages((prev) => prev.filter((m) => m.id !== id));
@@ -59,8 +60,10 @@ export const Chat: React.FC = () => {
   // Fix 9: cursor-based load — pass oldest message's created_at as `before`
   const load = useCallback(async (before?: string, prepend = false) => {
     if (!partnerId) return;
+    const version = !prepend ? ++loadVersionRef.current : loadVersionRef.current;
     try {
       const res = await getMessages(partnerId, before);
+      if (!prepend && version !== loadVersionRef.current) return;
       setHasMore(res.hasMore ?? false);
       setMessages((prev) =>
         prepend ? [...(res.messages ?? []), ...prev] : (res.messages ?? []),
