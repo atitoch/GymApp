@@ -42,7 +42,7 @@ export const Messages: React.FC = () => {
       >
         <div className="max-w-lg mx-auto px-4 py-4 flex items-center gap-3">
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => { if (window.history.length > 1) navigate(-1); else navigate('/dashboard'); }}
             className="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/10 transition-all"
           >
             <ArrowLeft size={20} />
