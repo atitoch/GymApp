@@ -59,12 +59,19 @@ function parseTargetReps(reps: string): string {
 
 // ─── Last Session Badge ───────────────────────────────────────────────────────
 
+const localDateStr = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
 function LastSessionBadge({
   exerciseName,
   weightUnit = 'kg',
+  before,
 }: {
   exerciseName: string;
   weightUnit?: string;
+  before?: string;
 }) {
   const [lastSession, setLastSession] = useState<{
     weight: number;
@@ -73,7 +80,7 @@ function LastSessionBadge({
   useEffect(() => {
     let cancelled = false;
 
-    getExerciseHistory(exerciseName, 1)
+    getExerciseHistory(exerciseName, 1, before)
       .then((history) => {
         if (cancelled || !history?.length) return;
         const lastSets = history[0].sets;
@@ -97,7 +104,7 @@ function LastSessionBadge({
       .catch(() => {});
 
     return () => { cancelled = true; };
-  }, [exerciseName, weightUnit]);
+  }, [exerciseName, weightUnit, before]);
 
   if (!lastSession) return null;
 
@@ -258,7 +265,8 @@ export default function ExerciseTracker({
 
   useEffect(() => {
     if (!isCurrentDay) return;
-    getExerciseHistory(exercise.name, 1)
+    const today = localDateStr();
+    getExerciseHistory(exercise.name, 1, today)
       .then((history) => {
         if (!history?.length) return;
         const sets = history[0].sets;
@@ -390,6 +398,7 @@ export default function ExerciseTracker({
               <LastSessionBadge
                 exerciseName={exercise.name}
                 weightUnit={weightUnit}
+                before={localDateStr()}
               />
             )}
           </div>
