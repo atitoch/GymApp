@@ -228,11 +228,12 @@ export default function RestTimer({
     >
       {/* Panel */}
       <div
-        className="relative w-full sm:w-96 rounded-t-3xl sm:rounded-3xl overflow-hidden"
+        className="relative w-full sm:w-96 rounded-t-3xl sm:rounded-3xl overflow-y-auto"
         style={{
           background: "linear-gradient(135deg, #1c1917 0%, #1c1917 100%)",
           border: "1px solid rgba(163,230,53,0.3)",
           boxShadow: "0 0 60px rgba(163,230,53,0.2)",
+          maxHeight: "calc(100dvh - env(safe-area-inset-bottom, 0px) - 0.5rem)",
         }}
       >
         {/* Header */}
@@ -336,6 +337,18 @@ export default function RestTimer({
 
         {/* Actions */}
         <div className="px-6 pb-8 flex gap-3">
+          <button
+            onClick={() => setMinimized(true)}
+            className="flex items-center justify-center gap-1.5 px-4 py-4 rounded-2xl font-bold text-sm transition-all active:scale-95"
+            style={{
+              background: "rgba(255,255,255,0.07)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              color: "#a8a29e",
+            }}
+            aria-label="Minimizar timer"
+          >
+            <Minimize2 size={18} />
+          </button>
           <button
             onClick={handleSkip}
             className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-sm transition-all active:scale-95"
