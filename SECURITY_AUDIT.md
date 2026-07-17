@@ -1,6 +1,7 @@
 # Security Audit — GymApp (Frontend)
 
-Auditoría realizada en julio 2026. Complementa el `SECURITY_AUDIT.md` del backend.
+Auditoría iniciada en julio 2026. Complementa el `SECURITY_AUDIT.md` del backend.
+Última actualización: 2026-07-16 (sesión de bug hunting — PRs #11–#17 GymApp, #15–#16 GymAppBack).
 
 ---
 
@@ -83,7 +84,37 @@ Antes de la corrección no había ninguna validación client-side (solo el atrib
 
 ---
 
-## 5. Pendiente — Requiere cambio en backend
+## 5. Correcciones aplicadas — julio 2026 (bug hunting session)
+
+### Confiabilidad y seguridad — Frontend
+
+| # PR | Archivo | Descripción |
+|------|---------|-------------|
+| #11 | `HowItWorksModal.tsx` | Guard de rol corregido (`role === 'coach' \|\| 'admin'`); Escape key + scroll lock |
+| #12 | `AuthContext.tsx` | Race condition en `enrichUserWithRole`: floating `.then()` → `await` con `cancelled` flag |
+| #12 | `ProfileSettings.tsx` | Validación de MIME type y tamaño (5 MB) antes de `uploadAvatar` |
+| #12 | `services/messages.ts` | Suscripción DELETE de realtime sin filtro → agrega `filter: sender_id=eq.${myUserId}` |
+| #12 | `services/routine.ts` | Fecha UTC vs. local en workout del día (`.toISOString()` → `getFullYear/Month/Date`) |
+| #12 | `pages/dayRoutine.tsx` | catch vacío en `handleSaveWorkout` → toast de error al usuario |
+| #12 | `pages/coach/index.tsx` | `handleAccept`/`handleReject` sin catch → try/catch con `setError` |
+| #14 | `pages/ApplyAsCoach.tsx` + `MyCoach.tsx` | `navigate(-1)` sin fallback → fallback a `/dashboard` |
+| #14 | `pages/coach/RoutineEditor.tsx` | Días sin `_key` estable → keys por UUID; validación de nombre de ejercicio en `handleSave` |
+| #14 | `pages/WorkoutHistory.tsx` | Race condition en `loadInitial` al cambiar filtro → version counter |
+| #15 | `pages/Chat.tsx` | Race condition al cambiar de chat → version counter en `load()` |
+| #15 | `pages/coach/ClientDetail.tsx` | catch vacío en `handleAddPayment`/`handlePaymentStatus` → error visible en UI |
+| #16 | `pages/Dashboard.tsx` + `services/workoutLog.ts` | `getWeeklyStats()` ignoraba `weekOffset` → siempre mostraba semana actual |
+| #17 | `pages/coaches/CoachProfile.tsx` | Race condition al navegar entre coaches → `cancelled` flag en `useEffect` |
+
+### Seguridad — Backend (GymAppBack)
+
+| # PR | Archivo | Descripción |
+|------|---------|-------------|
+| #15 (back) | `workoutLogsService.ts` + `workoutLogsController.ts` | `getWeeklyStats` acepta `week_offset`; controller lo clampea a ±52 semanas |
+| #16 (back) | `coachController.ts` | Agrega `UUID_RE` + `isValidUUID`; valida `commentId` y `routineId` en 5 endpoints (equivalente a lo que ya tenía `publicCoachController.ts`) |
+
+---
+
+## 6. Pendiente — Requiere cambio en backend
 
 ### IDOR en `/messages/:partnerId` — CRÍTICO
 
@@ -107,7 +138,7 @@ Verificar también que la policy esté activa y que el cliente realtime use el J
 
 ---
 
-## 6. Pendiente — Fuera del código
+## 7. Pendiente — Fuera del código
 
 ### Límite de tamaño en Supabase Storage
 
@@ -119,6 +150,6 @@ Lo mismo aplica para el bucket de avatares de coaches si existe.
 
 ---
 
-## Referencia cruzada
+## 8. Referencia cruzada
 
 Ver `../GymAppBack/SECURITY_AUDIT.md` para validaciones equivalentes en el backend (las validaciones client-side son complementarias, no sustitutos).
