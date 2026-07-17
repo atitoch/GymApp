@@ -63,12 +63,14 @@ export const CoachProfile: React.FC = () => {
 
   useEffect(() => {
     if (!id) return;
+    let cancelled = false;
     Promise.all([
       getCoachPublicProfile(id),
       getMyConnections(),
       getCoachPlans(id).catch(() => []),
     ])
       .then(([profileData, connections, coachPlans]) => {
+        if (cancelled) return;
         setCoach(profileData.coach);
         setDocuments((profileData as any).documents ?? []);
         setPlans(coachPlans);
@@ -77,8 +79,9 @@ export const CoachProfile: React.FC = () => {
         );
         setConnectionStatus(normalizeStatus(rel?.status));
       })
-      .catch(() => setError('No se pudo cargar el perfil.'))
-      .finally(() => setLoading(false));
+      .catch(() => { if (!cancelled) setError('No se pudo cargar el perfil.'); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, [id]);
 
   const handleConnect = async () => {
