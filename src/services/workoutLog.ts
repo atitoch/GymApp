@@ -116,7 +116,7 @@ export const getWorkoutHistory = async (
 /**
  * Stats de la semana actual (para el Dashboard)
  */
-export const getWeeklyStats = async (): Promise<{
+export const getWeeklyStats = async (weekOffset = 0): Promise<{
   total_sessions: number;
   completed_sessions: number;
   days_trained: number;
@@ -125,7 +125,8 @@ export const getWeeklyStats = async (): Promise<{
   avg_rating: number | null;
   current_streak: number;
 }> => {
-  return authenticatedGet('/workout-logs/weekly-stats');
+  const qs = weekOffset !== 0 ? `?week_offset=${weekOffset}` : '';
+  return authenticatedGet(`/workout-logs/weekly-stats${qs}`);
 };
 
 /**

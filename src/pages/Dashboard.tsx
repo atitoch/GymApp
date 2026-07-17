@@ -44,7 +44,7 @@ export const Dashboard: React.FC = () => {
     try {
       const [result, stats] = await Promise.allSettled([
         fetchUserRoutines(user.id, 7, weekOffset),
-        getWeeklyStats(),
+        getWeeklyStats(weekOffset),
       ]);
 
       // Distinguir "sin rutinas" de "falló la carga" para no mostrar un vacío engañoso
