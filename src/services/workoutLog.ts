@@ -136,8 +136,11 @@ export const getWeeklyStats = async (weekOffset = 0): Promise<{
 export const getExerciseHistory = async (
   exerciseName: string,
   limit: number = 5,
+  before?: string,
 ): Promise<{ date: string; sets: ExerciseLog[] }[]> => {
+  const params = new URLSearchParams({ limit: String(limit) });
+  if (before) params.set('before', before);
   return authenticatedGet<{ date: string; sets: ExerciseLog[] }[]>(
-    `/workout-logs/exercise-history/${encodeURIComponent(exerciseName)}?limit=${limit}`,
+    `/workout-logs/exercise-history/${encodeURIComponent(exerciseName)}?${params}`,
   );
 };
