@@ -80,7 +80,7 @@ function LastSessionBadge({
   useEffect(() => {
     let cancelled = false;
 
-    getExerciseHistory(exerciseName, 1, before)
+    getExerciseHistory(exerciseName, 1, before, true)
       .then((history) => {
         if (cancelled || !history?.length) return;
         const lastSets = history[0].sets;
@@ -266,7 +266,7 @@ export default function ExerciseTracker({
   useEffect(() => {
     if (!isCurrentDay) return;
     const today = localDateStr();
-    getExerciseHistory(exercise.name, 1, today)
+    getExerciseHistory(exercise.name, 1, today, true)
       .then((history) => {
         if (!history?.length) return;
         const sets = history[0].sets;
