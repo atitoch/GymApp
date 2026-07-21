@@ -146,6 +146,28 @@ describe('flushQueue', () => {
     expect(syncFn).not.toHaveBeenCalled();
   });
 
+  it('dos flushes concurrentes no duplican los sets (guard de reentrada)', async () => {
+    enqueueSet('wl-1', { ...payload, set_number: 1 });
+    enqueueSet('wl-1', { ...payload, set_number: 2 });
+
+    // syncFn lento para que el segundo flush llegue mientras el primero corre
+    const syncFn = vi.fn().mockImplementation(
+      async (_id, p: CreateExerciseSetRequest) =>
+        new Promise((resolve) =>
+          setTimeout(() => resolve(fakeLog({ set_number: p.set_number })), 10),
+        ),
+    );
+
+    const [first, second] = await Promise.all([
+      flushQueue(syncFn),
+      flushQueue(syncFn),
+    ]);
+
+    // Solo un flush procesa la cola; el otro sale sin hacer nada
+    expect(syncFn).toHaveBeenCalledTimes(2);
+    expect(first.synced.length + second.synced.length).toBe(2);
+  });
+
   it('respeta el orden de creación al sincronizar (FIFO)', async () => {
     enqueueSet('wl-1', { ...payload, set_number: 1 });
     enqueueSet('wl-1', { ...payload, set_number: 2 });

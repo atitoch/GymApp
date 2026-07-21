@@ -67,7 +67,11 @@ const tryRefreshToken = (): Promise<string | null> => {
       // viejo (ver authEvents.ts) para que se reautentique.
       emitTokenRefreshed(newToken);
       return newToken;
-    } catch {
+    } catch (error) {
+      // Un fallo de RED del refresh (fetch lanza TypeError) no significa que
+      // la sesión sea inválida: propagarlo para que el caller lo trate como
+      // offline (p. ej. encolar el set) en vez de cerrar la sesión.
+      if (error instanceof TypeError) throw error;
       return null;
     } finally {
       _isRefreshing = false;

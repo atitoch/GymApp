@@ -92,34 +92,45 @@ export interface FlushResult {
  * - Si falla por otra razón (validación, log no encontrado, etc.): se
  *   descarta, porque reintentar no va a cambiar el resultado.
  */
+// Evita flushes concurrentes: el consumidor llama al montar Y en el evento
+// 'online', y si ambos corren a la vez cada uno sincronizaría la misma cola
+// completa, duplicando los sets en el backend.
+let _flushing = false;
+
 export async function flushQueue(
   syncFn: (
     workoutLogId: string,
     payload: CreateExerciseSetRequest,
   ) => Promise<ExerciseLog>,
 ): Promise<FlushResult> {
-  const queue = readQueue();
-  if (queue.length === 0) return { synced: [], dropped: [] };
+  if (_flushing) return { synced: [], dropped: [] };
+  _flushing = true;
+  try {
+    const queue = readQueue();
+    if (queue.length === 0) return { synced: [], dropped: [] };
 
-  const synced: FlushResult['synced'] = [];
-  const dropped: QueuedSet[] = [];
-  const remaining: QueuedSet[] = [];
+    const synced: FlushResult['synced'] = [];
+    const dropped: QueuedSet[] = [];
+    const remaining: QueuedSet[] = [];
 
-  for (const item of queue) {
-    try {
-      const log = await syncFn(item.workoutLogId, item.payload);
-      synced.push({ tempId: item.tempId, log });
-    } catch (error) {
-      if (isNetworkError(error)) {
-        remaining.push(item);
-      } else {
-        dropped.push(item);
+    for (const item of queue) {
+      try {
+        const log = await syncFn(item.workoutLogId, item.payload);
+        synced.push({ tempId: item.tempId, log });
+      } catch (error) {
+        if (isNetworkError(error)) {
+          remaining.push(item);
+        } else {
+          dropped.push(item);
+        }
       }
     }
-  }
 
-  writeQueue(remaining);
-  return { synced, dropped };
+    writeQueue(remaining);
+    return { synced, dropped };
+  } finally {
+    _flushing = false;
+  }
 }
 
 export function clearQueue(): void {
