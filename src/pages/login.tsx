@@ -411,7 +411,7 @@ export const Login: React.FC = () => {
       </header>
 
       {/* Panel izquierdo - Showcase atlético */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-stone-950 p-8 xl:p-12 flex-col justify-between">
+      <div className="hidden lg:flex lg:w-1/2 relative min-h-0 overflow-y-auto overflow-x-hidden bg-stone-950 p-8 xl:p-12 flex-col justify-between">
         {/* Capas de fondo: rejilla blueprint + glows + halo lima */}
         <div className="absolute inset-0 gt-grid opacity-70" />
         <div className="absolute inset-0 bg-gradient-to-br from-lime-500/[0.12] via-transparent to-transparent" />
@@ -528,12 +528,12 @@ export const Login: React.FC = () => {
       </div>
 
       {/* Panel derecho - Formulario */}
-      <div className="relative w-full lg:w-1/2 flex-1 flex items-center justify-center p-4 lg:p-8 xl:p-12 overflow-hidden">
+      <div className="relative w-full lg:w-1/2 flex-1 min-h-0 flex justify-center p-4 lg:p-8 xl:p-12 overflow-y-auto overflow-x-hidden">
         {/* Textura sutil + glow para unificar con el panel izquierdo */}
         <div className="absolute inset-0 gt-grid opacity-[0.25] pointer-events-none" />
         <div className="absolute -bottom-32 -right-24 w-[24rem] h-[24rem] bg-lime-500/[0.07] rounded-full blur-[120px] pointer-events-none" />
 
-        <div className="relative w-full max-w-md">
+        <div className="relative w-full max-w-md my-auto py-6 lg:py-8">
           {/* Logo móvil */}
           <div className="lg:hidden flex items-center gap-3 mb-5">
             <div className="relative inline-flex items-center justify-center w-10 h-10 bg-gradient-to-br from-lime-400 to-lime-500 rounded-xl shadow-lg shadow-lime-400/30 shrink-0">
