@@ -284,7 +284,7 @@ function exportCSV(sessions: SessionWithDayInfo[]) {
     s.total_volume ?? '',
     s.rating ?? '',
     s.energy_level ?? '',
-    (s.notes ?? '').replace(/,/g, ' '),
+    (s.notes ?? '').replace(/[,\r\n]+/g, ' '),
   ]);
   const csv = [headers, ...rows].map((r) => r.join(',')).join('\n');
   const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
@@ -348,7 +348,9 @@ function ExerciseProgressChart({ unit }: { unit: WeightUnit }) {
     setSearched(true);
     setSuggestionsOpen(false);
     try {
-      const history = await getExerciseHistory(n, 40);
+      // exact: el nombre viene de la lista de sugerencias; con fuzzy,
+      // "Plancha frontal" también traería "Plancha Frontal y Lateral"
+      const history = await getExerciseHistory(n, 40, undefined, true);
       setRaw(history);
     } catch {
       setRaw([]);
@@ -620,9 +622,13 @@ function WeeklyChart({ sessions }: { sessions: SessionWithDayInfo[] }) {
   // Build last 8 weeks: count completed sessions per week (Mon-Sun)
   const weeks: { label: string; count: number }[] = [];
   const now = new Date();
+  // getDay() de domingo es 0: con "- getDay() + 1" el domingo apuntaba al
+  // lunes SIGUIENTE y la semana actual quedaba vacía. (dow + 6) % 7
+  // retrocede correctamente al lunes (mismo fix que el backend).
+  const dowMon = (now.getDay() + 6) % 7;
   for (let w = 7; w >= 0; w--) {
     const mon = new Date(now);
-    mon.setDate(now.getDate() - now.getDay() + 1 - w * 7);
+    mon.setDate(now.getDate() - dowMon - w * 7);
     mon.setHours(0, 0, 0, 0);
     const sun = new Date(mon);
     sun.setDate(mon.getDate() + 6);

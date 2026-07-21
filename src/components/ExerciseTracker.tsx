@@ -304,9 +304,19 @@ export default function ExerciseTracker({
   const [rows, setRows] = useState<SetRow[]>(initRows);
   const [expanded, setExpanded] = useState(isCurrentDay);
 
-  // Sincronizar cuando llegan completedSets desde el estado global
+  // Sincronizar cuando llegan completedSets desde el estado global.
+  // Se conserva lo tecleado en filas aún no guardadas: el padre re-renderiza
+  // por eventos ajenos a este ejercicio (guardar un set de otro ejercicio,
+  // abrir el timer) y regenerar las filas desde cero borraría la captura.
   useEffect(() => {
-    setRows(initRows());
+    setRows((prev) =>
+      initRows().map((row, i) => {
+        const p = prev[i];
+        return p && !row.saved && !p.saved
+          ? { ...row, weight: p.weight, reps: p.reps, saving: p.saving }
+          : row;
+      }),
+    );
   }, [completedSets.length, initRows]);
 
   const updateRow = (index: number, patch: Partial<SetRow>) => {

@@ -1,5 +1,5 @@
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useToast } from '../hooks/useToast';
 import { Toast } from '../components/Toast';
 import { Cooldown } from '../components/cooldown';
@@ -61,6 +61,8 @@ export const DayRoutine: React.FC = () => {
   const [workoutLogError, setWorkoutLogError] = useState(false);
   const [weightUnit, setWeightUnit] = useState<'kg' | 'lbs'>('kg');
   const [defaultRestSeconds, setDefaultRestSeconds] = useState(90);
+  // Último set_number asignado por ejercicio en esta sesión (ver handleLogSet)
+  const setNumberCounter = useRef<Map<string, number>>(new Map());
 
   useEffect(() => {
     const loadRoutine = async () => {
@@ -285,9 +287,13 @@ export const DayRoutine: React.FC = () => {
       throw new Error('No hay workout log activo');
     }
 
-    // Calcular el número de set
+    // Calcular el número de set. El contador monotónico evita duplicados
+    // cuando dos guardados van en vuelo a la vez: ambos leerían el mismo
+    // exerciseLogs (aún sin actualizar) y calcularían el mismo número.
     const existingSets = exerciseLogs.get(exerciseName) || [];
-    const setNumber = existingSets.length + 1;
+    const lastAssigned = setNumberCounter.current.get(exerciseName) ?? 0;
+    const setNumber = Math.max(existingSets.length, lastAssigned) + 1;
+    setNumberCounter.current.set(exerciseName, setNumber);
 
     const payload = {
       exercise_name: exerciseName,
