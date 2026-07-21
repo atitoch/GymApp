@@ -109,6 +109,16 @@ export const createAuthHeaders = (): HeadersInit => {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
+  // Zona horaria del usuario: el backend la usa para calcular "hoy"
+  // (workout del día, rachas, semana) en la hora local del usuario en vez
+  // de una zona fija.
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (tz) headers['X-Client-Timezone'] = tz;
+  } catch {
+    // Entornos sin Intl completo: el backend usa su zona por defecto
+  }
+
   return headers;
 };
 
