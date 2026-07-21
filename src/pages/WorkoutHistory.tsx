@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -24,8 +24,9 @@ import {
   type ExerciseNameSuggestion,
 } from '../services/workoutLog';
 import { filterExerciseSuggestions } from '../utils/exerciseSearch';
-import { getSetWeightInUnit } from '../utils/weight';
-import type { WorkoutLog } from '../types/workoutLog';
+import { getSetWeightInUnit, isStoredInOtherUnit } from '../utils/weight';
+import { getUserProfile } from '../services/profile';
+import type { WorkoutLog, ExerciseLog } from '../types/workoutLog';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -293,10 +294,40 @@ function exportCSV(sessions: SessionWithDayInfo[]) {
 function ExerciseProgressChart() {
   const [query, setQuery] = useState('');
   const [committed, setCommitted] = useState('');
-  const [data, setData] = useState<{ date: string; maxKg: number }[]>([]);
+  const [raw, setRaw] = useState<{ date: string; sets: ExerciseLog[] }[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Unidad preferida del usuario: la gráfica se dibuja en ella, convirtiendo
+  // los sets guardados en la otra unidad (p. ej. sesiones viejas en kg de
+  // cuando el perfil estaba en kg) en vez de mezclar escalas.
+  const [unit, setUnit] = useState<'kg' | 'lbs'>('kg');
+  useEffect(() => {
+    getUserProfile()
+      .then((p) => {
+        if (p?.weight_unit === 'kg' || p?.weight_unit === 'lbs') setUnit(p.weight_unit);
+      })
+      .catch(() => {});
+  }, []);
+
+  const data = useMemo(
+    () =>
+      raw
+        .map((entry) => {
+          const w = Math.max(0, ...entry.sets.map((s) => getSetWeightInUnit(s, unit)));
+          return { date: entry.date, weight: Math.round(w * 10) / 10 };
+        })
+        .filter((p) => p.weight > 0)
+        .sort((a, b) => a.date.localeCompare(b.date)),
+    [raw, unit],
+  );
+
+  // ¿Hay sesiones guardadas en la otra unidad? (para avisar que se convirtió)
+  const hasConverted = useMemo(
+    () => raw.some((e) => e.sets.some((s) => isStoredInOtherUnit(s, unit))),
+    [raw, unit],
+  );
 
   // Autocompletado: ejercicios que el usuario ya registró, por frecuencia
   const [allNames, setAllNames] = useState<ExerciseNameSuggestion[]>([]);
@@ -320,18 +351,9 @@ function ExerciseProgressChart() {
     setSuggestionsOpen(false);
     try {
       const history = await getExerciseHistory(n, 40);
-      const points = history
-        .map((entry) => {
-          // getSetWeightInUnit convierte sets guardados en lbs a kg, para que
-          // la gráfica no salga vacía si el usuario registra en libras
-          const maxKg = Math.max(0, ...entry.sets.map((s) => getSetWeightInUnit(s, 'kg')));
-          return { date: entry.date, maxKg: Math.round(maxKg * 10) / 10 };
-        })
-        .filter((p) => p.maxKg > 0)
-        .sort((a, b) => a.date.localeCompare(b.date));
-      setData(points);
+      setRaw(history);
     } catch {
-      setData([]);
+      setRaw([]);
     } finally {
       setLoading(false);
     }
@@ -377,7 +399,7 @@ function ExerciseProgressChart() {
     const cW = W - padL - padR;
     const cH = H - padT - padB;
 
-    const weights = data.map((d) => d.maxKg);
+    const weights = data.map((d) => d.weight);
     const minW = Math.min(...weights);
     const maxW = Math.max(...weights);
     const range = maxW - minW || 1;
@@ -386,7 +408,7 @@ function ExerciseProgressChart() {
 
     const pts = data.map((d, i) => ({
       x: padL + (i / (data.length - 1)) * cW,
-      y: padT + cH - ((d.maxKg - minW) / range) * cH,
+      y: padT + cH - ((d.weight - minW) / range) * cH,
       ...d,
     }));
 
@@ -447,7 +469,7 @@ function ExerciseProgressChart() {
         {/* PR label */}
         <text x={pts[prIdx].x} y={pts[prIdx].y - 10} textAnchor="middle"
           fontSize="10" fontWeight="bold" fill="#a3e635">
-          {maxW}kg ★
+          {maxW} {unit} ★
         </text>
 
         {/* X labels */}
@@ -471,7 +493,7 @@ function ExerciseProgressChart() {
         </p>
         {data.length >= 2 && (
           <span className="text-xs font-bold text-lime-400 flex items-center gap-1">
-            <Trophy size={11} /> PR: {Math.max(...data.map((d) => d.maxKg))}kg
+            <Trophy size={11} /> PR: {Math.max(...data.map((d) => d.weight))} {unit}
           </span>
         )}
       </div>
@@ -497,7 +519,7 @@ function ExerciseProgressChart() {
             className="flex-1 bg-transparent text-sm text-stone-300 placeholder-stone-600 outline-none"
           />
           {query && (
-            <button onClick={() => { setQuery(''); setData([]); setSearched(false); }} className="text-stone-600 hover:text-stone-400">
+            <button onClick={() => { setQuery(''); setRaw([]); setSearched(false); }} className="text-stone-600 hover:text-stone-400">
               <XCircle size={13} />
             </button>
           )}
@@ -574,7 +596,13 @@ function ExerciseProgressChart() {
         <div>
           {renderChart()}
           <p className="text-[10px] text-stone-700 text-center mt-1">
-            {data.length} sesiones · peso máximo por sesión
+            {data.length} sesiones · peso máximo por sesión en {unit}
+            {hasConverted && (
+              <>
+                {' '}· incluye sesiones registradas en{' '}
+                {unit === 'lbs' ? 'kg' : 'lbs'} convertidas a {unit}
+              </>
+            )}
           </p>
         </div>
       )}

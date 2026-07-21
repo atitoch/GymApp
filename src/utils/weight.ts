@@ -17,14 +17,26 @@ export function getSetWeightInUnit(
   set: { weight_kg?: number | null; weight_lbs?: number | null },
   unit: WeightUnit,
 ): number {
+  // Number(): las columnas numeric llegan del API como strings ("140.00");
+  // devolverlas tal cual rompe comparaciones (">" lexicográfico) y sumas.
   const direct = unit === 'lbs' ? set.weight_lbs : set.weight_kg;
-  if (direct != null) return direct;
+  if (direct != null) return Number(direct);
 
   const other = unit === 'lbs' ? set.weight_kg : set.weight_lbs;
   if (other != null) {
     const otherUnit: WeightUnit = unit === 'lbs' ? 'kg' : 'lbs';
-    return Math.round(convertWeight(other, otherUnit, unit) * 10) / 10;
+    return Math.round(convertWeight(Number(other), otherUnit, unit) * 10) / 10;
   }
 
   return 0;
+}
+
+/** true si el set NO tiene guardado el campo de `unit` y habría que convertir */
+export function isStoredInOtherUnit(
+  set: { weight_kg?: number | null; weight_lbs?: number | null },
+  unit: WeightUnit,
+): boolean {
+  const direct = unit === 'lbs' ? set.weight_lbs : set.weight_kg;
+  const other = unit === 'lbs' ? set.weight_kg : set.weight_lbs;
+  return direct == null && other != null;
 }
