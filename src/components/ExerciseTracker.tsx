@@ -285,11 +285,15 @@ export default function ExerciseTracker({
   const initRows = useCallback((): SetRow[] => {
     return Array.from({ length: targetSets }, (_, i) => {
       const saved = completedSets[i];
+      // getSetWeightInUnit: un set guardado en la otra unidad (p. ej. antes de
+      // cambiar kg↔lbs en el perfil) se convierte en vez de mostrarse vacío
       const savedWeight =
-        weightUnit === 'lbs' ? saved?.weight_lbs : saved?.weight_kg;
+        saved && (saved.weight_kg != null || saved.weight_lbs != null)
+          ? getSetWeightInUnit(saved, weightUnit)
+          : null;
       return {
         setIndex: i,
-        weight: savedWeight?.toString() ?? '',
+        weight: savedWeight != null ? String(savedWeight) : '',
         reps: saved?.reps_completed?.toString() ?? '',
         saved: !!saved,
         saving: false,

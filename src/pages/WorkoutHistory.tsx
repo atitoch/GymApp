@@ -24,7 +24,7 @@ import {
   type ExerciseNameSuggestion,
 } from '../services/workoutLog';
 import { filterExerciseSuggestions } from '../utils/exerciseSearch';
-import { getSetWeightInUnit, isStoredInOtherUnit } from '../utils/weight';
+import { getSetWeightInUnit, isStoredInOtherUnit, convertWeight, type WeightUnit } from '../utils/weight';
 import { getUserProfile } from '../services/profile';
 import type { WorkoutLog, ExerciseLog } from '../types/workoutLog';
 
@@ -123,10 +123,16 @@ function Skeleton() {
 function StatsSummary({
   stats,
   total,
+  unit,
 }: {
   stats: WeeklyStats | null;
   total: number;
+  unit: WeightUnit;
 }) {
+  // total_volume viene en kg (unidad canónica del backend)
+  const weekVolume = stats?.total_volume
+    ? convertWeight(Number(stats.total_volume), 'kg', unit)
+    : 0;
   const cards = [
     {
       label: 'Entrenos totales',
@@ -147,10 +153,8 @@ function StatsSummary({
       color: '#8b5cf6',
     },
     {
-      label: 'Volumen semana',
-      value: stats?.total_volume
-        ? `${Math.round(stats.total_volume / 1000)}t`
-        : '—',
+      label: `Volumen semana (${unit})`,
+      value: weekVolume ? `${Math.round(weekVolume / 1000)}k` : '—',
       icon: TrendingUp,
       color: '#10b981',
     },
@@ -179,7 +183,7 @@ function StatsSummary({
   );
 }
 
-function SessionCard({ session }: { session: SessionWithDayInfo }) {
+function SessionCard({ session, unit }: { session: SessionWithDayInfo; unit: WeightUnit }) {
   const style = DAY_STYLES[session.day_name ?? ''] ?? DAY_STYLES.PUSH;
   return (
     <div
@@ -231,7 +235,10 @@ function SessionCard({ session }: { session: SessionWithDayInfo }) {
             {!!session.total_volume && (
               <span className="flex items-center gap-1 text-xs text-stone-500">
                 <Zap size={11} />
-                {Math.round(session.total_volume as number).toLocaleString()} kg
+                {Math.round(
+                  convertWeight(Number(session.total_volume), 'kg', unit),
+                ).toLocaleString()}{' '}
+                {unit}
               </span>
             )}
             {session.rating != null && (
@@ -291,25 +298,16 @@ function exportCSV(sessions: SessionWithDayInfo[]) {
 
 // ─── Exercise Progress Chart ──────────────────────────────────────────────────
 
-function ExerciseProgressChart() {
+// La gráfica se dibuja en la unidad preferida del usuario, convirtiendo los
+// sets guardados en la otra unidad (p. ej. sesiones viejas en kg de cuando
+// el perfil estaba en kg) en vez de mezclar escalas.
+function ExerciseProgressChart({ unit }: { unit: WeightUnit }) {
   const [query, setQuery] = useState('');
   const [committed, setCommitted] = useState('');
   const [raw, setRaw] = useState<{ date: string; sets: ExerciseLog[] }[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  // Unidad preferida del usuario: la gráfica se dibuja en ella, convirtiendo
-  // los sets guardados en la otra unidad (p. ej. sesiones viejas en kg de
-  // cuando el perfil estaba en kg) en vez de mezclar escalas.
-  const [unit, setUnit] = useState<'kg' | 'lbs'>('kg');
-  useEffect(() => {
-    getUserProfile()
-      .then((p) => {
-        if (p?.weight_unit === 'kg' || p?.weight_unit === 'lbs') setUnit(p.weight_unit);
-      })
-      .catch(() => {});
-  }, []);
 
   const data = useMemo(
     () =>
@@ -690,6 +688,16 @@ export default function WorkoutHistory() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterType>('all');
+  // Unidad de peso preferida del usuario — todos los pesos/volúmenes de la
+  // página se muestran convertidos a ella
+  const [weightUnit, setWeightUnit] = useState<WeightUnit>('kg');
+  useEffect(() => {
+    getUserProfile()
+      .then((p) => {
+        if (p?.weight_unit === 'kg' || p?.weight_unit === 'lbs') setWeightUnit(p.weight_unit);
+      })
+      .catch(() => {});
+  }, []);
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
   const loadVersionRef = useRef(0);
@@ -804,9 +812,9 @@ export default function WorkoutHistory() {
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-5">
-        {!loading && <StatsSummary stats={weekStats} total={total} />}
+        {!loading && <StatsSummary stats={weekStats} total={total} unit={weightUnit} />}
         {!loading && sessions.length > 0 && <WeeklyChart sessions={sessions} />}
-        {!loading && sessions.length > 0 && <ExerciseProgressChart />}
+        {!loading && sessions.length > 0 && <ExerciseProgressChart unit={weightUnit} />}
 
         <div
           className="flex items-center gap-2 rounded-2xl px-4 py-3"
@@ -910,7 +918,7 @@ export default function WorkoutHistory() {
               </div>
               <div className="space-y-2">
                 {list.map((s) => (
-                  <SessionCard key={s.id} session={s} />
+                  <SessionCard key={s.id} session={s} unit={weightUnit} />
                 ))}
               </div>
             </div>
