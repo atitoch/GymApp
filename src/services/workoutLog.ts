@@ -130,6 +130,22 @@ export const getWeeklyStats = async (weekOffset = 0): Promise<{
 };
 
 /**
+ * Nombres distintos de ejercicios que el usuario ha registrado, ordenados
+ * por frecuencia. Alimenta el autocompletado del buscador de progreso.
+ */
+export interface ExerciseNameSuggestion {
+  name: string;
+  sessions: number;
+  last_date: string;
+}
+
+export const getExerciseNames = async (): Promise<ExerciseNameSuggestion[]> => {
+  return authenticatedGet<ExerciseNameSuggestion[]>(
+    '/workout-logs/exercise-names',
+  );
+};
+
+/**
  * Historial de un ejercicio específico — últimas N sesiones
  * Usado por ExerciseTracker para mostrar "última vez: 80kg × 10"
  */

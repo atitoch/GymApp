@@ -16,7 +16,15 @@ import {
   Trophy,
   Loader2,
 } from 'lucide-react';
-import { getWorkoutHistory, getWeeklyStats, getExerciseHistory } from '../services/workoutLog';
+import {
+  getWorkoutHistory,
+  getWeeklyStats,
+  getExerciseHistory,
+  getExerciseNames,
+  type ExerciseNameSuggestion,
+} from '../services/workoutLog';
+import { filterExerciseSuggestions } from '../utils/exerciseSearch';
+import { getSetWeightInUnit } from '../utils/weight';
 import type { WorkoutLog } from '../types/workoutLog';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -290,18 +298,34 @@ function ExerciseProgressChart() {
   const [searched, setSearched] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Autocompletado: ejercicios que el usuario ya registró, por frecuencia
+  const [allNames, setAllNames] = useState<ExerciseNameSuggestion[]>([]);
+  const [suggestionsOpen, setSuggestionsOpen] = useState(false);
+  const [activeIdx, setActiveIdx] = useState(-1);
+
+  useEffect(() => {
+    getExerciseNames()
+      .then(setAllNames)
+      .catch(() => {});
+  }, []);
+
+  const suggestions = filterExerciseSuggestions(allNames, query, 6);
+
   const search = useCallback(async (name: string) => {
     const n = name.trim();
     if (!n) return;
     setCommitted(n);
     setLoading(true);
     setSearched(true);
+    setSuggestionsOpen(false);
     try {
       const history = await getExerciseHistory(n, 40);
       const points = history
         .map((entry) => {
-          const maxKg = Math.max(0, ...entry.sets.map((s) => Number(s.weight_kg ?? 0)));
-          return { date: entry.date, maxKg };
+          // getSetWeightInUnit convierte sets guardados en lbs a kg, para que
+          // la gráfica no salga vacía si el usuario registra en libras
+          const maxKg = Math.max(0, ...entry.sets.map((s) => getSetWeightInUnit(s, 'kg')));
+          return { date: entry.date, maxKg: Math.round(maxKg * 10) / 10 };
         })
         .filter((p) => p.maxKg > 0)
         .sort((a, b) => a.date.localeCompare(b.date));
@@ -313,7 +337,34 @@ function ExerciseProgressChart() {
     }
   }, []);
 
+  const selectSuggestion = (name: string) => {
+    setQuery(name);
+    setActiveIdx(-1);
+    search(name);
+  };
+
   const handleKey = (e: React.KeyboardEvent) => {
+    if (suggestionsOpen && suggestions.length > 0) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setActiveIdx((i) => (i + 1) % suggestions.length);
+        return;
+      }
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setActiveIdx((i) => (i <= 0 ? suggestions.length - 1 : i - 1));
+        return;
+      }
+      if (e.key === 'Escape') {
+        setSuggestionsOpen(false);
+        setActiveIdx(-1);
+        return;
+      }
+      if (e.key === 'Enter' && activeIdx >= 0) {
+        selectSuggestion(suggestions[activeIdx].name);
+        return;
+      }
+    }
     if (e.key === 'Enter') search(query);
   };
 
@@ -425,32 +476,80 @@ function ExerciseProgressChart() {
         )}
       </div>
 
-      <div
-        className="flex items-center gap-2 rounded-xl px-3 py-2"
-        style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}
-      >
-        <Search size={13} className="text-stone-500 shrink-0" />
-        <input
-          ref={inputRef}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={handleKey}
-          placeholder="Ej. Press de banca, Sentadilla..."
-          className="flex-1 bg-transparent text-sm text-stone-300 placeholder-stone-600 outline-none"
-        />
-        {query && (
-          <button onClick={() => { setQuery(''); setData([]); setSearched(false); }} className="text-stone-600 hover:text-stone-400">
-            <XCircle size={13} />
-          </button>
-        )}
-        <button
-          onClick={() => search(query)}
-          disabled={!query.trim() || loading}
-          className="px-2.5 py-1 rounded-lg text-xs font-bold text-stone-950 disabled:opacity-40 transition-all"
-          style={{ background: 'linear-gradient(135deg,#a3e635,#84cc16)' }}
+      <div className="relative">
+        <div
+          className="flex items-center gap-2 rounded-xl px-3 py-2"
+          style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}
         >
-          {loading ? <Loader2 size={12} className="animate-spin" /> : 'Ver'}
-        </button>
+          <Search size={13} className="text-stone-500 shrink-0" />
+          <input
+            ref={inputRef}
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setSuggestionsOpen(true);
+              setActiveIdx(-1);
+            }}
+            onFocus={() => setSuggestionsOpen(true)}
+            onBlur={() => { setSuggestionsOpen(false); setActiveIdx(-1); }}
+            onKeyDown={handleKey}
+            placeholder="Escribe o elige un ejercicio..."
+            className="flex-1 bg-transparent text-sm text-stone-300 placeholder-stone-600 outline-none"
+          />
+          {query && (
+            <button onClick={() => { setQuery(''); setData([]); setSearched(false); }} className="text-stone-600 hover:text-stone-400">
+              <XCircle size={13} />
+            </button>
+          )}
+          <button
+            onClick={() => search(query)}
+            disabled={!query.trim() || loading}
+            className="px-2.5 py-1 rounded-lg text-xs font-bold text-stone-950 disabled:opacity-40 transition-all"
+            style={{ background: 'linear-gradient(135deg,#a3e635,#84cc16)' }}
+          >
+            {loading ? <Loader2 size={12} className="animate-spin" /> : 'Ver'}
+          </button>
+        </div>
+
+        {suggestionsOpen && suggestions.length > 0 && (
+          <ul
+            className="absolute left-0 right-0 top-full mt-1.5 z-30 rounded-xl overflow-hidden animate-[fadeIn_0.2s_ease-out_forwards]"
+            style={{
+              background: 'rgba(28,25,23,0.98)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              boxShadow: '0 12px 32px rgba(0,0,0,0.5)',
+            }}
+          >
+            {suggestions.map((s, i) => (
+              <li key={s.name}>
+                <button
+                  type="button"
+                  // onMouseDown en vez de onClick: se dispara antes del blur
+                  // del input, que cierra el dropdown
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    selectSuggestion(s.name);
+                  }}
+                  onMouseEnter={() => setActiveIdx(i)}
+                  className="w-full flex items-center justify-between gap-3 px-3 py-2 text-left transition-colors"
+                  style={{
+                    background: i === activeIdx ? 'rgba(163,230,53,0.12)' : 'transparent',
+                  }}
+                >
+                  <span
+                    className="text-sm truncate"
+                    style={{ color: i === activeIdx ? '#d9f99d' : '#d6d3d1' }}
+                  >
+                    {s.name}
+                  </span>
+                  <span className="text-[10px] text-stone-600 shrink-0 tabular-nums">
+                    {s.sessions} {s.sessions === 1 ? 'sesión' : 'sesiones'}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {loading && (
@@ -461,7 +560,7 @@ function ExerciseProgressChart() {
 
       {!loading && searched && data.length === 0 && (
         <p className="text-center text-xs text-stone-600 py-4">
-          Sin datos para <strong className="text-stone-500">{committed}</strong> — verifica el nombre exacto del ejercicio.
+          Sin pesos registrados para <strong className="text-stone-500">{committed}</strong>.
         </p>
       )}
 
@@ -482,7 +581,7 @@ function ExerciseProgressChart() {
 
       {!searched && (
         <p className="text-[11px] text-stone-700 text-center pb-1">
-          Escribe el nombre de un ejercicio y toca <strong className="text-stone-600">Ver</strong>
+          Toca el buscador y elige un ejercicio de la lista
         </p>
       )}
     </div>
