@@ -16,6 +16,7 @@ const parseJsonResponse = async <T>(response: Response): Promise<T> => {
 const TOKEN_KEY = 'auth_token';
 const REFRESH_TOKEN_KEY = 'auth_refresh_token';
 const USER_KEY = 'auth_user';
+const SESSION_STARTED_KEY = 'auth_session_started_at';
 
 /**
  * Limpia la sesión y redirige al login
@@ -25,6 +26,7 @@ const handleUnauthorized = () => {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(SESSION_STARTED_KEY);
   } catch {
     // ignore
   }

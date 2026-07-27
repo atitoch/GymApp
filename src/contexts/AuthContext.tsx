@@ -13,25 +13,72 @@ import { AuthContext, type AuthContextType, type User } from "./authContext";
 const TOKEN_KEY = "auth_token";
 const REFRESH_TOKEN_KEY = "auth_refresh_token";
 const USER_KEY = "auth_user";
+const SESSION_STARTED_KEY = "auth_session_started_at";
 
-const enrichUserWithRole = async (token: string, baseUser: User): Promise<User> => {
+// Edad máxima de una sesión guardada. Sin esto, un `auth_user` en localStorage
+// vive para siempre: quien abra la app en ese dispositivo entra directo al
+// perfil del último que la usó. Acota la ventana; no sustituye cerrar sesión.
+const MAX_SESSION_AGE_MS = 30 * 24 * 60 * 60 * 1000;
+
+/**
+ * Resultado de validar la sesión guardada contra el backend.
+ * - ok:          el token es válido; `user` es la identidad autoritativa.
+ * - invalid:     el servidor rechazó el token (401/403) — la sesión no sirve.
+ * - unverified:  no se pudo contactar al servidor (sin conexión).
+ */
+type VerifyResult =
+  | { status: 'ok'; user: User }
+  | { status: 'invalid' }
+  | { status: 'unverified' };
+
+/**
+ * Pide /users/profile con el token y construye el usuario a partir de la
+ * RESPUESTA, no de lo que hubiera en localStorage. El backend deriva el perfil
+ * del token, así que `id`/`email` de ahí son la única fuente de identidad
+ * confiable: tomarlos de `baseUser` permitía quedar con la identidad de una
+ * cuenta y el nombre/avatar de otra.
+ */
+const verifyAndEnrichUser = async (
+  token: string,
+  baseUser: User,
+): Promise<VerifyResult> => {
+  let response: Response;
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/users/profile`, {
+    response = await fetch(`${import.meta.env.VITE_API_URL}/users/profile`, {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
     });
-    if (!response.ok) return baseUser;
+  } catch {
+    // Fallo de red: no podemos validar, pero tampoco es evidencia de que la
+    // sesión sea inválida (usuario sin señal en el gym).
+    return { status: 'unverified' };
+  }
+
+  if (response.status === 401 || response.status === 403) {
+    return { status: 'invalid' };
+  }
+  if (!response.ok) return { status: 'unverified' };
+
+  try {
     const data = await response.json();
     const profile = data.data ?? data;
+    if (!profile?.id) return { status: 'unverified' };
+
     const fullName = [profile.first_name, profile.last_name].filter(Boolean).join(' ');
     return {
-      ...baseUser,
-      role: profile.role ?? 'user',
-      coachStatus: profile.coach_status ?? null,
-      name: fullName || baseUser.name,
-      avatar_url: profile.avatar_url ?? baseUser.avatar_url,
+      status: 'ok',
+      user: {
+        ...baseUser,
+        // Identidad SIEMPRE del perfil devuelto para este token
+        id: profile.id,
+        email: profile.email ?? baseUser.email,
+        role: profile.role ?? 'user',
+        coachStatus: profile.coach_status ?? null,
+        name: fullName || baseUser.name,
+        avatar_url: profile.avatar_url ?? baseUser.avatar_url,
+      },
     };
   } catch {
-    return baseUser;
+    return { status: 'unverified' };
   }
 };
 
@@ -62,29 +109,53 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         const storedUser = localStorage.getItem(USER_KEY);
 
         if (storedToken && storedUser) {
-          setToken(storedToken);
+          // Sesión demasiado vieja: se descarta sin siquiera mostrarla
+          const startedAt = Number(localStorage.getItem(SESSION_STARTED_KEY) ?? 0);
+          if (!startedAt || Date.now() - startedAt > MAX_SESSION_AGE_MS) {
+            clearSession();
+            setIsLoading(false);
+            return;
+          }
+
+          let parsed: User;
           try {
-            const parsed = JSON.parse(storedUser);
-            if (
-              parsed &&
-              typeof parsed.id === 'string' &&
-              typeof parsed.email === 'string'
-            ) {
-              setUser(parsed);
-              const enriched = await enrichUserWithRole(storedToken, parsed);
-              if (!cancelled) {
-                setUser(enriched);
-                localStorage.setItem(USER_KEY, JSON.stringify(enriched));
-              }
-            } else {
-              clearSession();
-              setIsLoading(false);
-              return;
-            }
+            parsed = JSON.parse(storedUser);
           } catch {
             clearSession();
             setIsLoading(false);
             return;
+          }
+
+          if (
+            !parsed ||
+            typeof parsed.id !== 'string' ||
+            typeof parsed.email !== 'string'
+          ) {
+            clearSession();
+            setIsLoading(false);
+            return;
+          }
+
+          // Validar ANTES de renderizar: pintar el usuario guardado de entrada
+          // era lo que mostraba el perfil de otra persona cuando el token ya
+          // no era válido (el fallo se tragaba y se quedaba lo de localStorage).
+          const result = await verifyAndEnrichUser(storedToken, parsed);
+          if (cancelled) return;
+
+          if (result.status === 'invalid') {
+            clearSession();
+            setIsLoading(false);
+            return;
+          }
+
+          setToken(storedToken);
+          if (result.status === 'ok') {
+            setUser(result.user);
+            localStorage.setItem(USER_KEY, JSON.stringify(result.user));
+          } else {
+            // Sin conexión: se usa la sesión guardada para permitir trabajar
+            // offline; la identidad se corrige en cuanto vuelva la red.
+            setUser(parsed);
           }
         }
       } catch {
@@ -104,6 +175,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
     localStorage.setItem(TOKEN_KEY, authData.token);
     localStorage.setItem(USER_KEY, JSON.stringify(authData.user));
+    localStorage.setItem(SESSION_STARTED_KEY, String(Date.now()));
 
     if (authData.refreshToken) {
       localStorage.setItem(REFRESH_TOKEN_KEY, authData.refreshToken);
@@ -116,17 +188,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(SESSION_STARTED_KEY);
   };
 
   const login = async (credentials: LoginCredentials) => {
     try {
       const authData = await authService.login(credentials);
       saveSession(authData);
-      const enriched = await enrichUserWithRole(authData.token, authData.user);
-      setUser(enriched);
-      localStorage.setItem(USER_KEY, JSON.stringify(enriched));
+      const result = await verifyAndEnrichUser(authData.token, authData.user);
+      let role: string | undefined;
+      if (result.status === 'ok') {
+        setUser(result.user);
+        localStorage.setItem(USER_KEY, JSON.stringify(result.user));
+        role = result.user.role;
+      }
 
-      navigate(enriched.role === 'admin' ? '/admin' : '/dashboard');
+      navigate(role === 'admin' ? '/admin' : '/dashboard');
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -207,9 +284,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   const setAuthData = (authData: AuthResponse) => {
     saveSession(authData);
-    enrichUserWithRole(authData.token, authData.user).then((enriched) => {
-      setUser(enriched);
-      localStorage.setItem(USER_KEY, JSON.stringify(enriched));
+    verifyAndEnrichUser(authData.token, authData.user).then((result) => {
+      if (result.status !== 'ok') return;
+      setUser(result.user);
+      localStorage.setItem(USER_KEY, JSON.stringify(result.user));
     });
   };
 
