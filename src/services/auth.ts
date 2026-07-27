@@ -313,3 +313,34 @@ export const resendVerificationEmail = async (email: string): Promise<void> => {
     throw handleFetchError(error);
   }
 };
+
+/**
+ * Reporta al backend un evento de sesión que solo el cliente conoce.
+ *
+ * - `login_ok` con provider: el login OAuth se completa entero en el navegador
+ *   (exchangeCodeForSession), así que sin esto esos accesos no dejaban rastro
+ *   en auth_events.
+ * - `identity_mismatch`: la identidad guardada en el dispositivo no era la del
+ *   token — la señal del incidente de "me cargó otro perfil".
+ *
+ * Es telemetría: nunca debe romper el flujo de login, así que los errores se
+ * ignoran deliberadamente.
+ */
+export const reportSessionEvent = async (
+  token: string,
+  event: 'login_ok' | 'identity_mismatch',
+  details: { provider?: string; storedUserId?: string } = {},
+): Promise<void> => {
+  try {
+    await fetch(`${API_BASE_URL}/auth/session-event`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ event, ...details }),
+    });
+  } catch {
+    // Telemetría best-effort
+  }
+};

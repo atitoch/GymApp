@@ -31,6 +31,10 @@ type VerifyResult =
   | { status: 'invalid' }
   | { status: 'unverified' };
 
+// Evita reportar el mismo desajuste más de una vez por carga (StrictMode monta
+// el efecto dos veces en desarrollo, y el efecto puede re-ejecutarse).
+const reportedMismatches = new Set<string>();
+
 /**
  * Pide /users/profile con el token y construye el usuario a partir de la
  * RESPUESTA, no de lo que hubiera en localStorage. El backend deriva el perfil
@@ -62,6 +66,19 @@ const verifyAndEnrichUser = async (
     const data = await response.json();
     const profile = data.data ?? data;
     if (!profile?.id) return { status: 'unverified' };
+
+    // La identidad guardada no era la del token: es exactamente el caso que
+    // dejaba ver el perfil de otra cuenta. Se corrige (abajo) y se reporta
+    // para tener trazabilidad si vuelve a ocurrir.
+    if (baseUser.id && profile.id !== baseUser.id) {
+      const key = `${baseUser.id}->${profile.id}`;
+      if (!reportedMismatches.has(key)) {
+        reportedMismatches.add(key);
+        authService.reportSessionEvent(token, 'identity_mismatch', {
+          storedUserId: baseUser.id,
+        });
+      }
+    }
 
     const fullName = [profile.first_name, profile.last_name].filter(Boolean).join(' ');
     return {
@@ -284,6 +301,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   const setAuthData = (authData: AuthResponse) => {
     saveSession(authData);
+    // El login OAuth se resuelve en el navegador y el backend nunca se entera;
+    // este aviso es lo único que deja rastro del acceso en auth_events.
+    authService.reportSessionEvent(authData.token, 'login_ok', {
+      provider: 'oauth',
+    });
     verifyAndEnrichUser(authData.token, authData.user).then((result) => {
       if (result.status !== 'ok') return;
       setUser(result.user);
