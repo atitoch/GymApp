@@ -4,6 +4,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL;
 import type { ApiResponse } from '../types/api';
 import { parseApiError, handleFetchError } from './errorHandler';
 import { emitTokenRefreshed } from './authEvents';
+import { supabase } from '../config/supabase';
 
 const parseJsonResponse = async <T>(response: Response): Promise<T> => {
   const contentType = response.headers.get('content-type');
@@ -30,6 +31,11 @@ const handleUnauthorized = () => {
   } catch {
     // ignore
   }
+  // Cerrar también la sesión OAuth de Supabase. Borrar solo las claves de la
+  // app dejaba viva la sesión del proveedor: en un equipo compartido, el
+  // siguiente en pulsar "Continuar con Google" podía quedar autenticado como
+  // la persona anterior sin que se le preguntara nada.
+  void supabase.auth.signOut({ scope: 'local' }).catch(() => {});
   window.location.href = '/';
 };
 
