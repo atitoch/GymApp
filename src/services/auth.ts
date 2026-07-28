@@ -128,6 +128,13 @@ const loginWithProvider = async (
     provider,
     options: {
       redirectTo: OAUTH_REDIRECT_URL,
+      // Forzar el selector de cuenta. Sin `prompt`, Google reutiliza en
+      // silencio la sesión que ya exista en el navegador: en un celular con
+      // otra cuenta de Google activa (la del dueño del teléfono, la de un
+      // familiar), pulsar "Continuar con Google" entra a ESA cuenta sin
+      // preguntar nada, y la app muestra ese perfil — correctamente, porque
+      // es la sesión que el proveedor entregó.
+      queryParams: { prompt: 'select_account' },
     },
   });
 
